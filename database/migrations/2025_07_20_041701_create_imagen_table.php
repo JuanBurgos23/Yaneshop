@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('imagen', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('id_producto'); // Cambiado a 'producto_id' para mantener consistencia
-            $table->string('ruta'); // o 'url' si prefieres
+            $table->mediumText('ruta'); // o 'url' si prefieres
             $table->timestamps();
 
             $table->foreign('id_producto')->references('id')->on('producto')->onDelete('cascade');

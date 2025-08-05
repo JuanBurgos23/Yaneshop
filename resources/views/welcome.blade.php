@@ -24,6 +24,169 @@
     <link rel="stylesheet" type="text/css" href="{{ asset('vendor/perfect-scrollbar/perfect-scrollbar.css') }}">
     <link rel="stylesheet" type="text/css" href="{{ asset('css/util.css') }}">
     <link rel="stylesheet" type="text/css" href="{{ asset('css/main.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+    <style>
+        /* Estilos para los dots (miniaturas) */
+        .wrap-slick3-dots ul.slick3-dots {
+            display: flex !important;
+            justify-content: start;
+            padding: 10px 0;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .wrap-slick3-dots li {
+            position: relative;
+            width: 60px;
+            height: 60px;
+            border-radius: 4px;
+            overflow: hidden;
+            cursor: pointer;
+            list-style: none;
+        }
+
+        /* Ocultamos el botón de slick (innecesario) */
+        .wrap-slick3-dots li button {
+            display: none !important;
+        }
+
+        /* Imagen o video miniatura */
+        .wrap-slick3-dots img,
+        .wrap-slick3-dots video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+            border-radius: 4px;
+            pointer-events: none;
+        }
+
+        /* Overlay */
+        .slick3-dot-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border: 2px solid transparent;
+            border-radius: 4px;
+            box-sizing: border-box;
+            transition: border 0.2s ease;
+        }
+
+        /* Borde activo */
+        .wrap-slick3-dots li.slick-active .slick3-dot-overlay {
+            border: 2px solid #007bff;
+        }
+
+        /* Resaltar imagen activa */
+        .wrap-slick3-dots li.slick-active img {
+            border: 2px solid #0d6efd;
+        }
+
+        /* Espaciado entre previews */
+        .wrap-slick3-dots li {
+            margin: 4px;
+            display: inline-block;
+            cursor: pointer;
+        }
+
+        /* Personalizar flechas */
+        .arrow-slick3 {
+            background: none;
+            border: none;
+            font-size: 24px;
+            color: #333;
+            cursor: pointer;
+        }
+
+        .block1.wrap-pic-w {
+            position: relative;
+            overflow: hidden;
+            border-radius: 5px;
+        }
+
+        .block1.wrap-pic-w img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            /* recorta si es necesario para llenar el contenedor */
+            transition: transform 0.3s ease;
+        }
+
+        /* Contenedor para imágenes grandes (primeras 2) */
+        .col-xl-6 .block1.wrap-pic-w {
+            height: 400px;
+            /* altura fija */
+        }
+
+        .col-xl-6 .block1.wrap-pic-w img {
+            object-fit: contain;
+            /* muestra la imagen completa sin recortar */
+            width: 100%;
+            height: 100%;
+            background-color: #f5f5f5;
+            /* opcional, para que el fondo no sea vacío */
+        }
+
+        /* Contenedor para imágenes pequeñas (últimas 3) */
+        .col-xl-4 .block1.wrap-pic-w {
+            height: 280px;
+        }
+
+        .col-xl-4 .block1.wrap-pic-w img {
+            object-fit: cover;
+            /* llena el espacio recortando si es necesario */
+            width: 100%;
+            height: 100%;
+        }
+
+        .block1.wrap-pic-w:hover img {
+            transform: scale(1.05);
+        }
+
+        .item-slick1 {
+            height: 450px;
+            /* altura controlada del slider */
+            background-size: cover;
+            background-position: center;
+            position: relative;
+        }
+
+        .item-slick1 .container {
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            margin-top: -30px;
+            /* 🔼 Esto realmente lo sube */
+            padding-bottom: 20px;
+            gap: 15px;
+        }
+
+
+        .flex-col-c-m {
+            text-align: center;
+        }
+
+        .layer-slick1 {
+            margin-bottom: 20px;
+            color: #fff;
+        }
+
+        /* responsive */
+        @media (max-width: 768px) {
+            .item-slick1 {
+                height: 300px;
+            }
+
+            .layer-slick1 h2 {
+                font-size: 24px;
+            }
+        }
+    </style>
 </head>
 
 <body class="animsition">
@@ -199,9 +362,7 @@
                 </ul>
 
                 <div class="sidebar-gallery w-full p-tb-30">
-                    <span class="mtext-101 cl5">
-                        @ CozaStore
-                    </span>
+
 
                     <div class="flex-w flex-sb p-t-36 gallery-lb">
                         <!-- item gallery sidebar -->
@@ -365,77 +526,41 @@
     <section class="section-slide">
         <div class="wrap-slick1 rs2-slick1">
             <div class="slick1">
-                <div class="item-slick1 bg-overlay1" style="background-image: url(images/slide-05.jpg);" data-thumb="images/thumb-01.jpg" data-caption="Women’s Wear">
-                    <div class="container h-full">
-                        <div class="flex-col-c-m h-full p-t-100 p-b-60 respon5">
+                @foreach ($productos->take(3) as $producto)
+                @php
+                $categoria = $producto->categoria;
+                $imagen = $producto->imagenes->first();
+                $backgroundImage = $imagen ? asset('storage/' . $imagen->ruta) : asset('images/default.jpg');
+                @endphp
+
+                <div class="item-slick1 bg-overlay1" style="background-image: url('{{ $backgroundImage }}');"
+                    data-thumb="{{ $backgroundImage }}"
+                    data-caption="{{ $categoria->nombre ?? 'Categoría' }}">
+                    <div class="container">
+                        <div class="flex-col-c-m">
                             <div class="layer-slick1 animated visible-false" data-appear="fadeInDown" data-delay="0">
                                 <span class="ltext-202 txt-center cl0 respon2">
-                                    Women Collection 2018
+                                    {{ $categoria->nombre ?? 'Categoría' }}
                                 </span>
                             </div>
 
                             <div class="layer-slick1 animated visible-false" data-appear="fadeInUp" data-delay="800">
                                 <h2 class="ltext-104 txt-center cl0 p-t-22 p-b-40 respon1">
-                                    New arrivals
+                                    {{ $producto->nombre }}
                                 </h2>
                             </div>
 
-                            <div class="layer-slick1 animated visible-false" data-appear="zoomIn" data-delay="1600">
-                                <a href="{{ route('product.index') }}" class="flex-c-m stext-101 cl0 size-101 bg1 bor1 hov-btn2 p-lr-15 trans-04">
-                                    Shop Now
+                            <!--<div class="layer-slick1 animated visible-false" data-appear="zoomIn" data-delay="1600">
+                                <a href="{{ route('product.index', ['categoria' => $categoria->id]) }}"
+                                    class="flex-c-m stext-101 cl0 size-101 bg1 bor1 hov-btn2 p-lr-15 trans-04">
+                                    Comprar Ahora
                                 </a>
-                            </div>
+                            </div>-->
                         </div>
                     </div>
                 </div>
 
-                <div class="item-slick1 bg-overlay1" style="background-image: url(images/slide-06.jpg);" data-thumb="images/thumb-02.jpg" data-caption="Men’s Wear">
-                    <div class="container h-full">
-                        <div class="flex-col-c-m h-full p-t-100 p-b-60 respon5">
-                            <div class="layer-slick1 animated visible-false" data-appear="rollIn" data-delay="0">
-                                <span class="ltext-202 txt-center cl0 respon2">
-                                    Men New-Season
-                                </span>
-                            </div>
-
-                            <div class="layer-slick1 animated visible-false" data-appear="lightSpeedIn" data-delay="800">
-                                <h2 class="ltext-104 txt-center cl0 p-t-22 p-b-40 respon1">
-                                    Jackets & Coats
-                                </h2>
-                            </div>
-
-                            <div class="layer-slick1 animated visible-false" data-appear="slideInUp" data-delay="1600">
-                                <a href="product.html" class="flex-c-m stext-101 cl0 size-101 bg1 bor1 hov-btn2 p-lr-15 trans-04">
-                                    Shop Now
-                                </a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="item-slick1 bg-overlay1" style="background-image: url(images/slide-07.jpg);" data-thumb="images/thumb-03.jpg" data-caption="Men’s Wear">
-                    <div class="container h-full">
-                        <div class="flex-col-c-m h-full p-t-100 p-b-60 respon5">
-                            <div class="layer-slick1 animated visible-false" data-appear="rotateInDownLeft" data-delay="0">
-                                <span class="ltext-202 txt-center cl0 respon2">
-                                    Men Collection 2018
-                                </span>
-                            </div>
-
-                            <div class="layer-slick1 animated visible-false" data-appear="rotateInUpRight" data-delay="800">
-                                <h2 class="ltext-104 txt-center cl0 p-t-22 p-b-40 respon1">
-                                    NEW SEASON
-                                </h2>
-                            </div>
-
-                            <div class="layer-slick1 animated visible-false" data-appear="rotateIn" data-delay="1600">
-                                <a href="product.html" class="flex-c-m stext-101 cl0 size-101 bg1 bor1 hov-btn2 p-lr-15 trans-04">
-                                    Shop Now
-                                </a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+                @endforeach
             </div>
 
             <div class="wrap-slick1-dots p-lr-10"></div>
@@ -443,174 +568,100 @@
     </section>
 
 
+
+
     <!-- Banner -->
-    <div class="sec-banner bg0 p-t-95 p-b-55">
+    <!-- Banner dinámico -->
+    <div class="sec-banner bg0 p-t-80 p-b-50">
         <div class="container">
             <div class="row">
-                <div class="col-md-6 p-b-30 m-lr-auto">
-                    <!-- Block1 -->
-                    <div class="block1 wrap-pic-w">
-                        <img src="images/banner-04.jpg" alt="IMG-BANNER">
+                @foreach ($categorias->take(5) as $i => $categoria)
+                @php
+                $productoConImagen = $categoria->productos->firstWhere('imagenes.0', '!=', null);
+                if (!$productoConImagen) {
+                $productoConImagen = $categoria->productos->first();
+                }
+                $imagen = ($productoConImagen && $productoConImagen->imagenes->first())
+                ? asset('storage/' . $productoConImagen->imagenes->first()->ruta)
+                : asset('images/default.jpg');
+                @endphp
 
-                        <a href="{{ route('product.index') }}" class="block1-txt ab-t-l s-full flex-col-l-sb p-lr-38 p-tb-34 trans-03 respon3">
+                <div class="{{ $i < 2 ? 'col-md-6 col-xl-6' : 'col-md-6 col-xl-4' }} p-b-30 m-lr-auto">
+                    <div class="block1 wrap-pic-w">
+                        <img src="{{ $imagen }}" alt="{{ $productoConImagen->nombre ?? 'Producto' }}">
+
+                        <div class="block1-txt ab-t-l s-full flex-col-l-sb p-lr-38 p-tb-34 trans-03 respon3">
                             <div class="block1-txt-child1 flex-col-l">
                                 <span class="block1-name ltext-102 trans-04 p-b-8">
-                                    Women
+                                    {{ $categoria->nombre }}
                                 </span>
-
                                 <span class="block1-info stext-102 trans-04">
-                                    New Trend
+                                    {{ $productoConImagen->nombre ?? 'Explora nuestros productos' }}
                                 </span>
                             </div>
 
-                            <div class="block1-txt-child2 p-b-4 trans-05">
+                            <!--<div class="block1-txt-child2 p-b-4 trans-05">
                                 <div class="block1-link stext-101 cl0 trans-09">
-                                    Shop Now
+                                    Comprar ahora
                                 </div>
-                            </div>
-                        </a>
+                            </div>-->
+                        </div>
                     </div>
                 </div>
-
-                <div class="col-md-6 p-b-30 m-lr-auto">
-                    <!-- Block1 -->
-                    <div class="block1 wrap-pic-w">
-                        <img src="images/banner-05.jpg" alt="IMG-BANNER">
-
-                        <a href="{{ route('product.index') }}" class="block1-txt ab-t-l s-full flex-col-l-sb p-lr-38 p-tb-34 trans-03 respon3">
-                            <div class="block1-txt-child1 flex-col-l">
-                                <span class="block1-name ltext-102 trans-04 p-b-8">
-                                    Men
-                                </span>
-
-                                <span class="block1-info stext-102 trans-04">
-                                    New Trend
-                                </span>
-                            </div>
-
-                            <div class="block1-txt-child2 p-b-4 trans-05">
-                                <div class="block1-link stext-101 cl0 trans-09">
-                                    Shop Now
-                                </div>
-                            </div>
-                        </a>
-                    </div>
-                </div>
-
-                <div class="col-md-6 col-lg-4 p-b-30 m-lr-auto">
-                    <!-- Block1 -->
-                    <div class="block1 wrap-pic-w">
-                        <img src="images/banner-07.jpg" alt="IMG-BANNER">
-
-                        <a href="{{ route('product.index') }}" class="block1-txt ab-t-l s-full flex-col-l-sb p-lr-38 p-tb-34 trans-03 respon3">
-                            <div class="block1-txt-child1 flex-col-l">
-                                <span class="block1-name ltext-102 trans-04 p-b-8">
-                                    Watches
-                                </span>
-
-                                <span class="block1-info stext-102 trans-04">
-                                    Spring 2018
-                                </span>
-                            </div>
-
-                            <div class="block1-txt-child2 p-b-4 trans-05">
-                                <div class="block1-link stext-101 cl0 trans-09">
-                                    Shop Now
-                                </div>
-                            </div>
-                        </a>
-                    </div>
-                </div>
-
-                <div class="col-md-6 col-lg-4 p-b-30 m-lr-auto">
-                    <!-- Block1 -->
-                    <div class="block1 wrap-pic-w">
-                        <img src="images/banner-08.jpg" alt="IMG-BANNER">
-
-                        <a href="product.html" class="block1-txt ab-t-l s-full flex-col-l-sb p-lr-38 p-tb-34 trans-03 respon3">
-                            <div class="block1-txt-child1 flex-col-l">
-                                <span class="block1-name ltext-102 trans-04 p-b-8">
-                                    Bags
-                                </span>
-
-                                <span class="block1-info stext-102 trans-04">
-                                    Spring 2018
-                                </span>
-                            </div>
-
-                            <div class="block1-txt-child2 p-b-4 trans-05">
-                                <div class="block1-link stext-101 cl0 trans-09">
-                                    Shop Now
-                                </div>
-                            </div>
-                        </a>
-                    </div>
-                </div>
-
-                <div class="col-md-6 col-lg-4 p-b-30 m-lr-auto">
-                    <!-- Block1 -->
-                    <div class="block1 wrap-pic-w">
-                        <img src="images/banner-09.jpg" alt="IMG-BANNER">
-
-                        <a href="{{ route('product.index') }}" class="block1-txt ab-t-l s-full flex-col-l-sb p-lr-38 p-tb-34 trans-03 respon3">
-                            <div class="block1-txt-child1 flex-col-l">
-                                <span class="block1-name ltext-102 trans-04 p-b-8">
-                                    Accessories
-                                </span>
-
-                                <span class="block1-info stext-102 trans-04">
-                                    Spring 2018
-                                </span>
-                            </div>
-
-                            <div class="block1-txt-child2 p-b-4 trans-05">
-                                <div class="block1-link stext-101 cl0 trans-09">
-                                    Shop Now
-                                </div>
-                            </div>
-                        </a>
-                    </div>
-                </div>
+                @endforeach
             </div>
         </div>
     </div>
-
-
     <!-- Product -->
     <section class="bg0 p-t-23 p-b-130">
         <div class="container">
             <div class="p-b-10">
                 <h3 class="ltext-103 cl5">
-                    Product Overview
+                    Productos
                 </h3>
             </div>
+            @if($promociones->count())
+            <section class="p-t-30 p-b-20">
+                <h4 class="text-center m-b-20">🔥 Promociones</h4>
+                @include('catalogo.catalogoNuevos', ['productos' => $promociones])
+            </section>
+            @endif
 
+            @if($nuevos->count())
+            <section class="p-t-30 p-b-20">
+                <h4 class="text-center m-b-20">🆕 Nuevos</h4>
+                @include('catalogo.catalogoNuevos', ['productos' => $nuevos])
+            </section>
+            @endif
             <div class="flex-w flex-sb-m p-b-52">
-                <div class="flex-w flex-l-m filter-tope-group m-tb-10">
+                <div class="flex-w flex-l-m filter-tope-group m-tb-10 align-items-center">
                     <button class="stext-106 cl6 hov1 bor3 trans-04 m-r-32 m-tb-5 how-active1" data-filter="*">
-                        All Products
+                        Todos
                     </button>
 
-                    <button class="stext-106 cl6 hov1 bor3 trans-04 m-r-32 m-tb-5" data-filter=".women">
-                        Women
+                    {{-- Mostrar primeras 5 categorías como botones --}}
+                    @foreach ($categorias->take(5) as $categoria)
+                    <button
+                        class="stext-106 cl6 hov1 bor3 trans-04 m-r-32 m-tb-5"
+                        data-filter=".{{ strtolower(Str::slug($categoria->nombre)) }}">
+                        {{ $categoria->nombre }}
                     </button>
+                    @endforeach
 
-                    <button class="stext-106 cl6 hov1 bor3 trans-04 m-r-32 m-tb-5" data-filter=".men">
-                        Men
-                    </button>
-
-                    <button class="stext-106 cl6 hov1 bor3 trans-04 m-r-32 m-tb-5" data-filter=".bag">
-                        Bag
-                    </button>
-
-                    <button class="stext-106 cl6 hov1 bor3 trans-04 m-r-32 m-tb-5" data-filter=".shoes">
-                        Shoes
-                    </button>
-
-                    <button class="stext-106 cl6 hov1 bor3 trans-04 m-r-32 m-tb-5" data-filter=".watches">
-                        Watches
-                    </button>
+                    {{-- Si hay más de 5 categorías, mostrar select --}}
+                    @if ($categorias->count() > 5)
+                    <div id="select-categorias-wrapper" class="m-r-32 m-tb-5">
+                        <select id="select-categorias" class="stext-106 cl6 bor3 trans-04 p-lr-10" style="height: 38px; border: 1px solid #ccc;">
+                            <option value="">Más categorías</option>
+                            @foreach ($categorias->skip(5) as $categoria)
+                            <option value=".{{ strtolower(Str::slug($categoria->nombre)) }}">{{ $categoria->nombre }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                    @endif
                 </div>
+
+
 
                 <div class="flex-w flex-c-m m-tb-10">
                     <div class="flex-c-m stext-106 cl6 size-104 bor4 pointer hov-btn3 trans-04 m-r-8 m-tb-4 js-show-filter">
@@ -622,7 +673,7 @@
                     <div class="flex-c-m stext-106 cl6 size-105 bor4 pointer hov-btn3 trans-04 m-tb-4 js-show-search">
                         <i class="icon-search cl2 m-r-6 fs-15 trans-04 zmdi zmdi-search"></i>
                         <i class="icon-close-search cl2 m-r-6 fs-15 trans-04 zmdi zmdi-close dis-none"></i>
-                        Search
+                        Buscar
                     </div>
                 </div>
 
@@ -633,57 +684,13 @@
                             <i class="zmdi zmdi-search"></i>
                         </button>
 
-                        <input class="mtext-107 cl2 size-114 plh2 p-r-15" type="text" name="search-product" placeholder="Search">
+                        <input class="mtext-107 cl2 size-114 plh2 p-r-15" type="text" name="search-product" placeholder="Buscar producto">
                     </div>
                 </div>
 
                 <!-- Filter -->
                 <div class="dis-none panel-filter w-full p-t-10">
                     <div class="wrap-filter flex-w bg6 w-full p-lr-40 p-t-27 p-lr-15-sm">
-                        <div class="filter-col1 p-r-15 p-b-27">
-                            <div class="mtext-102 cl2 p-b-15">
-                                Sort By
-                            </div>
-
-                            <ul>
-                                <li class="p-b-6">
-                                    <a href="#" class="filter-link stext-106 trans-04">
-                                        Default
-                                    </a>
-                                </li>
-
-                                <li class="p-b-6">
-                                    <a href="#" class="filter-link stext-106 trans-04">
-                                        Popularity
-                                    </a>
-                                </li>
-
-                                <li class="p-b-6">
-                                    <a href="#" class="filter-link stext-106 trans-04">
-                                        Average rating
-                                    </a>
-                                </li>
-
-                                <li class="p-b-6">
-                                    <a href="#" class="filter-link stext-106 trans-04 filter-link-active">
-                                        Newness
-                                    </a>
-                                </li>
-
-                                <li class="p-b-6">
-                                    <a href="#" class="filter-link stext-106 trans-04">
-                                        Price: Low to High
-                                    </a>
-                                </li>
-
-                                <li class="p-b-6">
-                                    <a href="#" class="filter-link stext-106 trans-04">
-                                        Price: High to Low
-                                    </a>
-                                </li>
-                            </ul>
-                        </div>
-
                         <div class="filter-col2 p-r-15 p-b-27">
                             <div class="mtext-102 cl2 p-b-15">
                                 Price
@@ -691,666 +698,110 @@
 
                             <ul>
                                 <li class="p-b-6">
-                                    <a href="#" class="filter-link stext-106 trans-04 filter-link-active">
+                                    <a href="#" class="filter-link stext-106 trans-04 filter-link-active filter-price" data-min="0" data-max="10000">
                                         All
                                     </a>
                                 </li>
 
                                 <li class="p-b-6">
-                                    <a href="#" class="filter-link stext-106 trans-04">
+                                    <a href="#" class="filter-link stext-106 trans-04 filter-price" data-min="0" data-max="50">
                                         $0.00 - $50.00
                                     </a>
                                 </li>
 
                                 <li class="p-b-6">
-                                    <a href="#" class="filter-link stext-106 trans-04">
+                                    <a href="#" class="filter-link stext-106 trans-04 filter-price" data-min="50" data-max="100">
                                         $50.00 - $100.00
                                     </a>
                                 </li>
 
                                 <li class="p-b-6">
-                                    <a href="#" class="filter-link stext-106 trans-04">
+                                    <a href="#" class="filter-link stext-106 trans-04 filter-price" data-min="100" data-max="150">
                                         $100.00 - $150.00
                                     </a>
                                 </li>
 
                                 <li class="p-b-6">
-                                    <a href="#" class="filter-link stext-106 trans-04">
+                                    <a href="#" class="filter-link stext-106 trans-04 filter-price" data-min="150" data-max="200">
                                         $150.00 - $200.00
                                     </a>
                                 </li>
 
                                 <li class="p-b-6">
-                                    <a href="#" class="filter-link stext-106 trans-04">
+                                    <a href="#" class="filter-link stext-106 trans-04 filter-price" data-min="200" data-max="100000">
                                         $200.00+
                                     </a>
                                 </li>
                             </ul>
+
                         </div>
 
-                        <div class="filter-col3 p-r-15 p-b-27">
-                            <div class="mtext-102 cl2 p-b-15">
-                                Color
-                            </div>
-
-                            <ul>
-                                <li class="p-b-6">
-                                    <span class="fs-15 lh-12 m-r-6" style="color: #222;">
-                                        <i class="zmdi zmdi-circle"></i>
-                                    </span>
-
-                                    <a href="#" class="filter-link stext-106 trans-04">
-                                        Black
-                                    </a>
-                                </li>
-
-                                <li class="p-b-6">
-                                    <span class="fs-15 lh-12 m-r-6" style="color: #4272d7;">
-                                        <i class="zmdi zmdi-circle"></i>
-                                    </span>
-
-                                    <a href="#" class="filter-link stext-106 trans-04 filter-link-active">
-                                        Blue
-                                    </a>
-                                </li>
-
-                                <li class="p-b-6">
-                                    <span class="fs-15 lh-12 m-r-6" style="color: #b3b3b3;">
-                                        <i class="zmdi zmdi-circle"></i>
-                                    </span>
-
-                                    <a href="#" class="filter-link stext-106 trans-04">
-                                        Grey
-                                    </a>
-                                </li>
-
-                                <li class="p-b-6">
-                                    <span class="fs-15 lh-12 m-r-6" style="color: #00ad5f;">
-                                        <i class="zmdi zmdi-circle"></i>
-                                    </span>
-
-                                    <a href="#" class="filter-link stext-106 trans-04">
-                                        Green
-                                    </a>
-                                </li>
-
-                                <li class="p-b-6">
-                                    <span class="fs-15 lh-12 m-r-6" style="color: #fa4251;">
-                                        <i class="zmdi zmdi-circle"></i>
-                                    </span>
-
-                                    <a href="#" class="filter-link stext-106 trans-04">
-                                        Red
-                                    </a>
-                                </li>
-
-                                <li class="p-b-6">
-                                    <span class="fs-15 lh-12 m-r-6" style="color: #aaa;">
-                                        <i class="zmdi zmdi-circle-o"></i>
-                                    </span>
-
-                                    <a href="#" class="filter-link stext-106 trans-04">
-                                        White
-                                    </a>
-                                </li>
-                            </ul>
-                        </div>
-
-                        <div class="filter-col4 p-b-27">
-                            <div class="mtext-102 cl2 p-b-15">
-                                Tags
-                            </div>
-
-                            <div class="flex-w p-t-4 m-r--5">
-                                <a href="#" class="flex-c-m stext-107 cl6 size-301 bor7 p-lr-15 hov-tag1 trans-04 m-r-5 m-b-5">
-                                    Fashion
-                                </a>
-
-                                <a href="#" class="flex-c-m stext-107 cl6 size-301 bor7 p-lr-15 hov-tag1 trans-04 m-r-5 m-b-5">
-                                    Lifestyle
-                                </a>
-
-                                <a href="#" class="flex-c-m stext-107 cl6 size-301 bor7 p-lr-15 hov-tag1 trans-04 m-r-5 m-b-5">
-                                    Denim
-                                </a>
-
-                                <a href="#" class="flex-c-m stext-107 cl6 size-301 bor7 p-lr-15 hov-tag1 trans-04 m-r-5 m-b-5">
-                                    Streetstyle
-                                </a>
-
-                                <a href="#" class="flex-c-m stext-107 cl6 size-301 bor7 p-lr-15 hov-tag1 trans-04 m-r-5 m-b-5">
-                                    Crafts
-                                </a>
-                            </div>
-                        </div>
                     </div>
                 </div>
             </div>
 
             <div class="row isotope-grid">
-                <div class="col-sm-6 col-md-4 col-lg-3 p-b-35 isotope-item women">
-                    <!-- Block2 -->
+                @foreach($productos as $producto)
+                <div class="col-sm-6 col-md-4 col-lg-3 p-b-35 isotope-item {{ strtolower(Str::slug($producto->categoria->nombre ?? '')) }}" data-precio="{{ $producto->precio }}">
                     <div class="block2">
-                        <div class="block2-pic hov-img0 label-new" data-label="New">
-                            <img src="images/product-01.jpg" alt="IMG-PRODUCT">
+                        @php
+                        $imagen = $producto->imagenes->first();
+                        $esNuevo = \Carbon\Carbon::parse($producto->created_at)->gt(now()->subDays(5));
+                        @endphp
 
-                            <a href="#" class="block2-btn flex-c-m stext-103 cl2 size-102 bg0 bor2 hov-btn1 p-lr-15 trans-04 js-show-modal1">
-                                Quick View
+                        <div class="block2-pic hov-img0 {{ $esNuevo ? 'label-new' : '' }}" data-label="{{ $esNuevo ? 'New' : '' }}">
+                            <img class="img-fluid" src="{{ $imagen ? asset('storage/' . $imagen->ruta) : asset('images/default.jpg') }}"
+                                alt="IMG-PRODUCT"
+                                style="object-fit: cover; width: 100%; height: 330px;">
+
+                            <a href="#"
+                                class="block2-btn flex-c-m stext-103 cl2 size-102 bg0 bor2 hov-btn1 p-lr-15 trans-04 js-show-modal1"
+                                data-product="{{ $producto->id }}">
+                                Ver Producto
                             </a>
                         </div>
 
                         <div class="block2-txt flex-w flex-t p-t-14">
                             <div class="block2-txt-child1 flex-col-l ">
-                                <a href="product-detail.html" class="stext-104 cl4 hov-cl1 trans-04 js-name-b2 p-b-6">
-                                    Esprit Ruffle Shirt
+                                <a href="#" class="stext-104 cl4 hov-cl1 trans-04 js-name-b2 p-b-6">
+                                    {{ $producto->nombre }}
                                 </a>
 
                                 <span class="stext-105 cl3">
-                                    $16.64
+                                    Bs. {{ number_format($producto->precio, 2) }}
                                 </span>
                             </div>
 
                             <div class="block2-txt-child2 flex-r p-t-3">
                                 <a href="#" class="btn-addwish-b2 dis-block pos-relative js-addwish-b2">
-                                    <img class="icon-heart1 dis-block trans-04" src="images/icons/icon-heart-01.png" alt="ICON">
-                                    <img class="icon-heart2 dis-block trans-04 ab-t-l" src="images/icons/icon-heart-02.png" alt="ICON">
+                                    <img class="icon-heart1 dis-block trans-04" src="{{ asset('images/icons/icon-heart-01.png') }}" alt="ICON">
+                                    <img class="icon-heart2 dis-block trans-04 ab-t-l" src="{{ asset('images/icons/icon-heart-02.png') }}" alt="ICON">
                                 </a>
                             </div>
                         </div>
                     </div>
                 </div>
+                @endforeach
 
-                <div class="col-sm-6 col-md-4 col-lg-3 p-b-35 isotope-item women">
-                    <!-- Block2 -->
-                    <div class="block2">
-                        <div class="block2-pic hov-img0">
-                            <img src="images/product-02.jpg" alt="IMG-PRODUCT">
-
-                            <a href="#" class="block2-btn flex-c-m stext-103 cl2 size-102 bg0 bor2 hov-btn1 p-lr-15 trans-04 js-show-modal1">
-                                Quick View
-                            </a>
-                        </div>
-
-                        <div class="block2-txt flex-w flex-t p-t-14">
-                            <div class="block2-txt-child1 flex-col-l ">
-                                <a href="product-detail.html" class="stext-104 cl4 hov-cl1 trans-04 js-name-b2 p-b-6">
-                                    Herschel supply
-                                </a>
-
-                                <span class="stext-105 cl3">
-                                    $35.31
-                                </span>
-                            </div>
-
-                            <div class="block2-txt-child2 flex-r p-t-3">
-                                <a href="#" class="btn-addwish-b2 dis-block pos-relative js-addwish-b2">
-                                    <img class="icon-heart1 dis-block trans-04" src="images/icons/icon-heart-01.png" alt="ICON">
-                                    <img class="icon-heart2 dis-block trans-04 ab-t-l" src="images/icons/icon-heart-02.png" alt="ICON">
-                                </a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="col-sm-6 col-md-4 col-lg-3 p-b-35 isotope-item men">
-                    <!-- Block2 -->
-                    <div class="block2">
-                        <div class="block2-pic hov-img0">
-                            <img src="images/product-03.jpg" alt="IMG-PRODUCT">
-
-                            <a href="#" class="block2-btn flex-c-m stext-103 cl2 size-102 bg0 bor2 hov-btn1 p-lr-15 trans-04 js-show-modal1">
-                                Quick View
-                            </a>
-                        </div>
-
-                        <div class="block2-txt flex-w flex-t p-t-14">
-                            <div class="block2-txt-child1 flex-col-l ">
-                                <a href="product-detail.html" class="stext-104 cl4 hov-cl1 trans-04 js-name-b2 p-b-6">
-                                    Only Check Trouser
-                                </a>
-
-                                <span class="stext-105 cl3">
-                                    $25.50
-                                </span>
-                            </div>
-
-                            <div class="block2-txt-child2 flex-r p-t-3">
-                                <a href="#" class="btn-addwish-b2 dis-block pos-relative js-addwish-b2">
-                                    <img class="icon-heart1 dis-block trans-04" src="images/icons/icon-heart-01.png" alt="ICON">
-                                    <img class="icon-heart2 dis-block trans-04 ab-t-l" src="images/icons/icon-heart-02.png" alt="ICON">
-                                </a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="col-sm-6 col-md-4 col-lg-3 p-b-35 isotope-item women">
-                    <!-- Block2 -->
-                    <div class="block2">
-                        <div class="block2-pic hov-img0">
-                            <img src="images/product-04.jpg" alt="IMG-PRODUCT">
-
-                            <a href="#" class="block2-btn flex-c-m stext-103 cl2 size-102 bg0 bor2 hov-btn1 p-lr-15 trans-04 js-show-modal1">
-                                Quick View
-                            </a>
-                        </div>
-
-                        <div class="block2-txt flex-w flex-t p-t-14">
-                            <div class="block2-txt-child1 flex-col-l ">
-                                <a href="product-detail.html" class="stext-104 cl4 hov-cl1 trans-04 js-name-b2 p-b-6">
-                                    Classic Trench Coat
-                                </a>
-
-                                <span class="stext-105 cl3">
-                                    $75.00
-                                </span>
-                            </div>
-
-                            <div class="block2-txt-child2 flex-r p-t-3">
-                                <a href="#" class="btn-addwish-b2 dis-block pos-relative js-addwish-b2">
-                                    <img class="icon-heart1 dis-block trans-04" src="images/icons/icon-heart-01.png" alt="ICON">
-                                    <img class="icon-heart2 dis-block trans-04 ab-t-l" src="images/icons/icon-heart-02.png" alt="ICON">
-                                </a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="col-sm-6 col-md-4 col-lg-3 p-b-35 isotope-item women">
-                    <!-- Block2 -->
-                    <div class="block2">
-                        <div class="block2-pic hov-img0">
-                            <img src="images/product-05.jpg" alt="IMG-PRODUCT">
-
-                            <a href="#" class="block2-btn flex-c-m stext-103 cl2 size-102 bg0 bor2 hov-btn1 p-lr-15 trans-04 js-show-modal1">
-                                Quick View
-                            </a>
-                        </div>
-
-                        <div class="block2-txt flex-w flex-t p-t-14">
-                            <div class="block2-txt-child1 flex-col-l ">
-                                <a href="product-detail.html" class="stext-104 cl4 hov-cl1 trans-04 js-name-b2 p-b-6">
-                                    Front Pocket Jumper
-                                </a>
-
-                                <span class="stext-105 cl3">
-                                    $34.75
-                                </span>
-                            </div>
-
-                            <div class="block2-txt-child2 flex-r p-t-3">
-                                <a href="#" class="btn-addwish-b2 dis-block pos-relative js-addwish-b2">
-                                    <img class="icon-heart1 dis-block trans-04" src="images/icons/icon-heart-01.png" alt="ICON">
-                                    <img class="icon-heart2 dis-block trans-04 ab-t-l" src="images/icons/icon-heart-02.png" alt="ICON">
-                                </a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="col-sm-6 col-md-4 col-lg-3 p-b-35 isotope-item watches">
-                    <!-- Block2 -->
-                    <div class="block2">
-                        <div class="block2-pic hov-img0">
-                            <img src="images/product-06.jpg" alt="IMG-PRODUCT">
-
-                            <a href="#" class="block2-btn flex-c-m stext-103 cl2 size-102 bg0 bor2 hov-btn1 p-lr-15 trans-04 js-show-modal1">
-                                Quick View
-                            </a>
-                        </div>
-
-                        <div class="block2-txt flex-w flex-t p-t-14">
-                            <div class="block2-txt-child1 flex-col-l ">
-                                <a href="product-detail.html" class="stext-104 cl4 hov-cl1 trans-04 js-name-b2 p-b-6">
-                                    Vintage Inspired Classic
-                                </a>
-
-                                <span class="stext-105 cl3">
-                                    $93.20
-                                </span>
-                            </div>
-
-                            <div class="block2-txt-child2 flex-r p-t-3">
-                                <a href="#" class="btn-addwish-b2 dis-block pos-relative js-addwish-b2">
-                                    <img class="icon-heart1 dis-block trans-04" src="images/icons/icon-heart-01.png" alt="ICON">
-                                    <img class="icon-heart2 dis-block trans-04 ab-t-l" src="images/icons/icon-heart-02.png" alt="ICON">
-                                </a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="col-sm-6 col-md-4 col-lg-3 p-b-35 isotope-item women">
-                    <!-- Block2 -->
-                    <div class="block2">
-                        <div class="block2-pic hov-img0">
-                            <img src="images/product-07.jpg" alt="IMG-PRODUCT">
-
-                            <a href="#" class="block2-btn flex-c-m stext-103 cl2 size-102 bg0 bor2 hov-btn1 p-lr-15 trans-04 js-show-modal1">
-                                Quick View
-                            </a>
-                        </div>
-
-                        <div class="block2-txt flex-w flex-t p-t-14">
-                            <div class="block2-txt-child1 flex-col-l ">
-                                <a href="product-detail.html" class="stext-104 cl4 hov-cl1 trans-04 js-name-b2 p-b-6">
-                                    Shirt in Stretch Cotton
-                                </a>
-
-                                <span class="stext-105 cl3">
-                                    $52.66
-                                </span>
-                            </div>
-
-                            <div class="block2-txt-child2 flex-r p-t-3">
-                                <a href="#" class="btn-addwish-b2 dis-block pos-relative js-addwish-b2">
-                                    <img class="icon-heart1 dis-block trans-04" src="images/icons/icon-heart-01.png" alt="ICON">
-                                    <img class="icon-heart2 dis-block trans-04 ab-t-l" src="images/icons/icon-heart-02.png" alt="ICON">
-                                </a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="col-sm-6 col-md-4 col-lg-3 p-b-35 isotope-item women">
-                    <!-- Block2 -->
-                    <div class="block2">
-                        <div class="block2-pic hov-img0">
-                            <img src="images/product-08.jpg" alt="IMG-PRODUCT">
-
-                            <a href="#" class="block2-btn flex-c-m stext-103 cl2 size-102 bg0 bor2 hov-btn1 p-lr-15 trans-04 js-show-modal1">
-                                Quick View
-                            </a>
-                        </div>
-
-                        <div class="block2-txt flex-w flex-t p-t-14">
-                            <div class="block2-txt-child1 flex-col-l ">
-                                <a href="product-detail.html" class="stext-104 cl4 hov-cl1 trans-04 js-name-b2 p-b-6">
-                                    Pieces Metallic Printed
-                                </a>
-
-                                <span class="stext-105 cl3">
-                                    $18.96
-                                </span>
-                            </div>
-
-                            <div class="block2-txt-child2 flex-r p-t-3">
-                                <a href="#" class="btn-addwish-b2 dis-block pos-relative js-addwish-b2">
-                                    <img class="icon-heart1 dis-block trans-04" src="images/icons/icon-heart-01.png" alt="ICON">
-                                    <img class="icon-heart2 dis-block trans-04 ab-t-l" src="images/icons/icon-heart-02.png" alt="ICON">
-                                </a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="col-sm-6 col-md-4 col-lg-3 p-b-35 isotope-item shoes">
-                    <!-- Block2 -->
-                    <div class="block2">
-                        <div class="block2-pic hov-img0">
-                            <img src="images/product-09.jpg" alt="IMG-PRODUCT">
-
-                            <a href="#" class="block2-btn flex-c-m stext-103 cl2 size-102 bg0 bor2 hov-btn1 p-lr-15 trans-04 js-show-modal1">
-                                Quick View
-                            </a>
-                        </div>
-
-                        <div class="block2-txt flex-w flex-t p-t-14">
-                            <div class="block2-txt-child1 flex-col-l ">
-                                <a href="product-detail.html" class="stext-104 cl4 hov-cl1 trans-04 js-name-b2 p-b-6">
-                                    Converse All Star Hi Plimsolls
-                                </a>
-
-                                <span class="stext-105 cl3">
-                                    $75.00
-                                </span>
-                            </div>
-
-                            <div class="block2-txt-child2 flex-r p-t-3">
-                                <a href="#" class="btn-addwish-b2 dis-block pos-relative js-addwish-b2">
-                                    <img class="icon-heart1 dis-block trans-04" src="images/icons/icon-heart-01.png" alt="ICON">
-                                    <img class="icon-heart2 dis-block trans-04 ab-t-l" src="images/icons/icon-heart-02.png" alt="ICON">
-                                </a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="col-sm-6 col-md-4 col-lg-3 p-b-35 isotope-item women">
-                    <!-- Block2 -->
-                    <div class="block2">
-                        <div class="block2-pic hov-img0">
-                            <img src="images/product-10.jpg" alt="IMG-PRODUCT">
-
-                            <a href="#" class="block2-btn flex-c-m stext-103 cl2 size-102 bg0 bor2 hov-btn1 p-lr-15 trans-04 js-show-modal1">
-                                Quick View
-                            </a>
-                        </div>
-
-                        <div class="block2-txt flex-w flex-t p-t-14">
-                            <div class="block2-txt-child1 flex-col-l ">
-                                <a href="product-detail.html" class="stext-104 cl4 hov-cl1 trans-04 js-name-b2 p-b-6">
-                                    Femme T-Shirt In Stripe
-                                </a>
-
-                                <span class="stext-105 cl3">
-                                    $25.85
-                                </span>
-                            </div>
-
-                            <div class="block2-txt-child2 flex-r p-t-3">
-                                <a href="#" class="btn-addwish-b2 dis-block pos-relative js-addwish-b2">
-                                    <img class="icon-heart1 dis-block trans-04" src="images/icons/icon-heart-01.png" alt="ICON">
-                                    <img class="icon-heart2 dis-block trans-04 ab-t-l" src="images/icons/icon-heart-02.png" alt="ICON">
-                                </a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="col-sm-6 col-md-4 col-lg-3 p-b-35 isotope-item men">
-                    <!-- Block2 -->
-                    <div class="block2">
-                        <div class="block2-pic hov-img0">
-                            <img src="images/product-11.jpg" alt="IMG-PRODUCT">
-
-                            <a href="#" class="block2-btn flex-c-m stext-103 cl2 size-102 bg0 bor2 hov-btn1 p-lr-15 trans-04 js-show-modal1">
-                                Quick View
-                            </a>
-                        </div>
-
-                        <div class="block2-txt flex-w flex-t p-t-14">
-                            <div class="block2-txt-child1 flex-col-l ">
-                                <a href="product-detail.html" class="stext-104 cl4 hov-cl1 trans-04 js-name-b2 p-b-6">
-                                    Herschel supply
-                                </a>
-
-                                <span class="stext-105 cl3">
-                                    $63.16
-                                </span>
-                            </div>
-
-                            <div class="block2-txt-child2 flex-r p-t-3">
-                                <a href="#" class="btn-addwish-b2 dis-block pos-relative js-addwish-b2">
-                                    <img class="icon-heart1 dis-block trans-04" src="images/icons/icon-heart-01.png" alt="ICON">
-                                    <img class="icon-heart2 dis-block trans-04 ab-t-l" src="images/icons/icon-heart-02.png" alt="ICON">
-                                </a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="col-sm-6 col-md-4 col-lg-3 p-b-35 isotope-item men">
-                    <!-- Block2 -->
-                    <div class="block2">
-                        <div class="block2-pic hov-img0">
-                            <img src="images/product-12.jpg" alt="IMG-PRODUCT">
-
-                            <a href="#" class="block2-btn flex-c-m stext-103 cl2 size-102 bg0 bor2 hov-btn1 p-lr-15 trans-04 js-show-modal1">
-                                Quick View
-                            </a>
-                        </div>
-
-                        <div class="block2-txt flex-w flex-t p-t-14">
-                            <div class="block2-txt-child1 flex-col-l ">
-                                <a href="product-detail.html" class="stext-104 cl4 hov-cl1 trans-04 js-name-b2 p-b-6">
-                                    Herschel supply
-                                </a>
-
-                                <span class="stext-105 cl3">
-                                    $63.15
-                                </span>
-                            </div>
-
-                            <div class="block2-txt-child2 flex-r p-t-3">
-                                <a href="#" class="btn-addwish-b2 dis-block pos-relative js-addwish-b2">
-                                    <img class="icon-heart1 dis-block trans-04" src="images/icons/icon-heart-01.png" alt="ICON">
-                                    <img class="icon-heart2 dis-block trans-04 ab-t-l" src="images/icons/icon-heart-02.png" alt="ICON">
-                                </a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="col-sm-6 col-md-4 col-lg-3 p-b-35 isotope-item women">
-                    <!-- Block2 -->
-                    <div class="block2">
-                        <div class="block2-pic hov-img0">
-                            <img src="images/product-13.jpg" alt="IMG-PRODUCT">
-
-                            <a href="#" class="block2-btn flex-c-m stext-103 cl2 size-102 bg0 bor2 hov-btn1 p-lr-15 trans-04 js-show-modal1">
-                                Quick View
-                            </a>
-                        </div>
-
-                        <div class="block2-txt flex-w flex-t p-t-14">
-                            <div class="block2-txt-child1 flex-col-l ">
-                                <a href="product-detail.html" class="stext-104 cl4 hov-cl1 trans-04 js-name-b2 p-b-6">
-                                    T-Shirt with Sleeve
-                                </a>
-
-                                <span class="stext-105 cl3">
-                                    $18.49
-                                </span>
-                            </div>
-
-                            <div class="block2-txt-child2 flex-r p-t-3">
-                                <a href="#" class="btn-addwish-b2 dis-block pos-relative js-addwish-b2">
-                                    <img class="icon-heart1 dis-block trans-04" src="images/icons/icon-heart-01.png" alt="ICON">
-                                    <img class="icon-heart2 dis-block trans-04 ab-t-l" src="images/icons/icon-heart-02.png" alt="ICON">
-                                </a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="col-sm-6 col-md-4 col-lg-3 p-b-35 isotope-item women">
-                    <!-- Block2 -->
-                    <div class="block2">
-                        <div class="block2-pic hov-img0">
-                            <img src="images/product-14.jpg" alt="IMG-PRODUCT">
-
-                            <a href="#" class="block2-btn flex-c-m stext-103 cl2 size-102 bg0 bor2 hov-btn1 p-lr-15 trans-04 js-show-modal1">
-                                Quick View
-                            </a>
-                        </div>
-
-                        <div class="block2-txt flex-w flex-t p-t-14">
-                            <div class="block2-txt-child1 flex-col-l ">
-                                <a href="product-detail.html" class="stext-104 cl4 hov-cl1 trans-04 js-name-b2 p-b-6">
-                                    Pretty Little Thing
-                                </a>
-
-                                <span class="stext-105 cl3">
-                                    $54.79
-                                </span>
-                            </div>
-
-                            <div class="block2-txt-child2 flex-r p-t-3">
-                                <a href="#" class="btn-addwish-b2 dis-block pos-relative js-addwish-b2">
-                                    <img class="icon-heart1 dis-block trans-04" src="images/icons/icon-heart-01.png" alt="ICON">
-                                    <img class="icon-heart2 dis-block trans-04 ab-t-l" src="images/icons/icon-heart-02.png" alt="ICON">
-                                </a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="col-sm-6 col-md-4 col-lg-3 p-b-35 isotope-item watches">
-                    <!-- Block2 -->
-                    <div class="block2">
-                        <div class="block2-pic hov-img0">
-                            <img src="images/product-15.jpg" alt="IMG-PRODUCT">
-
-                            <a href="#" class="block2-btn flex-c-m stext-103 cl2 size-102 bg0 bor2 hov-btn1 p-lr-15 trans-04 js-show-modal1">
-                                Quick View
-                            </a>
-                        </div>
-
-                        <div class="block2-txt flex-w flex-t p-t-14">
-                            <div class="block2-txt-child1 flex-col-l ">
-                                <a href="product-detail.html" class="stext-104 cl4 hov-cl1 trans-04 js-name-b2 p-b-6">
-                                    Mini Silver Mesh Watch
-                                </a>
-
-                                <span class="stext-105 cl3">
-                                    $86.85
-                                </span>
-                            </div>
-
-                            <div class="block2-txt-child2 flex-r p-t-3">
-                                <a href="#" class="btn-addwish-b2 dis-block pos-relative js-addwish-b2">
-                                    <img class="icon-heart1 dis-block trans-04" src="images/icons/icon-heart-01.png" alt="ICON">
-                                    <img class="icon-heart2 dis-block trans-04 ab-t-l" src="images/icons/icon-heart-02.png" alt="ICON">
-                                </a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="col-sm-6 col-md-4 col-lg-3 p-b-35 isotope-item women">
-                    <!-- Block2 -->
-                    <div class="block2">
-                        <div class="block2-pic hov-img0">
-                            <img src="images/product-16.jpg" alt="IMG-PRODUCT">
-
-                            <a href="#" class="block2-btn flex-c-m stext-103 cl2 size-102 bg0 bor2 hov-btn1 p-lr-15 trans-04 js-show-modal1">
-                                Quick View
-                            </a>
-                        </div>
-
-                        <div class="block2-txt flex-w flex-t p-t-14">
-                            <div class="block2-txt-child1 flex-col-l ">
-                                <a href="product-detail.html" class="stext-104 cl4 hov-cl1 trans-04 js-name-b2 p-b-6">
-                                    Square Neck Back
-                                </a>
-
-                                <span class="stext-105 cl3">
-                                    $29.64
-                                </span>
-                            </div>
-
-                            <div class="block2-txt-child2 flex-r p-t-3">
-                                <a href="#" class="btn-addwish-b2 dis-block pos-relative js-addwish-b2">
-                                    <img class="icon-heart1 dis-block trans-04" src="images/icons/icon-heart-01.png" alt="ICON">
-                                    <img class="icon-heart2 dis-block trans-04 ab-t-l" src="images/icons/icon-heart-02.png" alt="ICON">
-                                </a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
             </div>
 
-            <!-- Pagination -->
-            <div class="flex-c-m flex-w w-full p-t-38">
-                <a href="#" class="flex-c-m how-pagination1 trans-04 m-all-7 active-pagination1">
-                    1
-                </a>
 
-                <a href="#" class="flex-c-m how-pagination1 trans-04 m-all-7">
-                    2
+        </div>
+
+        <!-- Pagination -->
+        @php
+        $totalPages = $productos->lastPage();
+        $currentPage = $productos->currentPage();
+        @endphp
+
+        <div class="flex-c-m flex-w w-full p-t-38">
+            @for ($i = 1; $i <= $totalPages; $i++)
+                <a href="{{ $productos->url($i) }}"
+                class="flex-c-m how-pagination1 trans-04 m-all-7 {{ $currentPage == $i ? 'active-pagination1' : '' }}">
+                {{ $i }}
                 </a>
-            </div>
+                @endfor
+        </div>
         </div>
     </section>
 
@@ -1511,13 +962,13 @@
     </div>
 
     <!-- Modal1 -->
-    <div class="wrap-modal1 js-modal1 p-t-60 p-b-20">
+    <div class="wrap-modal1 js-modal1 p-t-60 p-b-20" style="display:none;">
         <div class="overlay-modal1 js-hide-modal1"></div>
 
         <div class="container">
             <div class="bg0 p-t-60 p-b-30 p-lr-15-lg how-pos3-parent">
                 <button class="how-pos3 hov3 trans-04 js-hide-modal1">
-                    <img src="images/icons/icon-close.png" alt="CLOSE">
+                    <img src="{{ asset('images/icons/icon-close.png') }}" alt="CLOSE">
                 </button>
 
                 <div class="row">
@@ -1528,35 +979,7 @@
                                 <div class="wrap-slick3-arrows flex-sb-m flex-w"></div>
 
                                 <div class="slick3 gallery-lb">
-                                    <div class="item-slick3" data-thumb="images/product-detail-01.jpg">
-                                        <div class="wrap-pic-w pos-relative">
-                                            <img src="images/product-detail-01.jpg" alt="IMG-PRODUCT">
-
-                                            <a class="flex-c-m size-108 how-pos1 bor0 fs-16 cl10 bg0 hov-btn3 trans-04" href="images/product-detail-01.jpg">
-                                                <i class="fa fa-expand"></i>
-                                            </a>
-                                        </div>
-                                    </div>
-
-                                    <div class="item-slick3" data-thumb="images/product-detail-02.jpg">
-                                        <div class="wrap-pic-w pos-relative">
-                                            <img src="images/product-detail-02.jpg" alt="IMG-PRODUCT">
-
-                                            <a class="flex-c-m size-108 how-pos1 bor0 fs-16 cl10 bg0 hov-btn3 trans-04" href="images/product-detail-02.jpg">
-                                                <i class="fa fa-expand"></i>
-                                            </a>
-                                        </div>
-                                    </div>
-
-                                    <div class="item-slick3" data-thumb="images/product-detail-03.jpg">
-                                        <div class="wrap-pic-w pos-relative">
-                                            <img src="images/product-detail-03.jpg" alt="IMG-PRODUCT">
-
-                                            <a class="flex-c-m size-108 how-pos1 bor0 fs-16 cl10 bg0 hov-btn3 trans-04" href="images/product-detail-03.jpg">
-                                                <i class="fa fa-expand"></i>
-                                            </a>
-                                        </div>
-                                    </div>
+                                    <!-- Aquí cargaremos imágenes y videos dinámicamente -->
                                 </div>
                             </div>
                         </div>
@@ -1564,99 +987,11 @@
 
                     <div class="col-md-6 col-lg-5 p-b-30">
                         <div class="p-r-50 p-t-5 p-lr-0-lg">
-                            <h4 class="mtext-105 cl2 js-name-detail p-b-14">
-                                Lightweight Jacket
-                            </h4>
+                            <h4 class="mtext-105 cl2 js-name-detail p-b-14"></h4>
+                            <span class="mtext-106 cl2 js-price-detail"></span>
+                            <p class="stext-102 cl3 p-t-23 js-desc-detail"></p>
 
-                            <span class="mtext-106 cl2">
-                                $58.79
-                            </span>
-
-                            <p class="stext-102 cl3 p-t-23">
-                                Nulla eget sem vitae eros pharetra viverra. Nam vitae luctus ligula. Mauris consequat ornare feugiat.
-                            </p>
-
-                            <!--  -->
-                            <div class="p-t-33">
-                                <div class="flex-w flex-r-m p-b-10">
-                                    <div class="size-203 flex-c-m respon6">
-                                        Size
-                                    </div>
-
-                                    <div class="size-204 respon6-next">
-                                        <div class="rs1-select2 bor8 bg0">
-                                            <select class="js-select2" name="time">
-                                                <option>Choose an option</option>
-                                                <option>Size S</option>
-                                                <option>Size M</option>
-                                                <option>Size L</option>
-                                                <option>Size XL</option>
-                                            </select>
-                                            <div class="dropDownSelect2"></div>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <div class="flex-w flex-r-m p-b-10">
-                                    <div class="size-203 flex-c-m respon6">
-                                        Color
-                                    </div>
-
-                                    <div class="size-204 respon6-next">
-                                        <div class="rs1-select2 bor8 bg0">
-                                            <select class="js-select2" name="time">
-                                                <option>Choose an option</option>
-                                                <option>Red</option>
-                                                <option>Blue</option>
-                                                <option>White</option>
-                                                <option>Grey</option>
-                                            </select>
-                                            <div class="dropDownSelect2"></div>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <div class="flex-w flex-r-m p-b-10">
-                                    <div class="size-204 flex-w flex-m respon6-next">
-                                        <div class="wrap-num-product flex-w m-r-20 m-tb-10">
-                                            <div class="btn-num-product-down cl8 hov-btn3 trans-04 flex-c-m">
-                                                <i class="fs-16 zmdi zmdi-minus"></i>
-                                            </div>
-
-                                            <input class="mtext-104 cl3 txt-center num-product" type="number" name="num-product" value="1">
-
-                                            <div class="btn-num-product-up cl8 hov-btn3 trans-04 flex-c-m">
-                                                <i class="fs-16 zmdi zmdi-plus"></i>
-                                            </div>
-                                        </div>
-
-                                        <button class="flex-c-m stext-101 cl0 size-101 bg1 bor1 hov-btn1 p-lr-15 trans-04 js-addcart-detail">
-                                            Add to cart
-                                        </button>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <!--  -->
-                            <div class="flex-w flex-m p-l-100 p-t-40 respon7">
-                                <div class="flex-m bor9 p-r-10 m-r-11">
-                                    <a href="#" class="fs-14 cl3 hov-cl1 trans-04 lh-10 p-lr-5 p-tb-2 js-addwish-detail tooltip100" data-tooltip="Add to Wishlist">
-                                        <i class="zmdi zmdi-favorite"></i>
-                                    </a>
-                                </div>
-
-                                <a href="#" class="fs-14 cl3 hov-cl1 trans-04 lh-10 p-lr-5 p-tb-2 m-r-8 tooltip100" data-tooltip="Facebook">
-                                    <i class="fa fa-facebook"></i>
-                                </a>
-
-                                <a href="#" class="fs-14 cl3 hov-cl1 trans-04 lh-10 p-lr-5 p-tb-2 m-r-8 tooltip100" data-tooltip="Twitter">
-                                    <i class="fa fa-twitter"></i>
-                                </a>
-
-                                <a href="#" class="fs-14 cl3 hov-cl1 trans-04 lh-10 p-lr-5 p-tb-2 m-r-8 tooltip100" data-tooltip="Google Plus">
-                                    <i class="fa fa-google-plus"></i>
-                                </a>
-                            </div>
+                            <!-- Más detalles aquí si querés (tallas, colores, botones) -->
                         </div>
                     </div>
                 </div>
@@ -1764,7 +1099,283 @@
     </script>
     <!--===============================================================================================-->
     <script src="{{ asset('js/main.js') }}"></script>
+    <script>
+        $(document).ready(function() {
+            function initSlick() {
+                $('.wrap-slick3').each(function() {
+                    const $wrap = $(this);
+                    const $gallery = $wrap.find('.slick3');
+                    const $dotsContainer = $wrap.find('.wrap-slick3-dots');
 
+                    $gallery.slick({
+                        slidesToShow: 1,
+                        slidesToScroll: 1,
+                        fade: true,
+                        infinite: true,
+                        autoplay: false,
+                        arrows: true,
+                        appendArrows: $wrap.find('.wrap-slick3-arrows'),
+                        prevArrow: '<button class="arrow-slick3 prev-slick3 slick-arrow" style=""><i class="fa fa-angle-left" aria-hidden="true"></i></button>',
+                        nextArrow: '<button class="arrow-slick3 next-slick3 slick-arrow" style=""><i class="fa fa-angle-right" aria-hidden="true"></i></button>',
+                        dots: true,
+                        appendDots: $dotsContainer,
+                        dotsClass: 'slick3-dots',
+                        customPaging: function(slider, i) {
+                            const thumb = $(slider.$slides[i]).data('thumb') || '';
+                            const isVideo = thumb.toLowerCase().endsWith('.mp4');
+
+                            return `
+                            <li role="presentation">
+                                ${isVideo
+                                    ? `<video src="${thumb}" muted playsinline></video>`
+                                    : `<img src="${thumb}" alt="thumb" />`
+                                }
+                                <div class="slick3-dot-overlay"></div>
+                            </li>`;
+                        }
+                    });
+
+                    // ✅ Actualiza manualmente el active luego del render
+                    setTimeout(() => {
+                        const $dots = $dotsContainer.find('li');
+                        const currentIndex = $gallery.slick('slickCurrentSlide');
+                        $dots.removeClass('slick-active');
+                        $dots.eq(currentIndex).addClass('slick-active');
+                    }, 100);
+
+                    // ✅ Cambio de slide actualiza activo
+                    $gallery.on('afterChange', function(event, slick, currentSlide) {
+                        const $dots = $dotsContainer.find('li');
+                        $dots.removeClass('slick-active');
+                        $dots.eq(currentSlide).addClass('slick-active');
+                    });
+
+                    // ✅ Click manual en thumbnails
+                    $dotsContainer.on('click', 'li', function() {
+                        const index = $(this).index();
+                        $gallery.slick('slickGoTo', index);
+                    });
+                });
+            }
+
+            $('.js-show-modal1').on('click', function(e) {
+                e.preventDefault();
+
+                const productoId = $(this).data('product');
+                if (!productoId) return alert('No se encontró el ID del producto.');
+
+                if ($('.wrap-modal1 .slick3').hasClass('slick-initialized')) {
+                    $('.wrap-modal1 .slick3').slick('unslick');
+                }
+                $('.wrap-modal1 .slick3').empty();
+                $('.js-name-detail').text('');
+                $('.js-price-detail').text('');
+                $('.js-desc-detail').text('');
+
+                $('.wrap-modal1').fadeIn();
+
+                $.ajax({
+                    url: '/api/producto/' + productoId + '/detalles',
+                    method: 'GET',
+                    dataType: 'json',
+                    success: function(data) {
+                        $('.js-name-detail').text(data.nombre);
+                        $('.js-price-detail').text('Bs. ' + data.precio);
+                        $('.js-desc-detail').text(data.descripcion);
+
+                        let contenidoSlider = '';
+
+                        if (data.imagenes && data.imagenes.length > 0) {
+                            data.imagenes.forEach(function(item) {
+                                console.log(item.ruta);
+
+                                if (item.ruta.match(/\.(mp4|webm|ogg)$/i)) {
+                                    // Si es video
+                                    contenidoSlider += `
+                                        <div class="item-slick3" data-thumb="${item.ruta}">
+                                            <div class="wrap-pic-w pos-relative">
+                                                <video class="w-100" controls style="max-height: 500px; object-fit: contain; margin: 0 auto; display: block;">
+                                                    <source src="${item.ruta}" type="video/mp4">
+                                                    Tu navegador no soporta el video.
+                                                </video>
+                                                <a class="video-expand-btn" onclick="expandVideo('${item.ruta}')" style="position:absolute; top:10px; right:10px;">
+                                                    <i class="fa fa-expand"></i>
+                                                </a>
+                                            </div>
+                                        </div>`;
+                                } else {
+                                    // Si es imagen
+                                    contenidoSlider += `
+                                        <div class="item-slick3" data-thumb="${item.ruta}">
+                                            <div class="wrap-pic-w pos-relative">
+                                                <img class="img w-100" src="${item.ruta}" alt="IMG-PRODUCT" style="max-height: 500px; object-fit: contain; margin: 0 auto; display: block;">
+                                                <a class="flex-c-m size-108 how-pos1 bor0 fs-16 cl10 bg0 hov-btn3 trans-04" href="${item.ruta}">
+                                                    <i class="fa fa-expand"></i>
+                                                </a>
+                                            </div>
+                                        </div>`;
+                                }
+                            });
+
+                            $('.wrap-modal1 .slick3').html(contenidoSlider);
+                        } else {
+                            $('.wrap-modal1 .slick3').html('<p>No hay imágenes ni videos disponibles.</p>');
+                        }
+
+                        initSlick();
+                    },
+                    error: function(xhr, status, error) {
+                        console.error('Error AJAX:', status, error, xhr.responseText);
+                        alert('Error al cargar detalles del producto');
+                        $('.wrap-modal1').fadeOut();
+                    }
+                });
+            });
+
+            $('.js-hide-modal1').on('click', function() {
+                $('.wrap-modal1').fadeOut();
+                if ($('.wrap-modal1 .slick3').hasClass('slick-initialized')) {
+                    $('.wrap-modal1 .slick3').slick('unslick');
+                }
+                $('.wrap-modal1 .slick3').empty();
+            });
+        });
+
+        // Expande video en pantalla completa
+        function expandVideo(ruta) {
+            const video = document.createElement('video');
+            video.src = ruta;
+            video.controls = true;
+            video.style.display = 'none';
+            document.body.appendChild(video);
+            video.requestFullscreen();
+            video.play();
+            video.onfullscreenchange = () => {
+                if (!document.fullscreenElement) {
+                    video.pause();
+                    video.remove();
+                }
+            };
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            // Inicializar Isotope
+            var $grid = $('.isotope-grid').isotope({
+                itemSelector: '.isotope-item',
+                layoutMode: 'fitRows'
+            });
+
+            // Evento al hacer clic en filtro de precio
+            $('.filter-price').on('click', function(e) {
+                e.preventDefault();
+
+                $('.filter-price').removeClass('filter-link-active');
+                $(this).addClass('filter-link-active');
+
+                let min = parseFloat($(this).data('min'));
+                let max = parseFloat($(this).data('max'));
+
+                $grid.isotope({
+                    filter: function() {
+                        let precio = parseFloat($(this).attr('data-precio'));
+                        return precio >= min && precio <= max;
+                    }
+                });
+            });
+        });
+
+        //buscar product
+        document.addEventListener('DOMContentLoaded', function() {
+            var $grid = $('.isotope-grid').isotope({
+                itemSelector: '.isotope-item',
+                layoutMode: 'fitRows'
+            });
+
+            // Variables para filtros activos
+            let precioFiltro = {
+                min: 0,
+                max: Infinity
+            };
+            let textoBusqueda = '';
+
+            // Función para combinar filtros de precio y búsqueda
+            function filtrarProductos() {
+                $grid.isotope({
+                    filter: function() {
+                        let precio = parseFloat($(this).attr('data-precio'));
+                        let nombre = $(this).find('.js-name-b2').text().toLowerCase();
+
+                        // Filtrar por precio
+                        let cumplePrecio = precio >= precioFiltro.min && precio <= precioFiltro.max;
+
+                        // Filtrar por texto
+                        let cumpleTexto = nombre.includes(textoBusqueda.toLowerCase());
+
+                        return cumplePrecio && cumpleTexto;
+                    }
+                });
+            }
+
+            // Evento filtro precio
+            $('.filter-price').on('click', function(e) {
+                e.preventDefault();
+                $('.filter-price').removeClass('filter-link-active');
+                $(this).addClass('filter-link-active');
+
+                precioFiltro.min = parseFloat($(this).data('min'));
+                precioFiltro.max = parseFloat($(this).data('max'));
+
+                filtrarProductos();
+            });
+
+            // Evento búsqueda en input
+            $('input[name="search-product"]').on('input', function() {
+                textoBusqueda = $(this).val();
+                filtrarProductos();
+            });
+
+            // Mostrar/ocultar panel de búsqueda y filtro (tu lógica si quieres)
+            $('.js-show-search').on('click', function() {
+                $('.panel-search').toggleClass('dis-none');
+                $('.panel-filter').addClass('dis-none');
+            });
+
+            $('.js-show-filter').on('click', function() {
+                $('.panel-filter').toggleClass('dis-none');
+                $('.panel-search').addClass('dis-none');
+            });
+        });
+
+        //filtrar por categorias
+        document.addEventListener('DOMContentLoaded', function() {
+            // Inicializa Isotope (solo una vez)
+            var $grid = $('.isotope-grid').isotope({
+                itemSelector: '.isotope-item',
+                layoutMode: 'fitRows'
+            });
+
+            // Filtrar al seleccionar del select de categorías
+            document.getElementById('select-categorias')?.addEventListener('change', function() {
+                const filter = this.value;
+
+                // Activar filtro en Isotope
+                $grid.isotope({
+                    filter: filter
+                });
+
+                // Quitar clase activa de botones
+                document.querySelectorAll('.filter-tope-group button').forEach(btn => {
+                    btn.classList.remove('how-active1');
+                });
+
+                // Activar botón "Todos" si se elige "*"
+                const btnTodos = document.querySelector('[data-filter="*"]');
+                if (filter === '*' && btnTodos) {
+                    btnTodos.classList.add('how-active1');
+                }
+            });
+        });
+    </script>
 </body>
 
 </html>

@@ -81,9 +81,9 @@
                                         <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">CI</th>
                                         <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Teléfono</th>
                                         <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Correo</th>
-                                        @role('Administrador') <!-- Asegurarse de que solo los administradores puedan ver la columna de acciones -->
+                                       
                                         <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Acciones</th>
-                                        @endrole
+                                    
                                     </tr>
                                 </thead>
                                 <tbody>

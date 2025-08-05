@@ -8,9 +8,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 class Cliente extends Model
 {
     use HasFactory;
-
     protected $table = "cliente";
-
     protected $fillable = [
         "id",
         "nombre",
@@ -19,8 +17,6 @@ class Cliente extends Model
         "ci",
         "telefono",
         "correo",
-
-
     ];
 
     public function getNombreCompletoAttribute()

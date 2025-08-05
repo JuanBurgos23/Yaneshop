@@ -217,6 +217,7 @@
                                         <th class="text-center">Categoría / Subcategoría</th>
                                         <th class="text-center">Producto</th>
                                         <th class="text-center">Precio (Bs.)</th>
+                                        <th class="text-center">Precio Oferta(Bs.)</th>
                                         <th class="text-center">Descripción</th>
                                         <th class="text-center">Stock</th>
                                         <th class="text-center">Acciones</th>
@@ -231,6 +232,7 @@
                                         </td>
                                         <td class="text-center">{{ $producto->nombre }}</td>
                                         <td class="text-center">{{ $producto->precio }}</td>
+                                        <td class="text-center">{{ $producto->precio_oferta }}</td>
                                         <td class="text-center">{{ $producto->descripcion }}</td>
                                         <td class="text-center">{{ $producto->cantidad }}</td>
                                         <td class="text-center">
@@ -247,8 +249,8 @@
                                 </tbody>
                             </table>
 
-                            <div class="d-flex justify-content-center mt-3">
-                                {{ $productos->links() }}
+                            <div class="d-flex justify-content-center mt-4">
+                                {{ $productos->links('pagination::bootstrap-4') }}
                             </div>
 
                         </div>
@@ -276,9 +278,13 @@
                                         <label for="precio" class="form-label">Precio (Bs.)</label>
                                         <input type="number" step="0.01" class="form-control" id="precio" name="precio" required>
                                     </div>
+                                    <div class="col-md-6">
+                                        <label for="precio" class="form-label">Precio Oferta(Bs.) Opcional</label>
+                                        <input type="number" step="0.01" class="form-control" id="precioOferta" name="precio_oferta">
+                                    </div>
                                     <div class="col-md-12">
                                         <label for="descripcion" class="form-label">Descripción</label>
-                                        <textarea class="form-control" id="descripcion" name="descripcion" required></textarea>
+                                        <textarea class="form-control" id="descripcion" name="descripcion" ></textarea>
                                     </div>
                                     <div class="col-md-6">
                                         <label for="cantidad" class="form-label">Cantidad</label>
@@ -305,21 +311,9 @@
                                         </select>
                                     </div>
                                     <div class="col-md-12">
-                                        <label for="imagenes" class="form-label">Imágenes del producto</label>
-                                        <input type="file" class="form-control" id="imagenes" name="imagenes[]" multiple accept="image/*">
+                                        <label for="archivos" class="form-label">Archivos del producto (imágenes o videos)</label>
+                                        <input type="file" class="form-control" id="archivos" name="archivos[]" multiple accept="image/*,video/*">
                                         <div id="preview" class="d-flex flex-wrap gap-3 mt-2"></div>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <label class="form-label">¿Cómo deseas manejar el Código de Barras?</label>
-                                        <select class="form-select" id="modo_codigo_barras" name="modo_codigo_barras" required>
-                                            <option value="lector">Lector de Barra</option>
-                                            <option value="auto">Generar automáticamente</option>
-                                            <option value="ninguno">No usar código de barras</option>
-                                        </select>
-                                    </div>
-                                    <div class="col-md-6" id="grupo_codigo_barras">
-                                        <label for="codigo_barras" class="form-label">Código de Barras</label>
-                                        <input type="text" class="form-control" id="codigo_barras" name="codigo_barras">
                                     </div>
                                 </div>
                                 <div class="modal-footer mt-4">
@@ -355,6 +349,10 @@
                                     <input type="text" class="form-control" id="edit_precio" name="precio" required>
                                 </div>
                                 <div class="mb-3">
+                                    <label for="edit_precio" class="form-label">Precio Oferta (Bs.) Opcional</label>
+                                    <input type="text" class="form-control" id="edit_precioOferta" name="precio_oferta" required>
+                                </div>
+                                <div class="mb-3">
                                     <label for="edit_descripcion" class="form-label">Descripción</label>
                                     <input type="text" class="form-control" id="edit_descripcion" name="descripcion" required>
                                 </div>
@@ -362,10 +360,7 @@
                                     <label for="edit_cantidad" class="form-label">Cantidad</label>
                                     <input type="number" class="form-control" id="edit_cantidad" name="cantidad" required>
                                 </div>
-                                <div class="mb-3">
-                                    <label for="edit_codigo_barras" class="form-label">Código de Barras</label>
-                                    <input type="text" class="form-control" id="edit_codigo_barras" name="codigo_barras">
-                                </div>
+
                                 <div class="mb-3">
                                     <label for="edit_categoria" class="form-label">Categoría</label>
                                     <select id="edit_categoria" name="categoria_id" class="form-select select2" style="width: 100%" required>
@@ -387,7 +382,7 @@
                                 </div>
                                 <div class="mb-3">
                                     <label for="edit_nuevas_imagenes" class="form-label">Agregar nuevas imágenes</label>
-                                    <input type="file" name="imagenes[]" id="edit_nuevas_imagenes" class="form-control" multiple accept="image/*">
+                                    <input type="file" name="imagenes[]" id="edit_nuevas_imagenes" class="form-control" multiple accept="image/*,video/*">
                                 </div>
                                 <div id="preview-nuevas-imagenes" class="d-flex flex-wrap gap-2 mt-2"></div>
                                 <div class="mb-3">
@@ -428,7 +423,15 @@
                                 src=""
                                 alt="Vista previa"
                                 class="img-fluid rounded"
-                                style="max-height: 80vh; object-fit: contain;">
+                                style="max-height: 80vh; object-fit: contain; display: none;">
+
+                            <video id="videoGrande"
+                                controls
+                                class="rounded"
+                                style="max-height: 80vh; display: none;">
+                                <source src="" type="video/mp4">
+                                Tu navegador no soporta videos HTML5.
+                            </video>
                         </div>
 
                     </div>
@@ -445,6 +448,7 @@
             <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
             <!-- Select2 JS -->
             <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+            <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
             <!-- Scripts -->
             <script>
                 const editModal = document.getElementById('editModal');
@@ -459,6 +463,7 @@
                         .then(producto => {
                             $('#edit_nombre').val(producto.nombre);
                             $('#edit_precio').val(producto.precio);
+                            $('#edit_precioOferta').val(producto.precio_oferta);
                             $('#edit_descripcion').val(producto.descripcion);
                             $('#edit_cantidad').val(producto.cantidad);
                             $('#edit_codigo_barras').val(producto.codigo_barras);
@@ -538,42 +543,63 @@
                             const contenedor = document.getElementById('imagenes-actuales');
                             contenedor.innerHTML = '';
                             producto.imagenes.forEach((img) => {
-                                const imgWrapper = document.createElement('div');
-                                imgWrapper.className = 'position-relative';
+                                const wrapper = document.createElement('div');
+                                wrapper.className = 'position-relative';
 
-                                const image = document.createElement('img');
-                                image.src = img.url;
-                                image.alt = 'Imagen producto';
-                                image.style = 'width: 100px; height: 100px; object-fit: cover; border-radius: 5px; cursor: pointer;';
+                                let media;
+                                const esVideo = img.url.endsWith('.mp4') || img.url.endsWith('.webm') || img.url.endsWith('.ogg');
 
-                                // 👉 Evento para abrir imagen en el modal
-                                image.addEventListener('click', () => {
-                                    const visor = document.getElementById('imagenGrande');
-                                    visor.src = img.url;
+                                if (esVideo) {
+                                    media = document.createElement('video');
+                                    media.src = img.url;
+                                    media.controls = true;
+                                } else {
+                                    media = document.createElement('img');
+                                    media.src = img.url;
+                                    media.alt = 'Imagen producto';
+                                }
+
+                                media.style = 'width: 100px; height: 100px; object-fit: cover; border-radius: 5px; cursor: pointer;';
+                                media.addEventListener('click', () => {
+                                    const visorImg = document.getElementById('imagenGrande');
+                                    const visorVideo = document.getElementById('videoGrande');
                                     const modal = new bootstrap.Modal(document.getElementById('visorImagenModal'));
-                                    // Mostrar el nombre del producto
+
                                     document.getElementById('tituloProductoModal').textContent = producto.nombre ?? 'Producto';
+
+                                    if (esVideo) {
+                                        visorImg.style.display = 'none';
+                                        visorVideo.src = img.url;
+                                        visorVideo.style.display = 'block';
+                                        visorVideo.load();
+                                    } else {
+                                        visorVideo.pause();
+                                        visorVideo.style.display = 'none';
+                                        visorImg.src = img.url;
+                                        visorImg.style.display = 'block';
+                                    }
+
                                     modal.show();
-                                    // Abrir el modal
-                                    visor.show();
                                 });
 
                                 const btnDelete = document.createElement('button');
                                 btnDelete.innerHTML = '&times;';
                                 btnDelete.className = 'btn btn-danger btn-sm position-absolute top-0 end-0';
                                 btnDelete.type = 'button';
-                                btnDelete.onclick = () => eliminarImagen(img.id, img.url, imgWrapper);
+                                btnDelete.onclick = () => eliminarImagen(img.id, img.url, wrapper);
 
-                                imgWrapper.appendChild(image);
-                                imgWrapper.appendChild(btnDelete);
-                                contenedor.appendChild(imgWrapper);
+                                wrapper.appendChild(media);
+                                wrapper.appendChild(btnDelete);
+                                contenedor.appendChild(wrapper);
                             });
+
 
                         })
                         .catch(error => {
                             console.error('Error al obtener los datos del producto:', error);
                         });
                 });
+
 
                 // Inicializa el select2 de subcategoría con mensaje por defecto
                 $('#subcategoria').select2({
@@ -686,10 +712,11 @@
                         cache: true
                     }
                 });
-
+                console.log('Categoría selects:', $('#categoria').length);
+                console.log('Subcategoría selects:', $('#subcategoria').length);
 
                 // Manejar la subida de imágenes y la vista previa
-                document.getElementById('imagenes').addEventListener('change', function(event) {
+                document.getElementById('archivos').addEventListener('change', function(event) {
                     const files = Array.from(event.target.files);
                     const preview = document.getElementById('preview');
                     preview.innerHTML = '';
@@ -700,8 +727,18 @@
                             const container = document.createElement('div');
                             container.classList.add('img-preview');
 
-                            const img = document.createElement('img');
-                            img.src = e.target.result;
+                            let mediaElement;
+                            const fileURL = URL.createObjectURL(file);
+                            if (file.type.startsWith('image/')) {
+                                mediaElement = document.createElement('img');
+                                mediaElement.src = e.target.result;
+                                mediaElement.style = 'width: 100px; height: 100px; object-fit: cover;';
+                            } else if (file.type.startsWith('video/')) {
+                                mediaElement = document.createElement('video');
+                                mediaElement.src = e.target.result;
+                                mediaElement.controls = true;
+                                mediaElement.style = 'width: 100px; height: 100px; object-fit: cover;';
+                            }
 
                             const btn = document.createElement('button');
                             btn.innerHTML = '×';
@@ -710,7 +747,7 @@
                                 removeImage(index);
                             };
 
-                            container.appendChild(img);
+                            container.appendChild(mediaElement);
                             container.appendChild(btn);
                             preview.appendChild(container);
                         };
@@ -748,15 +785,24 @@
                                 const container = document.createElement('div');
                                 container.classList.add('img-preview'); // aquí reutilizas estilo igual que agregar
 
-                                const img = document.createElement('img');
-                                img.src = e.target.result;
-
+                                let mediaElement;
+                                const fileURL = URL.createObjectURL(file);
+                                if (file.type.startsWith('image/')) {
+                                    mediaElement = document.createElement('img');
+                                    mediaElement.src = e.target.result;
+                                    mediaElement.style = 'width: 100px; height: 100px; object-fit: cover;';
+                                } else if (file.type.startsWith('video/')) {
+                                    mediaElement = document.createElement('video');
+                                    mediaElement.src = e.target.result;
+                                    mediaElement.controls = true;
+                                    mediaElement.style = 'width: 100px; height: 100px; object-fit: cover;';
+                                }
                                 const btnDelete = document.createElement('button');
                                 btnDelete.textContent = '×';
                                 btnDelete.type = 'button';
                                 btnDelete.onclick = () => eliminarArchivoEditar(index);
 
-                                container.appendChild(img);
+                                container.appendChild(mediaElement);
                                 container.appendChild(btnDelete);
                                 previewEditar.appendChild(container);
                             };
@@ -803,8 +849,18 @@
                     });
                 });
 
-                function eliminarImagen(id, url, wrapper) {
-                    if (!confirm('¿Estás seguro de eliminar esta imagen?')) return;
+                async function eliminarImagen(id, url, wrapper) {
+                    const confirmacion = await Swal.fire({
+                        title: '¿Estás seguro?',
+                        text: "No podrás deshacer esta acción",
+                        icon: 'warning',
+                        showCancelButton: true,
+                        confirmButtonText: 'Sí, eliminar',
+                        cancelButtonText: 'Cancelar'
+                    });
+
+                    // Solo continuar si el usuario confirmó
+                    if (!confirmacion.isConfirmed) return;
 
                     fetch(`/producto/imagen/${id}`, {
                         method: 'DELETE',
@@ -814,44 +870,20 @@
                     }).then(resp => {
                         if (resp.ok) {
                             wrapper.remove();
+                            Swal.fire({
+                                icon: 'success',
+                                title: 'Eliminado',
+                                text: 'La imagen fue eliminada correctamente.'
+                            });
                         } else {
-                            alert('Error al eliminar la imagen.');
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Error',
+                                text: 'Error al eliminar la imagen.'
+                            });
                         }
                     });
                 }
-
-                //codigo de barras
-                document.addEventListener('DOMContentLoaded', function() {
-                    const modo = document.getElementById('modo_codigo_barras');
-                    const grupoInput = document.getElementById('grupo_codigo_barras');
-                    const input = document.getElementById('codigo_barras');
-
-                    function actualizarVisibilidad() {
-                        if (modo.value === 'lector') {
-                            grupoInput.style.display = 'block';
-                            input.required = true;
-                            input.readOnly = false;
-                            input.value = '';
-                        } else if (modo.value === 'auto') {
-                            grupoInput.style.display = 'block';
-                            input.required = false;
-                            input.readOnly = true;
-                            input.value = generarCodigoAleatorio();
-                        } else {
-                            grupoInput.style.display = 'none';
-                            input.required = false;
-                            input.value = '';
-                        }
-                    }
-
-                    function generarCodigoAleatorio() {
-                        // Código de 12 dígitos numéricos
-                        return Math.floor(100000000000 + Math.random() * 900000000000).toString();
-                    }
-
-                    modo.addEventListener('change', actualizarVisibilidad);
-                    actualizarVisibilidad(); // Ejecutar al cargar por defecto
-                });
             </script>
     </main>
 </x-layout>

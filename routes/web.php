@@ -8,9 +8,7 @@ use App\Http\Controllers\ProductoController;
 use Illuminate\Support\Facades\Route;
 use SebastianBergmann\CodeCoverage\Report\Html\Dashboard;
 
-Route::get('/', function () {
-    return view('welcome');
-});
+Route::get('/',  [ProductoController::class, 'indexWelcome'])->name('welcome');
 
 Auth::routes();
 
