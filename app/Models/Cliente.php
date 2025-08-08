@@ -10,13 +10,14 @@ class Cliente extends Model
     use HasFactory;
     protected $table = "cliente";
     protected $fillable = [
-        "id",
         "nombre",
         "paterno",
         "materno",
         "ci",
         "telefono",
         "correo",
+        "direccion",
+        "ciudad"
     ];
 
     public function getNombreCompletoAttribute()

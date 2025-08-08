@@ -55,4 +55,9 @@ class User extends Authenticatable
     {
         return "{$this->name} {$this->paterno} {$this->materno}";
     }
+
+    public function empresa()
+    {
+        return $this->hasOne(Empresa::class, 'id_user');
+    }
 }

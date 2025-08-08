@@ -14,16 +14,15 @@ return new class extends Migration
         Schema::create('cliente', function (Blueprint $table) {
             $table->id();
             $table->string('nombre');
-            $table->string('paterno');
-            $table->string('materno');
+            $table->string('paterno')->nullable();
+            $table->string('materno')->nullable();
             $table->string('telefono')->nullable();
             $table->string('ci')->nullable();
             $table->date('fecha_nacimiento')->nullable();
             $table->string('direccion')->nullable();
             $table->string('correo')->nullable();
-           
-            // $table->string('huella_digital')->nullable(); // Campo para almacenar la huella digital
-            
+            $table->string('ciudad')->nullable();
+            $table->foreignId('id_empresa')->constrained('empresa')->onDelete('cascade');
             $table->timestamps();
         });
     }

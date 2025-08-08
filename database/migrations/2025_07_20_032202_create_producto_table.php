@@ -17,10 +17,11 @@ return new class extends Migration
             $table->text('descripcion')->nullable();
             $table->decimal('precio', 10, 2);
             $table->integer('cantidad')->default(0);
-            $table->foreignId('id_categoria')->references('id')->on('categoria');
-            $table->foreignId('id_subcategoria')->references('id')->on('sub_categoria');
-            $table->string('codigo_barras', 50)->unique()->nullable(); // Código
-            $table->string('estado', 20); // Estado del producto .
+            $table->foreignId('id_categoria')->constrained('categoria')->onDelete('cascade');
+            $table->foreignId('id_subcategoria')->nullable()->constrained('sub_categoria')->onDelete('cascade');
+            $table->string('codigo_barras', 50)->unique()->nullable();
+            $table->string('estado', 20);
+            $table->foreignId('id_empresa')->constrained('empresa')->onDelete('cascade');
             $table->timestamps();
         });
     }
