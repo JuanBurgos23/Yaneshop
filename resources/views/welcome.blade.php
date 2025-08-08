@@ -25,30 +25,14 @@
     <link rel="stylesheet" type="text/css" href="{{ asset('css/util.css') }}">
     <link rel="stylesheet" type="text/css" href="{{ asset('css/main.css') }}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <style>
-        /* Estilos para los dots (miniaturas) */
         .wrap-slick3-dots ul.slick3-dots {
             display: flex !important;
             justify-content: start;
             padding: 10px 0;
             gap: 10px;
             flex-wrap: wrap;
-        }
-
-        .wrap-slick3-dots li {
-            position: relative;
-            width: 60px;
-            height: 60px;
-            border-radius: 4px;
-            overflow: hidden;
-            cursor: pointer;
-            list-style: none;
-        }
-
-        /* Ocultamos el botón de slick (innecesario) */
-        .wrap-slick3-dots li button {
-            display: none !important;
         }
 
         /* Imagen o video miniatura */
@@ -62,7 +46,6 @@
             pointer-events: none;
         }
 
-        /* Overlay */
         .slick3-dot-overlay {
             position: absolute;
             top: 0;
@@ -75,37 +58,78 @@
             transition: border 0.2s ease;
         }
 
-        /* Borde activo */
-        .wrap-slick3-dots li.slick-active .slick3-dot-overlay {
-            border: 2px solid #007bff;
-        }
-
-        /* Resaltar imagen activa */
-        .wrap-slick3-dots li.slick-active img {
-            border: 2px solid #0d6efd;
-        }
-
-        /* Espaciado entre previews */
-        .wrap-slick3-dots li {
-            margin: 4px;
-            display: inline-block;
-            cursor: pointer;
-        }
-
-        /* Personalizar flechas */
-        .arrow-slick3 {
-            background: none;
-            border: none;
-            font-size: 24px;
-            color: #333;
-            cursor: pointer;
-        }
-
-        .block1.wrap-pic-w {
+        .wrap-slick3 {
             position: relative;
-            overflow: hidden;
-            border-radius: 5px;
         }
+
+        /*---------------------------------------------*/
+        .wrap-slick3-arrows {
+            position: absolute;
+            z-index: 100;
+            width: 83.333333%;
+            right: 0;
+            top: calc(50% - 20px);
+        }
+
+        .arrow-slick3 {
+            font-size: 25px;
+            color: #fff;
+
+            position: absolute;
+            top: 0;
+            width: 40px;
+            height: 40px;
+            background-color: rgba(0, 0, 0, 0.5);
+
+            -webkit-transition: all 0.4s;
+            -o-transition: all 0.4s;
+            -moz-transition: all 0.4s;
+            transition: all 0.4s;
+        }
+
+        .arrow-slick3:hover {
+            background-color: rgba(0, 0, 0, 0.9);
+        }
+
+        .prev-slick3 {
+            left: 0px;
+        }
+
+        .next-slick3 {
+            right: 0px;
+        }
+
+        /*---------------------------------------------*/
+        .wrap-slick3-dots {
+            width: 11.111111%;
+        }
+
+        .slick3 {
+            width: 83.333333%;
+        }
+
+        .slick3-dots li {
+            display: block;
+            position: relative;
+            width: 100%;
+            margin-bottom: 27px;
+        }
+
+        .slick3-dots li img {
+            width: 100%;
+        }
+
+
+
+        .slick3-dot-overlay:hover {
+            border-color: #ccc;
+        }
+
+        .slick3-dots .slick-active .slick3-dot-overlay {
+            border-color: #ccc;
+        }
+
+
 
         .block1.wrap-pic-w img {
             width: 100%;
@@ -186,6 +210,10 @@
                 font-size: 24px;
             }
         }
+
+        .swal2-container {
+            z-index: 99999 !important;
+        }
     </style>
 </head>
 
@@ -207,11 +235,11 @@
                     <div class="menu-desktop">
                         <ul class="main-menu">
                             <li>
-                                <a href="{{ url('/') }}">Inicio</a>
+                                <a href="{{ url($empresa->slug) }}">Inicio</a>
                             </li>
 
                             <li>
-                                <a href="{{ route('product.index') }}">Comprar</a>
+                                <a href="{{ route('comprar.public', ['slug' => $empresa->slug]) }}">Comprar</a>
                             </li>
 
                             <li>
@@ -227,7 +255,7 @@
                     <!-- Icon header -->
                     <div class="wrap-icon-header flex-w flex-r-m h-full">
                         <div class="flex-c-m h-full p-r-25 bor6">
-                            <div class="icon-header-item cl0 hov-cl1 trans-04 p-lr-11 icon-header-noti js-show-cart" data-notify="2">
+                            <div class="icon-header-item cl0 hov-cl1 trans-04 p-lr-11 icon-header-noti js-show-cart" data-notify>
                                 <i class="zmdi zmdi-shopping-cart"></i>
                             </div>
                         </div>
@@ -252,7 +280,7 @@
             <!-- Icon header -->
             <div class="wrap-icon-header flex-w flex-r-m h-full m-r-15">
                 <div class="flex-c-m h-full p-r-5">
-                    <div class="icon-header-item cl2 hov-cl1 trans-04 p-lr-11 icon-header-noti js-show-cart" data-notify="2">
+                    <div class="icon-header-item cl2 hov-cl1 trans-04 p-lr-11 icon-header-noti js-show-cart" data-notify>
                         <i class="zmdi zmdi-shopping-cart"></i>
                     </div>
                 </div>
@@ -271,14 +299,14 @@
         <div class="menu-mobile">
             <ul class="main-menu-m">
                 <li>
-                    <a href="{{ url('/') }}">Inicio</a>
+                    <a href="{{ url($empresa->slug) }}">Inicio</a>
                     <span class="arrow-main-menu-m">
                         <i class="fa fa-angle-right" aria-hidden="true"></i>
                     </span>
                 </li>
 
                 <li>
-                    <a href="{{ route('product.index') }}">Shop</a>
+                    <a href="{{ route('comprar.public', ['slug' => $empresa->slug]) }}">Comprar</a>
                 </li>
 
 
@@ -312,128 +340,6 @@
 
 
     <!-- Sidebar -->
-    <aside class="wrap-sidebar js-sidebar">
-        <div class="s-full js-hide-sidebar"></div>
-
-        <div class="sidebar flex-col-l p-t-22 p-b-25">
-            <div class="flex-r w-full p-b-30 p-r-27">
-                <div class="fs-35 lh-10 cl2 p-lr-5 pointer hov-cl1 trans-04 js-hide-sidebar">
-                    <i class="zmdi zmdi-close"></i>
-                </div>
-            </div>
-
-            <div class="sidebar-content flex-w w-full p-lr-65 js-pscroll">
-                <ul class="sidebar-link w-full">
-                    <li class="p-b-13">
-                        <a href="index.html" class="stext-102 cl2 hov-cl1 trans-04">
-                            Home
-                        </a>
-                    </li>
-
-                    <li class="p-b-13">
-                        <a href="#" class="stext-102 cl2 hov-cl1 trans-04">
-                            My Wishlist
-                        </a>
-                    </li>
-
-                    <li class="p-b-13">
-                        <a href="#" class="stext-102 cl2 hov-cl1 trans-04">
-                            My Account
-                        </a>
-                    </li>
-
-                    <li class="p-b-13">
-                        <a href="#" class="stext-102 cl2 hov-cl1 trans-04">
-                            Track Oder
-                        </a>
-                    </li>
-
-                    <li class="p-b-13">
-                        <a href="#" class="stext-102 cl2 hov-cl1 trans-04">
-                            Refunds
-                        </a>
-                    </li>
-
-                    <li class="p-b-13">
-                        <a href="#" class="stext-102 cl2 hov-cl1 trans-04">
-                            Help & FAQs
-                        </a>
-                    </li>
-                </ul>
-
-                <div class="sidebar-gallery w-full p-tb-30">
-
-
-                    <div class="flex-w flex-sb p-t-36 gallery-lb">
-                        <!-- item gallery sidebar -->
-                        <div class="wrap-item-gallery m-b-10">
-                            <a class="item-gallery bg-img1" href="images/gallery-01.jpg" data-lightbox="gallery"
-                                style="background-image: url('images/gallery-01.jpg');"></a>
-                        </div>
-
-                        <!-- item gallery sidebar -->
-                        <div class="wrap-item-gallery m-b-10">
-                            <a class="item-gallery bg-img1" href="images/gallery-02.jpg" data-lightbox="gallery"
-                                style="background-image: url('images/gallery-02.jpg');"></a>
-                        </div>
-
-                        <!-- item gallery sidebar -->
-                        <div class="wrap-item-gallery m-b-10">
-                            <a class="item-gallery bg-img1" href="images/gallery-03.jpg" data-lightbox="gallery"
-                                style="background-image: url('images/gallery-03.jpg');"></a>
-                        </div>
-
-                        <!-- item gallery sidebar -->
-                        <div class="wrap-item-gallery m-b-10">
-                            <a class="item-gallery bg-img1" href="images/gallery-04.jpg" data-lightbox="gallery"
-                                style="background-image: url('images/gallery-04.jpg');"></a>
-                        </div>
-
-                        <!-- item gallery sidebar -->
-                        <div class="wrap-item-gallery m-b-10">
-                            <a class="item-gallery bg-img1" href="images/gallery-05.jpg" data-lightbox="gallery"
-                                style="background-image: url('images/gallery-05.jpg');"></a>
-                        </div>
-
-                        <!-- item gallery sidebar -->
-                        <div class="wrap-item-gallery m-b-10">
-                            <a class="item-gallery bg-img1" href="images/gallery-06.jpg" data-lightbox="gallery"
-                                style="background-image: url('images/gallery-06.jpg');"></a>
-                        </div>
-
-                        <!-- item gallery sidebar -->
-                        <div class="wrap-item-gallery m-b-10">
-                            <a class="item-gallery bg-img1" href="images/gallery-07.jpg" data-lightbox="gallery"
-                                style="background-image: url('images/gallery-07.jpg');"></a>
-                        </div>
-
-                        <!-- item gallery sidebar -->
-                        <div class="wrap-item-gallery m-b-10">
-                            <a class="item-gallery bg-img1" href="images/gallery-08.jpg" data-lightbox="gallery"
-                                style="background-image: url('images/gallery-08.jpg');"></a>
-                        </div>
-
-                        <!-- item gallery sidebar -->
-                        <div class="wrap-item-gallery m-b-10">
-                            <a class="item-gallery bg-img1" href="images/gallery-09.jpg" data-lightbox="gallery"
-                                style="background-image: url('images/gallery-09.jpg');"></a>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="sidebar-gallery w-full">
-                    <span class="mtext-101 cl5">
-                        About Us
-                    </span>
-
-                    <p class="stext-108 cl6 p-t-27">
-                        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur maximus vulputate hendrerit. Praesent faucibus erat vitae rutrum gravida. Vestibulum tempus mi enim, in molestie sem fermentum quis.
-                    </p>
-                </div>
-            </div>
-        </div>
-    </aside>
-
 
     <!-- Cart -->
     <div class="wrap-header-cart js-panel-cart">
@@ -442,83 +348,68 @@
         <div class="header-cart flex-col-l p-l-65 p-r-25">
             <div class="header-cart-title flex-w flex-sb-m p-b-8">
                 <span class="mtext-103 cl2">
-                    Your Cart
+                    Carrito de compras
                 </span>
-
                 <div class="fs-35 lh-10 cl2 p-lr-5 pointer hov-cl1 trans-04 js-hide-cart">
                     <i class="zmdi zmdi-close"></i>
                 </div>
             </div>
 
-            <div class="header-cart-content flex-w js-pscroll">
+            <!-- CONTENIDO DEL CARRITO -->
+            <div id="carrito-content" class="header-cart-content flex-w js-pscroll">
                 <ul class="header-cart-wrapitem w-full">
-                    <li class="header-cart-item flex-w flex-t m-b-12">
-                        <div class="header-cart-item-img">
-                            <img src="images/item-cart-01.jpg" alt="IMG">
-                        </div>
-
-                        <div class="header-cart-item-txt p-t-8">
-                            <a href="#" class="header-cart-item-name m-b-18 hov-cl1 trans-04">
-                                White Shirt Pleat
-                            </a>
-
-                            <span class="header-cart-item-info">
-                                1 x $19.00
-                            </span>
-                        </div>
-                    </li>
-
-                    <li class="header-cart-item flex-w flex-t m-b-12">
-                        <div class="header-cart-item-img">
-                            <img src="images/item-cart-02.jpg" alt="IMG">
-                        </div>
-
-                        <div class="header-cart-item-txt p-t-8">
-                            <a href="#" class="header-cart-item-name m-b-18 hov-cl1 trans-04">
-                                Converse All Star
-                            </a>
-
-                            <span class="header-cart-item-info">
-                                1 x $39.00
-                            </span>
-                        </div>
-                    </li>
-
-                    <li class="header-cart-item flex-w flex-t m-b-12">
-                        <div class="header-cart-item-img">
-                            <img src="images/item-cart-03.jpg" alt="IMG">
-                        </div>
-
-                        <div class="header-cart-item-txt p-t-8">
-                            <a href="#" class="header-cart-item-name m-b-18 hov-cl1 trans-04">
-                                Nixon Porter Leather
-                            </a>
-
-                            <span class="header-cart-item-info">
-                                1 x $17.00
-                            </span>
-                        </div>
-                    </li>
+                    <!-- Se rellena con JS -->
                 </ul>
 
                 <div class="w-full">
                     <div class="header-cart-total w-full p-tb-40">
-                        Total: $75.00
+                        Total: Bs. 0.00
                     </div>
 
                     <div class="header-cart-buttons flex-w w-full">
-                        <a href="shoping-cart.html" class="flex-c-m stext-101 cl0 size-107 bg3 bor2 hov-btn3 p-lr-15 trans-04 m-r-8 m-b-10">
-                            View Cart
-                        </a>
+                        <button id="btn-whatsapp" class="flex-c-m stext-101 cl0 size-107 bg-success bor2 hov-btn3 p-lr-15 trans-04 m-b-10">
+                            Consultar por WhatsApp
+                        </button>
+                    </div>
+                </div>
+            </div>
 
-                        <a href="shoping-cart.html" class="flex-c-m stext-101 cl0 size-107 bg3 bor2 hov-btn3 p-lr-15 trans-04 m-b-10">
-                            Check Out
-                        </a>
+            <!-- FORMULARIO DE REGISTRO -->
+            <div id="registro-content" class="header-cart-content flex-w js-pscroll" style="display:none;">
+                <div class="w-full p-t-20">
+                    <h4 class="mtext-105 cl2 p-b-14">Datos para la consulta</h4>
+
+                    <!-- Campo CI primero -->
+                    <div class="m-b-12">
+                        <input id="reg-ci" type="text" class="size-114 bor4 stext-111 p-lr-15" placeholder="CI">
+                        <small id="ci-status" class="stext-111"></small>
+                    </div>
+
+                    <div class="m-b-12">
+                        <input id="reg-nombre" type="text" class="size-114 bor4 stext-111 p-lr-15" placeholder="Nombre completo">
+                    </div>
+                    <div class="m-b-12">
+                        <input id="reg-direccion" type="text" class="size-114 bor4 stext-111 p-lr-15" placeholder="Dirección">
+                    </div>
+                    <div class="m-b-12">
+                        <input id="reg-ciudad" type="text" class="size-114 bor4 stext-111 p-lr-15" placeholder="Ciudad">
+                    </div>
+
+                    <div class="flex-w m-t-20">
+                        <button id="guardar-registro" class="flex-c-m stext-101 cl0 size-121 bg-success bor2 hov-btn3 p-lr-15 trans-04 m-r-8">
+                            Registrar y Consultar
+                        </button>
+                        <button id="volver-carrito" class="flex-c-m stext-101 cl0 size-121 bg2 bor2 hov-btn2 p-lr-15 trans-04">
+                            Volver
+                        </button>
                     </div>
                 </div>
             </div>
         </div>
     </div>
+
+
+
 
 
 
@@ -551,7 +442,7 @@
                             </div>
 
                             <!--<div class="layer-slick1 animated visible-false" data-appear="zoomIn" data-delay="1600">
-                                <a href="{{ route('product.index', ['categoria' => $categoria->id]) }}"
+                                <a href=""
                                     class="flex-c-m stext-101 cl0 size-101 bg1 bor1 hov-btn2 p-lr-15 trans-04">
                                     Comprar Ahora
                                 </a>
@@ -620,19 +511,7 @@
                     Productos
                 </h3>
             </div>
-            @if($promociones->count())
-            <section class="p-t-30 p-b-20">
-                <h4 class="text-center m-b-20">🔥 Promociones</h4>
-                @include('catalogo.catalogoNuevos', ['productos' => $promociones])
-            </section>
-            @endif
 
-            @if($nuevos->count())
-            <section class="p-t-30 p-b-20">
-                <h4 class="text-center m-b-20">🆕 Nuevos</h4>
-                @include('catalogo.catalogoNuevos', ['productos' => $nuevos])
-            </section>
-            @endif
             <div class="flex-w flex-sb-m p-b-52">
                 <div class="flex-w flex-l-m filter-tope-group m-tb-10 align-items-center">
                     <button class="stext-106 cl6 hov1 bor3 trans-04 m-r-32 m-tb-5 how-active1" data-filter="*">
@@ -693,43 +572,43 @@
                     <div class="wrap-filter flex-w bg6 w-full p-lr-40 p-t-27 p-lr-15-sm">
                         <div class="filter-col2 p-r-15 p-b-27">
                             <div class="mtext-102 cl2 p-b-15">
-                                Price
+                                Precios
                             </div>
 
                             <ul>
                                 <li class="p-b-6">
                                     <a href="#" class="filter-link stext-106 trans-04 filter-link-active filter-price" data-min="0" data-max="10000">
-                                        All
+                                        Todos
                                     </a>
                                 </li>
 
                                 <li class="p-b-6">
                                     <a href="#" class="filter-link stext-106 trans-04 filter-price" data-min="0" data-max="50">
-                                        $0.00 - $50.00
+                                        Bs.0.00 - Bs.50.00
                                     </a>
                                 </li>
 
                                 <li class="p-b-6">
                                     <a href="#" class="filter-link stext-106 trans-04 filter-price" data-min="50" data-max="100">
-                                        $50.00 - $100.00
+                                        Bs.50.00 - Bs.100.00
                                     </a>
                                 </li>
 
                                 <li class="p-b-6">
                                     <a href="#" class="filter-link stext-106 trans-04 filter-price" data-min="100" data-max="150">
-                                        $100.00 - $150.00
+                                        Bs.100.00 - Bs.150.00
                                     </a>
                                 </li>
 
                                 <li class="p-b-6">
                                     <a href="#" class="filter-link stext-106 trans-04 filter-price" data-min="150" data-max="200">
-                                        $150.00 - $200.00
+                                        Bs.150.00 - Bs.200.00
                                     </a>
                                 </li>
 
                                 <li class="p-b-6">
                                     <a href="#" class="filter-link stext-106 trans-04 filter-price" data-min="200" data-max="100000">
-                                        $200.00+
+                                        Bs.200.00+
                                     </a>
                                 </li>
                             </ul>
@@ -739,16 +618,27 @@
                     </div>
                 </div>
             </div>
+            @if($promociones->count())
+            <section class="p-t-30 p-b-20">
+                <h4 class="text-center m-b-20">🔥 Promociones</h4>
+                @include('catalogo.catalogoNuevos', ['productos' => $promociones])
+            </section>
+            @endif
 
+            @if($nuevos->count())
+            <section class="p-t-30 p-b-20">
+                <h4 class="text-center m-b-20">🆕 Nuevos</h4>
+                @include('catalogo.catalogoNuevos', ['productos' => $nuevos])
+            </section>
+            @endif
             <div class="row isotope-grid">
                 @foreach($productos as $producto)
-                <div class="col-sm-6 col-md-4 col-lg-3 p-b-35 isotope-item {{ strtolower(Str::slug($producto->categoria->nombre ?? '')) }}" data-precio="{{ $producto->precio }}">
+                <div class="col-6 col-sm-6 col-md-4 col-lg-3 p-b-35 isotope-item {{ strtolower(Str::slug($producto->categoria->nombre ?? '')) }}" data-precio="{{ $producto->precio }}">
                     <div class="block2">
                         @php
                         $imagen = $producto->imagenes->first();
                         $esNuevo = \Carbon\Carbon::parse($producto->created_at)->gt(now()->subDays(5));
                         @endphp
-
                         <div class="block2-pic hov-img0 {{ $esNuevo ? 'label-new' : '' }}" data-label="{{ $esNuevo ? 'New' : '' }}">
                             <img class="img-fluid" src="{{ $imagen ? asset('storage/' . $imagen->ruta) : asset('images/default.jpg') }}"
                                 alt="IMG-PRODUCT"
@@ -760,32 +650,23 @@
                                 Ver Producto
                             </a>
                         </div>
-
                         <div class="block2-txt flex-w flex-t p-t-14">
                             <div class="block2-txt-child1 flex-col-l ">
-                                <a href="#" class="stext-104 cl4 hov-cl1 trans-04 js-name-b2 p-b-6">
+                                <div class="stext-104 cl4 hov-cl1 trans-04 js-name-b2 p-b-6">
                                     {{ $producto->nombre }}
-                                </a>
-
+                                </div>
+                                <div class="js-extra-busqueda" style="display:none;">
+                                    {{ $producto->descripcion }} {{ $producto->categoria->nombre ?? '' }}
+                                </div>
                                 <span class="stext-105 cl3">
                                     Bs. {{ number_format($producto->precio, 2) }}
                                 </span>
-                            </div>
-
-                            <div class="block2-txt-child2 flex-r p-t-3">
-                                <a href="#" class="btn-addwish-b2 dis-block pos-relative js-addwish-b2">
-                                    <img class="icon-heart1 dis-block trans-04" src="{{ asset('images/icons/icon-heart-01.png') }}" alt="ICON">
-                                    <img class="icon-heart2 dis-block trans-04 ab-t-l" src="{{ asset('images/icons/icon-heart-02.png') }}" alt="ICON">
-                                </a>
                             </div>
                         </div>
                     </div>
                 </div>
                 @endforeach
-
             </div>
-
-
         </div>
 
         <!-- Pagination -->
@@ -807,152 +688,15 @@
 
 
     <!-- Footer -->
-    <footer class="bg3 p-t-75 p-b-32">
-        <div class="container">
-            <div class="row">
-                <div class="col-sm-6 col-lg-3 p-b-50">
-                    <h4 class="stext-301 cl0 p-b-30">
-                        Categories
-                    </h4>
+    <footer>
+        <div class="p-t-40">
+            <p class="stext-107 cl6 txt-center">
+                &copy; {{ date('Y') }} Sistema de <strong>TUXSON</strong> | Desarrollado por <strong href="">Juan Burgos</strong>
 
-                    <ul>
-                        <li class="p-b-10">
-                            <a href="#" class="stext-107 cl7 hov-cl1 trans-04">
-                                Women
-                            </a>
-                        </li>
-
-                        <li class="p-b-10">
-                            <a href="#" class="stext-107 cl7 hov-cl1 trans-04">
-                                Men
-                            </a>
-                        </li>
-
-                        <li class="p-b-10">
-                            <a href="#" class="stext-107 cl7 hov-cl1 trans-04">
-                                Shoes
-                            </a>
-                        </li>
-
-                        <li class="p-b-10">
-                            <a href="#" class="stext-107 cl7 hov-cl1 trans-04">
-                                Watches
-                            </a>
-                        </li>
-                    </ul>
-                </div>
-
-                <div class="col-sm-6 col-lg-3 p-b-50">
-                    <h4 class="stext-301 cl0 p-b-30">
-                        Help
-                    </h4>
-
-                    <ul>
-                        <li class="p-b-10">
-                            <a href="#" class="stext-107 cl7 hov-cl1 trans-04">
-                                Track Order
-                            </a>
-                        </li>
-
-                        <li class="p-b-10">
-                            <a href="#" class="stext-107 cl7 hov-cl1 trans-04">
-                                Returns
-                            </a>
-                        </li>
-
-                        <li class="p-b-10">
-                            <a href="#" class="stext-107 cl7 hov-cl1 trans-04">
-                                Shipping
-                            </a>
-                        </li>
-
-                        <li class="p-b-10">
-                            <a href="#" class="stext-107 cl7 hov-cl1 trans-04">
-                                FAQs
-                            </a>
-                        </li>
-                    </ul>
-                </div>
-
-                <div class="col-sm-6 col-lg-3 p-b-50">
-                    <h4 class="stext-301 cl0 p-b-30">
-                        GET IN TOUCH
-                    </h4>
-
-                    <p class="stext-107 cl7 size-201">
-                        Any questions? Let us know in store at 8th floor, 379 Hudson St, New York, NY 10018 or call us on (+1) 96 716 6879
-                    </p>
-
-                    <div class="p-t-27">
-                        <a href="#" class="fs-18 cl7 hov-cl1 trans-04 m-r-16">
-                            <i class="fa fa-facebook"></i>
-                        </a>
-
-                        <a href="#" class="fs-18 cl7 hov-cl1 trans-04 m-r-16">
-                            <i class="fa fa-instagram"></i>
-                        </a>
-
-                        <a href="#" class="fs-18 cl7 hov-cl1 trans-04 m-r-16">
-                            <i class="fa fa-pinterest-p"></i>
-                        </a>
-                    </div>
-                </div>
-
-                <div class="col-sm-6 col-lg-3 p-b-50">
-                    <h4 class="stext-301 cl0 p-b-30">
-                        Newsletter
-                    </h4>
-
-                    <form>
-                        <div class="wrap-input1 w-full p-b-4">
-                            <input class="input1 bg-none plh1 stext-107 cl7" type="text" name="email" placeholder="email@example.com">
-                            <div class="focus-input1 trans-04"></div>
-                        </div>
-
-                        <div class="p-t-18">
-                            <button class="flex-c-m stext-101 cl0 size-103 bg1 bor1 hov-btn2 p-lr-15 trans-04">
-                                Subscribe
-                            </button>
-                        </div>
-                    </form>
-                </div>
-            </div>
-
-            <div class="p-t-40">
-                <div class="flex-c-m flex-w p-b-18">
-                    <a href="#" class="m-all-1">
-                        <img src="images/icons/icon-pay-01.png" alt="ICON-PAY">
-                    </a>
-
-                    <a href="#" class="m-all-1">
-                        <img src="images/icons/icon-pay-02.png" alt="ICON-PAY">
-                    </a>
-
-                    <a href="#" class="m-all-1">
-                        <img src="images/icons/icon-pay-03.png" alt="ICON-PAY">
-                    </a>
-
-                    <a href="#" class="m-all-1">
-                        <img src="images/icons/icon-pay-04.png" alt="ICON-PAY">
-                    </a>
-
-                    <a href="#" class="m-all-1">
-                        <img src="images/icons/icon-pay-05.png" alt="ICON-PAY">
-                    </a>
-                </div>
-
-                <p class="stext-107 cl6 txt-center">
-                    <!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. -->
-                    Copyright &copy;<script>
-                        document.write(new Date().getFullYear());
-                    </script> All rights reserved | Made with <i class="fa fa-heart-o" aria-hidden="true"></i> by <a href="https://colorlib.com" target="_blank">Colorlib</a> &amp; distributed by <a href="https://themewagon.com" target="_blank">ThemeWagon</a>
-                    <!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. -->
-
-                </p>
-            </div>
+            </p>
         </div>
-    </footer>
 
+    </footer>
 
     <!-- Back to top -->
     <div class="btn-back-to-top" id="myBtn">
@@ -991,13 +735,38 @@
                             <span class="mtext-106 cl2 js-price-detail"></span>
                             <p class="stext-102 cl3 p-t-23 js-desc-detail"></p>
 
-                            <!-- Más detalles aquí si querés (tallas, colores, botones) -->
+                            <!-- Botones debajo de la descripción -->
+                            <div class="p-t-25 flex-w">
+                                <button id="mi-btn-add-to-cart"
+                                    class="flex-c-m stext-101 cl0 size-101 bg1 bor1 hov-btn1 p-lr-15 trans-04 m-r-10">
+                                    <i class="zmdi zmdi-plus-circle-o m-r-5"></i> Agregar
+                                </button>
+
+                                <button id="btn-ver-carrito"
+                                    class="btn-ver-carrito-wrapper flex-c-m stext-101 cl0 size-101 bg3 bor1 hov-btn3 p-lr-15 trans-04"
+                                    style="position: relative;">
+                                    <i class="zmdi zmdi-shopping-cart m-r-5"></i> Ver carrito
+                                    <span id="contador-ver-carrito" style="
+                                    background:red;
+                                    color:white;
+                                    border-radius:50%;
+                                    padding:2px 6px;
+                                    font-size:12px;
+                                    position:absolute;
+                                    top:-8px;
+                                    right:-8px;
+                                    display:none;
+                                ">0</span>
+                                </button>
+                            </div>
+                            <!-- Fin botones -->
                         </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
+
 
     <!--===============================================================================================-->
     <script src="{{ asset('vendor/jquery/jquery-3.2.1.min.js') }}"></script>
@@ -1008,6 +777,7 @@
     <script src="{{ asset('vendor/bootstrap/js/bootstrap.min.js') }}"></script>
     <!--===============================================================================================-->
     <script src="{{ asset('vendor/select2/select2.min.js') }}"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
         $(".js-select2").each(function() {
             $(this).select2({
@@ -1045,41 +815,7 @@
     <script src="{{ asset('vendor/isotope/isotope.pkgd.min.js') }}"></script>
     <!--===============================================================================================-->
     <script src="{{ asset('vendor/sweetalert/sweetalert.min.js') }}"></script>
-    <script>
-        $('.js-addwish-b2').on('click', function(e) {
-            e.preventDefault();
-        });
 
-        $('.js-addwish-b2').each(function() {
-            var nameProduct = $(this).parent().parent().find('.js-name-b2').html();
-            $(this).on('click', function() {
-                swal(nameProduct, "is added to wishlist !", "success");
-
-                $(this).addClass('js-addedwish-b2');
-                $(this).off('click');
-            });
-        });
-
-        $('.js-addwish-detail').each(function() {
-            var nameProduct = $(this).parent().parent().parent().find('.js-name-detail').html();
-
-            $(this).on('click', function() {
-                swal(nameProduct, "is added to wishlist !", "success");
-
-                $(this).addClass('js-addedwish-detail');
-                $(this).off('click');
-            });
-        });
-
-        /*---------------------------------------------*/
-
-        $('.js-addcart-detail').each(function() {
-            var nameProduct = $(this).parent().parent().parent().parent().find('.js-name-detail').html();
-            $(this).on('click', function() {
-                swal(nameProduct, "is added to cart !", "success");
-            });
-        });
-    </script>
     <!--===============================================================================================-->
     <script src="{{ asset('vendor/perfect-scrollbar/perfect-scrollbar.min.js') }}"></script>
     <script>
@@ -1158,10 +894,12 @@
                 });
             }
 
-            $('.js-show-modal1').on('click', function(e) {
+            $(document).on('click', '.js-show-modal1', function(e) {
                 e.preventDefault();
 
                 const productoId = $(this).data('product');
+                console.log('Producto ID:', productoId);
+
                 if (!productoId) return alert('No se encontró el ID del producto.');
 
                 if ($('.wrap-modal1 .slick3').hasClass('slick-initialized')) {
@@ -1179,41 +917,51 @@
                     method: 'GET',
                     dataType: 'json',
                     success: function(data) {
+                        console.log('Respuesta AJAX:', data);
+
                         $('.js-name-detail').text(data.nombre);
-                        $('.js-price-detail').text('Bs. ' + data.precio);
+                        if (data.precio_oferta && data.precio_oferta > 0) {
+                            $('.js-price-detail').html(
+                                `<span class="js-price-normal" style="text-decoration: line-through; color: #888;">Bs. ${parseFloat(data.precio).toFixed(2)}</span> 
+         <span class="js-price-promo" style="color: red; font-weight: bold;">Bs. ${parseFloat(data.precio_oferta).toFixed(2)}</span>`
+                            );
+                        } else {
+                            $('.js-price-detail').html(
+                                `<span class="js-price-normal">Bs. ${parseFloat(data.precio).toFixed(2)}</span>`
+                            );
+                        }
+
                         $('.js-desc-detail').text(data.descripcion);
 
                         let contenidoSlider = '';
 
                         if (data.imagenes && data.imagenes.length > 0) {
                             data.imagenes.forEach(function(item) {
-                                console.log(item.ruta);
+                                console.log('Imagen/video:', item.ruta);
 
                                 if (item.ruta.match(/\.(mp4|webm|ogg)$/i)) {
-                                    // Si es video
                                     contenidoSlider += `
-                                        <div class="item-slick3" data-thumb="${item.ruta}">
-                                            <div class="wrap-pic-w pos-relative">
-                                                <video class="w-100" controls style="max-height: 500px; object-fit: contain; margin: 0 auto; display: block;">
-                                                    <source src="${item.ruta}" type="video/mp4">
-                                                    Tu navegador no soporta el video.
-                                                </video>
-                                                <a class="video-expand-btn" onclick="expandVideo('${item.ruta}')" style="position:absolute; top:10px; right:10px;">
-                                                    <i class="fa fa-expand"></i>
-                                                </a>
-                                            </div>
-                                        </div>`;
+                            <div class="item-slick3" data-thumb="${item.ruta}">
+                                <div class="wrap-pic-w pos-relative">
+                                    <video class="w-100" controls style="max-height: 500px; object-fit: contain; margin: 0 auto; display: block;">
+                                        <source src="${item.ruta}" type="video/mp4">
+                                        Tu navegador no soporta el video.
+                                    </video>
+                                    <a class="video-expand-btn" onclick="expandVideo('${item.ruta}')" style="position:absolute; top:10px; right:10px;">
+                                        <i class="fa fa-expand"></i>
+                                    </a>
+                                </div>
+                            </div>`;
                                 } else {
-                                    // Si es imagen
                                     contenidoSlider += `
-                                        <div class="item-slick3" data-thumb="${item.ruta}">
-                                            <div class="wrap-pic-w pos-relative">
-                                                <img class="img w-100" src="${item.ruta}" alt="IMG-PRODUCT" style="max-height: 500px; object-fit: contain; margin: 0 auto; display: block;">
-                                                <a class="flex-c-m size-108 how-pos1 bor0 fs-16 cl10 bg0 hov-btn3 trans-04" href="${item.ruta}">
-                                                    <i class="fa fa-expand"></i>
-                                                </a>
-                                            </div>
-                                        </div>`;
+                            <div class="item-slick3" data-thumb="${item.ruta}">
+                                <div class="wrap-pic-w pos-relative">
+                                    <img class="img w-100" src="${item.ruta}" alt="IMG-PRODUCT" style="max-height: 500px; object-fit: contain; margin: 0 auto; display: block;">
+                                    <a class="flex-c-m size-108 how-pos1 bor0 fs-16 cl10 bg0 hov-btn3 trans-04" href="${item.ruta}">
+                                        <i class="fa fa-expand"></i>
+                                    </a>
+                                </div>
+                            </div>`;
                                 }
                             });
 
@@ -1222,6 +970,7 @@
                             $('.wrap-modal1 .slick3').html('<p>No hay imágenes ni videos disponibles.</p>');
                         }
 
+                        // Si initSlick() falla, comenta esta línea para probar
                         initSlick();
                     },
                     error: function(xhr, status, error) {
@@ -1231,6 +980,7 @@
                     }
                 });
             });
+
 
             $('.js-hide-modal1').on('click', function() {
                 $('.wrap-modal1').fadeOut();
@@ -1286,37 +1036,40 @@
 
         //buscar product
         document.addEventListener('DOMContentLoaded', function() {
+            // Inicializar Isotope en todas las grillas que haya
             var $grid = $('.isotope-grid').isotope({
                 itemSelector: '.isotope-item',
                 layoutMode: 'fitRows'
             });
 
-            // Variables para filtros activos
             let precioFiltro = {
                 min: 0,
                 max: Infinity
             };
             let textoBusqueda = '';
 
-            // Función para combinar filtros de precio y búsqueda
             function filtrarProductos() {
                 $grid.isotope({
                     filter: function() {
-                        let precio = parseFloat($(this).attr('data-precio'));
+                        let precio = parseFloat($(this).attr('data-precio')) || 0;
+
+                        // Texto del nombre
                         let nombre = $(this).find('.js-name-b2').text().toLowerCase();
 
-                        // Filtrar por precio
-                        let cumplePrecio = precio >= precioFiltro.min && precio <= precioFiltro.max;
+                        // Texto extra (si lo tienes en algún span oculto)
+                        let extra = $(this).find('.js-extra-busqueda').text().toLowerCase();
 
-                        // Filtrar por texto
-                        let cumpleTexto = nombre.includes(textoBusqueda.toLowerCase());
+                        let textoCompleto = nombre + ' ' + extra;
+
+                        let cumplePrecio = precio >= precioFiltro.min && precio <= precioFiltro.max;
+                        let cumpleTexto = textoCompleto.includes(textoBusqueda.toLowerCase());
 
                         return cumplePrecio && cumpleTexto;
                     }
                 });
             }
 
-            // Evento filtro precio
+            // Filtro por precio
             $('.filter-price').on('click', function(e) {
                 e.preventDefault();
                 $('.filter-price').removeClass('filter-link-active');
@@ -1328,11 +1081,13 @@
                 filtrarProductos();
             });
 
-            // Evento búsqueda en input
+            // Búsqueda por texto
             $('input[name="search-product"]').on('input', function() {
                 textoBusqueda = $(this).val();
                 filtrarProductos();
             });
+
+
 
             // Mostrar/ocultar panel de búsqueda y filtro (tu lógica si quieres)
             $('.js-show-search').on('click', function() {
@@ -1375,6 +1130,314 @@
                 }
             });
         });
+
+        //agregar al carrito
+        let carrito = [];
+        let totalCarrito = 0;
+
+        // Variable para evitar doble click rápido
+        let agregando = false;
+
+        function agregarAlCarrito(producto) {
+            let existente = carrito.find(p => p.nombre === producto.nombre);
+            if (existente) {
+                existente.cantidad += producto.cantidad;
+            } else {
+                carrito.push(producto);
+            }
+            actualizarCarrito();
+        }
+
+        function eliminarDelCarrito(index) {
+            carrito.splice(index, 1);
+            actualizarCarrito();
+        }
+
+        function cambiarCantidad(index, cantidad) {
+            if (cantidad < 1) cantidad = 1;
+            carrito[index].cantidad = cantidad;
+            actualizarCarrito();
+        }
+
+        function actualizarCarrito() {
+            const cartWrap = document.querySelector(".header-cart-wrapitem");
+            const totalElement = document.querySelector(".header-cart-total");
+
+            cartWrap.innerHTML = "";
+            totalCarrito = 0;
+
+            carrito.forEach((item, i) => {
+                totalCarrito += item.precio * item.cantidad;
+
+                cartWrap.innerHTML += `
+        <li class="header-cart-item flex-w flex-t m-b-12" style="align-items:center;">
+            <div class="header-cart-item-img">
+                <img src="${item.imagen}" alt="${item.nombre}" style="border-radius:8px;">
+            </div>
+            <div class="header-cart-item-txt p-t-8" style="flex:1">
+                <a href="#" class="header-cart-item-name m-b-18 hov-cl1 trans-04" style="font-weight:bold;">
+                    ${item.nombre} ${item.esPromocion ? '<span style="color:red; font-weight:bold;">(Promo)</span>' : ''}
+                </a>
+                <div class="flex-w m-b-10" style="gap:5px;align-items:center;">
+                    <button class="btn-cantidad" onclick="cambiarCantidad(${i}, ${item.cantidad - 1})" 
+                        style="border:none;background:#f44336;color:white;width:28px;height:28px;border-radius:50%;cursor:pointer;">-</button>
+                    <input type="number" value="${item.cantidad}"
+                           onchange="cambiarCantidad(${i}, this.value)" 
+                           style="width:50px;text-align:center;border:1px solid #ccc;border-radius:5px;">
+                    <button class="btn-cantidad" onclick="cambiarCantidad(${i}, ${item.cantidad + 1})" 
+                        style="border:none;background:#4CAF50;color:white;width:28px;height:28px;border-radius:50%;cursor:pointer;">+</button>
+                </div>
+                <span style="color:#555;">Bs. ${item.precio.toFixed(2)}</span>
+            </div>
+            <button onclick="eliminarDelCarrito(${i})" 
+                style="border:none;background:#e0e0e0;border-radius:5px;padding:5px 8px;cursor:pointer;">
+                <i class="zmdi zmdi-delete" style="color:red;font-size:18px;"></i>
+            </button>
+        </li>
+        `;
+            });
+
+            totalElement.textContent = `Total: Bs. ${totalCarrito.toFixed(2)}`;
+
+            // 🔹 Actualiza el contador en todos los íconos de carrito (PC + móvil)
+            document.querySelectorAll(".icon-header-noti").forEach(icon => {
+                icon.setAttribute("data-notify", carrito.length);
+            });
+            const contadorVerCarrito = document.getElementById("contador-ver-carrito");
+            if (contadorVerCarrito) {
+                if (carrito.length > 0) {
+                    contadorVerCarrito.textContent = carrito.length;
+                    contadorVerCarrito.style.display = "inline-block";
+                } else {
+                    contadorVerCarrito.style.display = "none";
+                }
+            }
+        }
+        document.addEventListener("click", function(e) {
+            // Botón agregar al carrito
+            const btnAdd = e.target.closest("#mi-btn-add-to-cart")
+            if (btnAdd) {
+                e.preventDefault();
+                e.stopPropagation();
+
+                if (agregando) return; // evitar doble click rápido
+                agregando = true;
+
+                const nombre = document.querySelector(".js-name-detail").textContent.trim();
+                // Aquí intenta obtener precio promoción, si no existe usar precio normal
+                const precioPromoEl = document.querySelector(".js-price-promo");
+                let precio;
+
+                if (precioPromoEl && precioPromoEl.textContent.trim() !== '') {
+                    // Usar precio promoción, quitar "Bs." y parsear
+                    precio = parseFloat(precioPromoEl.textContent.replace("Bs.", "").trim());
+                } else {
+                    // Precio normal
+                    precio = parseFloat(document.querySelector(".js-price-detail").textContent.replace("Bs.", "").trim());
+                }
+
+                const imagen = document.querySelector(".gallery-lb img")?.src || "{{ asset('images/default.jpg') }}";
+
+                agregarAlCarrito({
+                    nombre,
+                    precio,
+                    cantidad: 1,
+                    imagen,
+                    esPromocion: precioPromoEl && precioPromoEl.textContent.trim() !== ''
+                });
+
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Producto agregado',
+                    text: `${nombre} fue agregado al carrito.`,
+                    timer: 1500,
+                    showConfirmButton: false
+                });
+
+                // Permitir otro click después de 300ms
+                setTimeout(() => {
+                    agregando = false;
+                }, 300);
+
+                return;
+            }
+
+            // Botón ver carrito
+            const btnVer = e.target.closest("#btn-ver-carrito");
+            if (btnVer) {
+                e.preventDefault();
+                e.stopPropagation();
+
+                document.querySelector(".wrap-modal1").style.display = "none";
+                document.querySelector(".overlay-modal1").classList.remove("show-modal1");
+
+                document.querySelector(".js-panel-cart").classList.add("show-header-cart");
+                return;
+            }
+        });
+
+
+        //consultar al whatpsap
+
+        let usuarioRegistrado = false;
+        let datosUsuario = {};
+
+        // Detectar escritura o pérdida de foco en el CI
+        document.addEventListener("input", function(e) {
+            if (e.target && e.target.id === "reg-ci") {
+                let ci = e.target.value.trim();
+                if (ci.length > 0) {
+                    verificarCI(ci);
+                } else {
+                    limpiarCamposRegistro();
+                    document.getElementById("ci-status").textContent = "";
+                }
+            }
+        });
+
+        document.addEventListener("click", function(e) {
+            // Agregar al carrito
+            if (e.target && e.target.id === "btn-add-to-cart") {
+                const nombre = document.querySelector(".js-name-detail").textContent.trim();
+                const precio = parseFloat(document.querySelector(".js-price-detail").textContent.replace("Bs.", "").trim());
+                const imagen = document.querySelector(".gallery-lb img")?.src || "{{ asset('images/default.jpg') }}";
+
+                agregarAlCarrito({
+                    nombre,
+                    precio,
+                    cantidad: 1,
+                    imagen
+                });
+
+                Swal.fire({
+                    icon: 'success',
+                    title: nombre,
+                    text: '¡Se agregó al carrito!',
+                    showConfirmButton: false,
+                    timer: 1500
+                });
+            }
+
+            // Botón WhatsApp → mostrar formulario si no está registrado
+            if (e.target && e.target.id === "btn-whatsapp") {
+                if (!usuarioRegistrado) {
+                    document.getElementById("carrito-content").style.display = "none";
+                    document.getElementById("registro-content").style.display = "block";
+                    return;
+                }
+                enviarWhatsApp();
+            }
+
+            // Guardar registro
+            if (e.target && e.target.id === "guardar-registro") {
+                let ci = document.getElementById("reg-ci").value.trim();
+                let nombre = document.getElementById("reg-nombre").value.trim();
+                let direccion = document.getElementById("reg-direccion").value.trim();
+                let ciudad = document.getElementById("reg-ciudad").value.trim();
+
+                if (!ci || !nombre || !direccion || !ciudad) {
+                    Swal.fire('Error', 'Por favor completa todos los campos', 'error');
+                    return;
+                }
+
+                datosUsuario = {
+                    ci,
+                    nombre,
+                    direccion,
+                    ciudad
+                };
+                console.log('Datos del usuario: ', datosUsuario)
+                Swal.fire({
+                    title: 'Confirmar registro',
+                    text: '¿Deseas registrarte y consultar por WhatsApp?',
+                    icon: 'question',
+                    showCancelButton: true,
+                    confirmButtonText: 'Sí, continuar',
+                    cancelButtonText: 'Cancelar'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        registrarCliente(datosUsuario);
+                    }
+                });
+            }
+
+            // Volver al carrito
+            if (e.target && e.target.id === "volver-carrito") {
+                document.getElementById("registro-content").style.display = "none";
+                document.getElementById("carrito-content").style.display = "block";
+            }
+        });
+
+        // Verificar CI en Laravel
+        function verificarCI(ci) {
+            fetch(`/clientes/buscar-ci/${ci}`)
+                .then(res => res.json())
+                .then(data => {
+                    if (data.encontrado) {
+                        document.getElementById("ci-status").innerHTML = `<strong style="color:green">Cliente encontrado</strong>`;
+                        document.getElementById("reg-nombre").value = data.cliente.nombre;
+                        document.getElementById("reg-direccion").value = data.cliente.direccion;
+                        document.getElementById("reg-ciudad").value = data.cliente.ciudad;
+                        usuarioRegistrado = true;
+                        datosUsuario = data.cliente;
+                    } else {
+                        document.getElementById("ci-status").innerHTML = `<strong style="color:red">Cliente no registrado</strong>`;
+                        limpiarCamposRegistro();
+                        usuarioRegistrado = false;
+                    }
+                });
+        }
+        const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+        // Registrar cliente en Laravel
+        function registrarCliente(datos) {
+            fetch(`/clientes/registrar`, {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "X-CSRF-TOKEN": csrfToken
+                    },
+                    body: JSON.stringify(datos)
+                })
+                .then(res => {
+                    if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
+                    return res.json();
+                })
+                .then(data => {
+                    if (data.success) {
+                        usuarioRegistrado = true;
+                        enviarWhatsApp();
+                        setTimeout(() => location.reload(), 1500);
+                    } else {
+                        Swal.fire('Error', data.message || 'No se pudo registrar', 'error');
+                    }
+                })
+                .catch(error => {
+                    console.error("Fetch error:", error);
+                    Swal.fire('Error', 'Ocurrió un error en el servidor', 'error');
+                });
+        }
+
+        // Enviar mensaje a WhatsApp
+        function enviarWhatsApp() {
+            let telefono = "{{ $empresa->telefono_whatsapp ?? '0000000' }}";
+            console.log('telefono del usuario: ', telefono)
+            let mensaje = `Hola, quiero consultar los siguientes productos:\n\n`;
+
+            carrito.forEach(p => {
+                mensaje += `- ${p.nombre} (${p.cantidad} x Bs. ${p.precio.toFixed(2)})\n`;
+            });
+            mensaje += `\nTotal: Bs. ${totalCarrito.toFixed(2)}`;
+            mensaje += `\n\nMis datos:\nCI: ${datosUsuario.ci}\nNombre: ${datosUsuario.nombre}\nDirección: ${datosUsuario.direccion}\nCiudad: ${datosUsuario.ciudad}`;
+
+            let url = `https://wa.me/${telefono}?text=${encodeURIComponent(mensaje)}`;
+            window.open(url, "_blank");
+        }
+
+        function limpiarCamposRegistro() {
+            document.getElementById("reg-nombre").value = "";
+            document.getElementById("reg-direccion").value = "";
+            document.getElementById("reg-ciudad").value = "";
+        }
     </script>
 </body>
 

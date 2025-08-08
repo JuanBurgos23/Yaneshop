@@ -1,7 +1,7 @@
 {{-- resources/views/partials/productos-grid.blade.php --}}
 <div class="row isotope-grid">
     @foreach($productos as $producto)
-    <div class="col-sm-6 col-md-4 col-lg-3 p-b-35 isotope-item {{ strtolower(Str::slug($producto->categoria->nombre ?? '')) }}">
+    <div class="col-6 col-sm-6 col-md-4 col-lg-3 p-b-35 isotope-item {{ strtolower(Str::slug($producto->categoria->nombre ?? '')) }}" data-precio="{{ $producto->precio }}">
         <div class="block2">
             @php
             $imagen = $producto->imagenes->first();
@@ -21,9 +21,9 @@
 
             <div class="block2-txt flex-w flex-t p-t-14">
                 <div class="block2-txt-child1 flex-col-l ">
-                    <a href="#" class="stext-104 cl4 hov-cl1 trans-04 js-name-b2 p-b-6">
+                    <div class="stext-104 cl4 hov-cl1 trans-04 js-name-b2 p-b-6">
                         {{ $producto->nombre }}
-                    </a>
+                    </div>
 
                     @if($producto->precio_oferta)
                     <span class="stext-105 cl3">

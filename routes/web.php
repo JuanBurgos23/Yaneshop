@@ -2,13 +2,14 @@
 
 use App\Http\Controllers\CategoriaController;
 use App\Http\Controllers\ClienteController;
+use App\Http\Controllers\EmpresaController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\PerfilController;
 use App\Http\Controllers\ProductoController;
 use Illuminate\Support\Facades\Route;
 use SebastianBergmann\CodeCoverage\Report\Html\Dashboard;
 
-Route::get('/',  [ProductoController::class, 'indexWelcome'])->name('welcome');
+//Route::get('/',  [ProductoController::class, 'indexWelcome'])->name('welcome');
 
 Auth::routes();
 
@@ -19,9 +20,6 @@ Route::post('/user/{id}/update-avatar', [PerfilController::class, 'updateAvatar'
 Route::delete('/user/{id}/delete-avatar', [PerfilController::class, 'deleteAvatar'])->name('user.deleteAvatar');
 Route::post('user-perfil', [PerfilController::class, 'perfilUpdate'])->name('user.perfilUpdate');
 
-Route::get('/producto', [ProductoController::class, 'indexWelcome'])->name('product.index');
-Route::get('/productos', [ProductoController::class, 'index'])->name('productos');
-Route::get('/dashboard', [HomeController::class, 'index'])->name('dashboard');
 //Cliente
 Route::get('cliente', [ClienteController::class, 'index'])->name('mostrar_cliente');
 Route::post('/cliente-register', [ClienteController::class, 'store']);
@@ -43,9 +41,34 @@ Route::get('/subcategorias/por-categoria', [CategoriaController::class, 'porCate
 Route::get('/subcategorias/{id}', [CategoriaController::class, 'subcategoriasPorCategoria']);
 
 //Producto
-
+Route::get('/productos', [ProductoController::class, 'index'])->name('productos');
 Route::post('/producto-register', [ProductoController::class, 'store'])->name('producto.store');
 Route::get('/producto/edit/{id}', [ProductoController::class, 'edit'])->name('producto.edit');
 Route::put('/producto-update/{id}', [ProductoController::class, 'update'])->name('producto.update');
 Route::get('/productos/exportar', [ProductoController::class, 'exportar'])->name('productos.exportar');
 Route::delete('/producto/imagen/{id}', [ProductoController::class, 'eliminarImagen']);
+
+
+//consultar si existe el cliente por ci para el formulario
+Route::get('/clientes/buscar-telefono/{ci}', [ClienteController::class, 'buscarPorTelefono']);
+//registro del cliente
+Route::post('/clientes/registrar', [ClienteController::class, 'registrar']);
+
+
+//registrar empresa
+Route::get('/empresa', [EmpresaController::class, 'index'])->name('empresa.index');
+Route::post('/empresa', [EmpresaController::class, 'store'])->name('empresa.store');
+Route::get('/empresa/{id}/edit', [EmpresaController::class, 'edit'])->name('empresa.edit');
+Route::put('/empresa/{id}', [EmpresaController::class, 'update'])->name('empresa.update');
+
+Route::prefix('ajax')->group(function () {
+    Route::get('/load-more-promociones', [ProductoController::class, 'loadMorePromociones'])->name('ajax.loadMorePromociones');
+    Route::get('/load-more-nuevos', [ProductoController::class, 'loadMoreNuevos'])->name('ajax.loadMoreNuevos');
+    Route::get('/load-more-productos', [ProductoController::class, 'loadMoreProductos'])->name('ajax.loadMoreProductos');
+
+});
+
+Route::get('/{slug}', [ProductoController::class, 'productoInicio'])->name('empresa.public');
+
+
+//Route::get('/{slug}/comprar', [ProductoController::class, 'productoInicio'])->name('comprar.public');

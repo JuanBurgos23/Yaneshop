@@ -13,6 +13,7 @@ Route::get('/producto/{id}/detalles', function($id) {
     return response()->json([
         'nombre' => $producto->nombre,
         'precio' => number_format($producto->precio, 2),
+        'precio_oferta' =>number_format($producto->precio_oferta, 2),
         'descripcion' => $producto->descripcion,
         'imagenes' => $producto->imagenes->map(function($img){
             return [

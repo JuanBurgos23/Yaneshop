@@ -3,14 +3,17 @@
 namespace App\Http\Controllers;
 
 use App\Models\Categoria;
+use App\Models\Empresa;
 use App\Models\Imagen;
 use App\Models\Producto;
 use App\Models\SubCategoria;
 use Illuminate\Http\Request;
 use Barryvdh\DomPDF\Facade\Pdf;
+use Illuminate\Support\Facades\Auth;
 use Maatwebsite\Excel\Facades\Excel;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\View;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 use Illuminate\Support\Str;
@@ -18,44 +21,149 @@ use Illuminate\Support\Str;
 
 class ProductoController extends Controller
 {
-    public function indexWelcome()
+    public function productoInicio($slug)
     {
-        $categorias = Categoria::with('subcategorias')->get();
+        // Buscar la empresa por slug
+        $empresa = Empresa::where('slug', $slug)->firstOrFail();
+        $empresaId = $empresa->id;
 
-        // Todos los productos paginados (opcional, si deseas mantenerlo)
-        $productos = Producto::with('categoria', 'imagenes')
-            ->whereNull('precio_oferta') // para evitar duplicados con promociones
-            ->orderBy('created_at', 'desc')
-            ->paginate(20);
-
-        // Productos nuevos (los últimos 8 creados)
-        $nuevos = Producto::with('categoria', 'imagenes')
-            ->whereBetween('created_at', [now()->subDays(7), now()])
+        // Categorías con productos activos
+        $categorias = Categoria::with('subcategorias')
+            ->where('id_empresa', $empresaId)
+            ->whereHas('productos', function ($query) use ($empresaId) {
+                $query->where('id_empresa', $empresaId)
+                    ->where('estado', 'activo');
+            })
             ->get();
 
-        // Promociones (donde hay precio_oferta)
+        // Productos en promoción (todos)
         $promociones = Producto::with('categoria', 'imagenes')
             ->whereNotNull('precio_oferta')
+            ->where('id_empresa', $empresaId)
+            ->where('estado', 'activo')
+            ->orderBy('created_at', 'desc')
+            ->get();
+
+        // Productos nuevos (todos)
+        $nuevos = Producto::with('categoria', 'imagenes')
+            ->whereBetween('created_at', [now()->subDays(7), now()])
+            ->where('id_empresa', $empresaId)
+            ->where('estado', 'activo')
+            ->orderBy('created_at', 'desc')
+            ->get();
+
+        // Productos normales (todos)
+        $productos = Producto::with('categoria', 'imagenes')
+            ->whereNull('precio_oferta')
+            ->where('id_empresa', $empresaId)
+            ->where('estado', 'activo')
+            ->orderBy('created_at', 'desc')
+            ->get();
+
+        return view('Producto.ProductoInicio', compact('empresa', 'categorias', 'productos', 'nuevos', 'promociones'));
+    }
+
+
+    //cargar mas  8
+    public function loadMorePromociones(Request $request)
+    {
+        $offset = $request->input('offset', 0);
+        $empresaId = $request->input('empresa_id');
+
+        $promociones = Producto::with('categoria', 'imagenes')
+            ->whereNotNull('precio_oferta')
+            ->where('id_empresa', $empresaId)
+            ->where('estado', 'activo')
+            ->orderBy('created_at', 'desc')
+            ->skip($offset)
             ->take(8)
             ->get();
 
-        return view('welcome', compact('categorias', 'productos', 'nuevos', 'promociones'));
+        $html = '';
+        if ($promociones->count()) {
+            $html = View::make('catalogo.catalogoNuevos', ['productos' => $promociones])->render();
+        }
+
+        return response()->json([
+            'html' => $html,
+            'total' => $promociones->count()
+        ]);
     }
-    public function productoInicio()
+
+    public function loadMoreNuevos(Request $request)
     {
-        return view('Producto.ProductoInicio');
+        $offset = $request->input('offset', 0);
+        $empresaId = $request->input('empresa_id');
+
+        $nuevos = Producto::with('categoria', 'imagenes')
+            ->whereBetween('created_at', [now()->subDays(7), now()])
+            ->where('id_empresa', $empresaId)
+            ->where('estado', 'activo')
+            ->orderBy('created_at', 'desc')
+            ->skip($offset)
+            ->take(8)
+            ->get();
+
+        $html = '';
+        if ($nuevos->count()) {
+            $html = View::make('catalogo.catalogoNuevos', ['productos' => $nuevos])->render();
+        }
+
+        return response()->json([
+            'html' => $html,
+            'total' => $nuevos->count()
+        ]);
     }
+    //pructos normales
+    public function loadMoreProductos(Request $request)
+    {
+        $offset = $request->input('offset', 0);
+        $empresaId = $request->input('empresa_id');
+
+        $productos = Producto::with('categoria', 'imagenes')
+            ->whereNull('precio_oferta')
+            ->where('id_empresa', $empresaId)
+            ->where('estado', 'activo')
+            ->orderBy('created_at', 'desc')
+            ->skip($offset)
+            ->take(8)
+            ->get();
+
+        $html = '';
+        if ($productos->count()) {
+            $html = View::make('catalogo.catalogoNuevos', ['productos' => $productos])->render();
+        }
+
+        return response()->json([
+            'html' => $html,
+            'total' => $productos->count()
+        ]);
+    }
+
     public function index(Request $request)
     {
-        $categoriasFiltradas = $request->input('categorias', []);
-        $todasLasCategorias = Categoria::all();
+        $empresaId = Auth::user()->empresa->id;
 
-        // Obtener productos filtrados por categoría si se seleccionaron
+        // Categorías solo de la empresa
+        $todasLasCategorias = Categoria::where('id_empresa', $empresaId)->get();
+
+        // Categorías filtradas por el request, pero que pertenezcan a la empresa
+        $categoriasFiltradas = $request->input('categorias', []);
+
+        // Query para productos de la empresa, filtrados si hay categorías seleccionadas
         $query = Producto::with('categoria', 'categoria.subcategorias')
-            ->latest();  // Ordena por fecha de creación descendente
+            ->where('id_empresa', $empresaId)
+            ->latest();
 
         if (!empty($categoriasFiltradas)) {
-            $query->whereIn('id_categoria', $categoriasFiltradas);
+            // Aseguramos que solo filtre categorías que sean de esta empresa
+            $categoriasFiltradas = array_filter($categoriasFiltradas, function ($catId) use ($todasLasCategorias) {
+                return $todasLasCategorias->pluck('id')->contains($catId);
+            });
+
+            if (!empty($categoriasFiltradas)) {
+                $query->whereIn('id_categoria', $categoriasFiltradas);
+            }
         }
 
         $productos = $query->paginate(10);
@@ -66,6 +174,7 @@ class ProductoController extends Controller
             'categoriasSeleccionadas' => $categoriasFiltradas
         ]);
     }
+
     public function store(Request $request)
     {
         //dd($request->all());
@@ -117,6 +226,7 @@ class ProductoController extends Controller
             'id' => $producto->id,
             'nombre' => $producto->nombre,
             'precio' => $producto->precio,
+            'precio_oferta' => $producto->precio_oferta,
             'descripcion' => $producto->descripcion,
             'cantidad' => $producto->cantidad,
             'estado' => $producto->estado,

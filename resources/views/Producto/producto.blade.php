@@ -118,6 +118,17 @@
             overflow: hidden;
             text-overflow: ellipsis;
         }
+
+        .descripcion {
+            width: 810px;
+            min-height: 20px;
+            field-sizing: content;
+        }
+
+        .descripcionEdit {
+            
+            field-sizing: content;
+        }
     </style>
     <main class="main-content position-relative max-height-vh-100 h-100 border-radius-lg">
         <nav class="navbar navbar-main navbar-expand-lg px-0 mx-4 shadow-none border-radius-xl">
@@ -233,7 +244,9 @@
                                         <td class="text-center">{{ $producto->nombre }}</td>
                                         <td class="text-center">{{ $producto->precio }}</td>
                                         <td class="text-center">{{ $producto->precio_oferta }}</td>
-                                        <td class="text-center">{{ $producto->descripcion }}</td>
+                                        <td class="text-center" style="white-space: pre-wrap; word-wrap: break-word;">
+                                            {{ $producto->descripcion }}
+                                        </td>
                                         <td class="text-center">{{ $producto->cantidad }}</td>
                                         <td class="text-center">
                                             <button class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#editModal" data-id="{{ $producto->id }}">
@@ -284,7 +297,7 @@
                                     </div>
                                     <div class="col-md-12">
                                         <label for="descripcion" class="form-label">Descripción</label>
-                                        <textarea class="form-control" id="descripcion" name="descripcion" ></textarea>
+                                        <textarea class="form-control descripcion" id="descripcion" name="descripcion"></textarea>
                                     </div>
                                     <div class="col-md-6">
                                         <label for="cantidad" class="form-label">Cantidad</label>
@@ -349,12 +362,12 @@
                                     <input type="text" class="form-control" id="edit_precio" name="precio" required>
                                 </div>
                                 <div class="mb-3">
-                                    <label for="edit_precio" class="form-label">Precio Oferta (Bs.) Opcional</label>
-                                    <input type="text" class="form-control" id="edit_precioOferta" name="precio_oferta" required>
+                                    <label for="edit_precioOferta" class="form-label">Precio Oferta (Bs.) Opcional</label>
+                                    <input type="text" class="form-control" id="edit_precioOferta" name="precio_oferta">
                                 </div>
                                 <div class="mb-3">
                                     <label for="edit_descripcion" class="form-label">Descripción</label>
-                                    <input type="text" class="form-control" id="edit_descripcion" name="descripcion" required>
+                                    <textarea class="form-control descripcionEdit" id="edit_descripcion" name="descripcion"></textarea>
                                 </div>
                                 <div class="mb-3">
                                     <label for="edit_cantidad" class="form-label">Cantidad</label>

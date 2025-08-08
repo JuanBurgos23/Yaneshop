@@ -64,19 +64,14 @@
                 @php
                 $registrosRoutes = [
                 'mostrar_cliente',
-                'mostrar_inscripcion',
-                'historial_inscripciones',
-                'historial_cliente',
-                'historial_recibos_cliente',
-                'mostrar_paquete',
-                'mostrar_casillero',
-                'mostrar_empleado',
+                'empresa.index'
                 ];
 
                 $productosRoutes = [
                 'productos',
                 'mostrar_categoria',
                 'productos.masivo',
+                
                 ];
                 @endphp
                 <li class="nav-item nav-category">
@@ -107,6 +102,11 @@
                             <li class="nav-item">
                                 <a class="nav-link {{ Route::is('mostrar_cliente') ? 'active' : '' }}" href="{{ route('mostrar_cliente') }}">
                                     Cliente
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link {{ Route::is('empresa.index') ? 'active' : '' }}" href="{{ route('empresa.index') }}">
+                                    Empresa
                                 </a>
                             </li>
 
@@ -219,6 +219,8 @@
                             <div class="dropdown-menu dropdown-menu-end navbar-dropdown preview-list" aria-labelledby="profileDropdown">
                                 <h6 class="p-3 mb-0">Perfil</h6>
                                 <div class="dropdown-divider"></div>
+
+                                <!-- Configuración -->
                                 <a class="dropdown-item preview-item" href="{{ route('mostrar_perfil') }}">
                                     <div class="preview-thumbnail">
                                         <div class="preview-icon bg-dark rounded-circle">
@@ -226,26 +228,30 @@
                                         </div>
                                     </div>
                                     <div class="preview-item-content">
-                                        <p class="preview-subject mb-1">Configuracion</p>
-
+                                        <p class="preview-subject mb-1">Configuración</p>
                                     </div>
                                 </a>
+
                                 <div class="dropdown-divider"></div>
-                                <a class="dropdown-item preview-item">
+
+                                <!-- Cerrar sesión -->
+                                <a class="dropdown-item preview-item" href="{{ route('logout') }}"
+                                    onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
                                     <div class="preview-thumbnail">
                                         <div class="preview-icon bg-dark rounded-circle">
                                             <i class="mdi mdi-logout text-danger"></i>
                                         </div>
                                     </div>
                                     <div class="preview-item-content">
-                                        <p class="preview-subject mb-1" href="{{ route('logout') }}" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
-                                            Cerrar Session</p>
-                                        <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">
-                                            @csrf
-                                        </form>
+                                        <p class="preview-subject mb-1">Cerrar Sesión</p>
                                     </div>
                                 </a>
+
+                                <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">
+                                    @csrf
+                                </form>
                             </div>
+
                         </li>
                     </ul>
                     <button class="navbar-toggler navbar-toggler-right d-lg-none align-self-center" type="button" data-toggle="offcanvas">
@@ -334,18 +340,18 @@
     <script src="{{asset('assets/js/proBanner.js')}}"></script>
     <script src="{{asset('assets/js/dashboard.js')}}"></script>
     <!-- End custom js for this page -->
-    <script src="{{asset('vendorsAdmin/scripts/core.js')}}"></script>
-    <script src="{{asset('vendorsAdmin/scripts/script.min.js')}}"></script>
-    <script src="{{asset('vendorsAdmin/scripts/process.js')}}"></script>
-    <script src="{{asset('vendorsAdmin/scripts/layout-settings.js')}}"></script>
+    <script src="{{asset('vendors/scripts/core.js')}}"></script>
+    <script src="{{asset('vendors/scripts/script.min.js')}}"></script>
+    <script src="{{asset('vendors/scripts/process.js')}}"></script>
+    <script src="{{asset('vendors/scripts/layout-settings.js')}}"></script>
     <script src="{{asset('src/plugins/apexcharts/apexcharts.min.js')}}"></script>
     <script src="{{asset('src/plugins/datatables/js/jquery.dataTables.min.js')}}"></script>
     <script src="{{asset('src/plugins/datatables/js/dataTables.bootstrap4.min.js')}}"></script>
     <script src="{{asset('src/plugins/datatables/js/dataTables.responsive.min.js')}}"></script>
     <script src="{{asset('src/plugins/datatables/js/responsive.bootstrap4.min.js')}}"></script>
-    <script src="{{asset('vendorsAdmin/scripts/dashboard.js')}}"></script>
+    <script src="{{asset('vendors/scripts/dashboard.js')}}"></script>
     <script src="{{asset('src/plugins/jquery-steps/jquery.steps.js')}}"></script>
-    <script src="{{asset('vendorsAdmin/scripts/steps-setting.js')}}"></script>
+    <script src="{{asset('vendors/scripts/steps-setting.js')}}"></script>
 
     <!-- buttons for Export datatable -->
     <script src="{{asset('src/plugins/datatables/js/dataTables.buttons.min.js')}}"></script>
@@ -360,10 +366,10 @@
 
     <!-- buttons for Export datatable -->
     <!-- plugins:js -->
-    <script src="{{ asset('assets/vendorsAdmin/js/vendor.bundle.base.js') }}"></script>
+    <script src="{{ asset('assets/vendors/js/vendor.bundle.base.js') }}"></script>
     <!-- endinject -->
     <!-- Plugin js for this page -->
-    <script src="{{ asset('assets/vendorsAdmin/chart.js/chart.umd.js') }}"></script>
+    <script src="{{ asset('assets/vendors/chart.js/chart.umd.js') }}"></script>
     <!-- End plugin js for this page -->
 
     <!-- Custom js for this page -->
@@ -371,7 +377,7 @@
     <!-- End custom js for this page -->
 
     <!-- Datatable Setting js -->
-    <script src="{{ asset('vendorsAdmin/scripts/datatable-setting.js') }}"></script>
+    <script src="{{ asset('vendors/scripts/datatable-setting.js') }}"></script>
     @stack('js')
 </body>
 
