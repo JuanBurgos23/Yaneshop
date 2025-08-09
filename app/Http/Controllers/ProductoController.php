@@ -179,6 +179,7 @@ class ProductoController extends Controller
     {
         //dd($request->all());
         // 1. Crear el producto
+        $empresa = Auth::user()->empresa;
         $producto = Producto::create(attributes: [
             'nombre' => $request->nombre,
             'precio' => $request->precio,
@@ -188,6 +189,7 @@ class ProductoController extends Controller
             'id_subcategoria' => $request->subcategoria_id,
             'precio_oferta'     => $request->precio_oferta,
             'estado' => "activo",
+            'id_empresa' => $empresa->id
         ]);
 
         // 2. Procesar imágenes y videos
@@ -221,7 +223,6 @@ class ProductoController extends Controller
     public function edit($id)
     {
         $producto = Producto::with(['categoria', 'subcategoria', 'imagenes'])->findOrFail($id);
-
         return response()->json([
             'id' => $producto->id,
             'nombre' => $producto->nombre,
@@ -244,10 +245,9 @@ class ProductoController extends Controller
 
     public function update(Request $request, $id)
     {
-
-
         $producto = Producto::findOrFail($id);
 
+        // Actualizar campos
         $producto->nombre = $request->nombre;
         $producto->precio = $request->precio;
         $producto->descripcion = $request->descripcion;
@@ -260,16 +260,24 @@ class ProductoController extends Controller
 
         $producto->save();
 
-        // Guardar nuevas imágenes
-        if ($request->hasFile('imagenes')) {
-            foreach ($request->file('imagenes') as $imagen) {
-                // Guardar archivo en storage (ejemplo: carpeta 'productos')
-                $ruta = $imagen->store('productos', 'public');
+        // Procesar imágenes y videos nuevos (igual que en store)
+        if ($request->hasFile('archivos')) {
+            foreach ($request->file('archivos') as $archivo) {
 
-                // Crear registro en tabla imágenes (ajusta según tu modelo)
-                $producto->imagenes()->create([
+                $mime = $archivo->getMimeType();
+
+                if (Str::startsWith($mime, 'image/')) {
+                    $ruta = $archivo->store('productos/imagenes', 'public');
+                } elseif (Str::startsWith($mime, 'video/')) {
+                    $ruta = $archivo->store('productos/videos', 'public');
+                } else {
+                    continue; // ignorar archivos no válidos
+                }
+
+                // Registrar en la base de datos
+                Imagen::create([
+                    'id_producto' => $producto->id,
                     'ruta' => $ruta,
-                    'url' => asset('storage/' . $ruta)
                 ]);
             }
         }

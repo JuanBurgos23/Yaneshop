@@ -39,6 +39,7 @@ class CategoriaController extends Controller
 
     public function store(Request $request)
     {
+        $empresaId = Auth::user()->empresa->id;
         $request->validate([
             'nombre' => 'required|string|max:255',
             'descripcion' => 'nullable|string',
@@ -47,7 +48,7 @@ class CategoriaController extends Controller
         Categoria::create([
             'nombre' => $request->nombre,
             'descripcion' => $request->descripcion,
-            'id_empresa' => Auth::user()->empresa->id, // <- asignar empresa
+            'id_empresa' => $empresaId, // <- asignar empresa
         ]);
 
         return redirect()->back()->with('success', 'Categoría registrada correctamente');
