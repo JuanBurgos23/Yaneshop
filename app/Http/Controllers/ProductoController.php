@@ -222,7 +222,14 @@ class ProductoController extends Controller
 
     public function edit($id)
     {
-        $producto = Producto::with(['categoria', 'subcategoria', 'imagenes'])->findOrFail($id);
+        $empresaId = Auth::user()->empresa->id; // O la empresa que corresponda según tu lógica
+
+        // Buscar producto solo si pertenece a la empresa
+        $producto = Producto::with(['categoria', 'subcategoria', 'imagenes'])
+            ->where('id', $id)
+            ->where('id_empresa', $empresaId)
+            ->firstOrFail();
+
         return response()->json([
             'id' => $producto->id,
             'nombre' => $producto->nombre,
@@ -245,7 +252,12 @@ class ProductoController extends Controller
 
     public function update(Request $request, $id)
     {
-        $producto = Producto::findOrFail($id);
+        $empresaId = Auth::user()->empresa->id;
+
+        // Buscar producto solo si pertenece a la empresa
+        $producto = Producto::where('id', $id)
+            ->where('id_empresa', $empresaId)
+            ->firstOrFail();
 
         // Actualizar campos
         $producto->nombre = $request->nombre;
@@ -260,10 +272,9 @@ class ProductoController extends Controller
 
         $producto->save();
 
-        // Procesar imágenes y videos nuevos (igual que en store)
-        if ($request->hasFile('archivos')) {
-            foreach ($request->file('archivos') as $archivo) {
-
+        // Procesar archivos nuevos (imágenes/videos)
+        if ($request->hasFile('imagenes')) {
+            foreach ($request->file('imagenes') as $archivo) {
                 $mime = $archivo->getMimeType();
 
                 if (Str::startsWith($mime, 'image/')) {
@@ -271,10 +282,9 @@ class ProductoController extends Controller
                 } elseif (Str::startsWith($mime, 'video/')) {
                     $ruta = $archivo->store('productos/videos', 'public');
                 } else {
-                    continue; // ignorar archivos no válidos
+                    continue;
                 }
 
-                // Registrar en la base de datos
                 Imagen::create([
                     'id_producto' => $producto->id,
                     'ruta' => $ruta,
@@ -284,6 +294,7 @@ class ProductoController extends Controller
 
         return redirect()->route('productos')->with('success', 'Producto actualizado correctamente');
     }
+
     public function exportar(Request $request)
     {
         $categoriasIds = $request->input('categorias', []);

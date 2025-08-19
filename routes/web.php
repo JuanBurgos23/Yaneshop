@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\CategoriaController;
 use App\Http\Controllers\ClienteController;
 use App\Http\Controllers\EmpresaController;
@@ -9,9 +10,15 @@ use App\Http\Controllers\ProductoController;
 use Illuminate\Support\Facades\Route;
 use SebastianBergmann\CodeCoverage\Report\Html\Dashboard;
 
-//Route::get('/',  [ProductoController::class, 'indexWelcome'])->name('welcome');
+Route::get('/', function () {
+    return view('welcome');
+});
 
 Auth::routes();
+// Login
+Route::get('iniciar-sesion', [LoginController::class, 'showLoginForm'])->name('login');
+Route::post('iniciar-sesion', [LoginController::class, 'login']);
+Route::post('cerrar-sesion', [LoginController::class, 'logout'])->name('logout');
 
 Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
 //User
@@ -65,7 +72,6 @@ Route::prefix('ajax')->group(function () {
     Route::get('/load-more-promociones', [ProductoController::class, 'loadMorePromociones'])->name('ajax.loadMorePromociones');
     Route::get('/load-more-nuevos', [ProductoController::class, 'loadMoreNuevos'])->name('ajax.loadMoreNuevos');
     Route::get('/load-more-productos', [ProductoController::class, 'loadMoreProductos'])->name('ajax.loadMoreProductos');
-
 });
 
 Route::get('/{slug}', [ProductoController::class, 'productoInicio'])->name('empresa.public');

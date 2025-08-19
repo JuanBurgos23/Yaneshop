@@ -1,1443 +1,604 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 
 <head>
-    <title>Yane Shop</title>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="icon" type="image/png" href="{{ asset('images/icons/favicon.png') }}" />
-
-    <link rel="stylesheet" type="text/css" href="{{ asset('vendor/bootstrap/css/bootstrap.min.css') }}">
-    <link rel="stylesheet" type="text/css" href="{{ asset('fonts/font-awesome-4.7.0/css/font-awesome.min.css') }}">
-    <link rel="stylesheet" type="text/css" href="{{ asset('fonts/iconic/css/material-design-iconic-font.min.css') }}">
-
-    <link rel="stylesheet" type="text/css" href="{{ asset('fonts/linearicons-v1.0.0/icon-font.min.css') }}">
-    <link rel="stylesheet" type="text/css" href="{{ asset('vendor/animate/animate.css') }}">
-    <link rel="stylesheet" type="text/css" href="{{ asset('vendor/css-hamburgers/hamburgers.min.css') }}">
-
-    <link rel="stylesheet" type="text/css" href="{{ asset('vendor/animsition/css/animsition.min.css') }}">
-    <link rel="stylesheet" type="text/css" href="{{ asset('vendor/select2/select2.min.css') }}">
-    <link rel="stylesheet" type="text/css" href="{{ asset('vendor/daterangepicker/daterangepicker.css') }}">
-
-    <link rel="stylesheet" type="text/css" href="{{ asset('vendor/slick/slick.css') }}">
-    <link rel="stylesheet" type="text/css" href="{{ asset('vendor/MagnificPopup/magnific-popup.css') }}">
-    <link rel="stylesheet" type="text/css" href="{{ asset('vendor/perfect-scrollbar/perfect-scrollbar.css') }}">
-    <link rel="stylesheet" type="text/css" href="{{ asset('css/util.css') }}">
-    <link rel="stylesheet" type="text/css" href="{{ asset('css/main.css') }}">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-    <meta name="csrf-token" content="{{ csrf_token() }}">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TUXON - Soluciones de Software a Medida</title>
     <style>
-        .wrap-slick3-dots ul.slick3-dots {
-            display: flex !important;
-            justify-content: start;
-            padding: 10px 0;
-            gap: 10px;
-            flex-wrap: wrap;
+        :root {
+            --primary: #2c3e50;
+            --secondary: #3498db;
+            --accent: #e74c3c;
+            --light: #ecf0f1;
+            --dark: #2c3e50;
+            --text: #333;
+            --text-light: #7f8c8d;
         }
 
-        /* Imagen o video miniatura */
-        .wrap-slick3-dots img,
-        .wrap-slick3-dots video {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            display: block;
-            border-radius: 4px;
-            pointer-events: none;
-        }
-
-        .slick3-dot-overlay {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            border: 2px solid transparent;
-            border-radius: 4px;
+        * {
+            margin: 0;
+            padding: 0;
             box-sizing: border-box;
-            transition: border 0.2s ease;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
 
-        .wrap-slick3 {
+        body {
+            background-color: var(--light);
+            color: var(--text);
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        header {
+            background: linear-gradient(135deg, var(--primary), var(--dark));
+            color: white;
+            padding: 40px 0;
             position: relative;
+            overflow: hidden;
         }
 
-        /*---------------------------------------------*/
-        .wrap-slick3-arrows {
-            position: absolute;
-            z-index: 100;
-            width: 83.333333%;
-            right: 0;
-            top: calc(50% - 20px);
-        }
-
-        .arrow-slick3 {
-            font-size: 25px;
-            color: #fff;
-
-            position: absolute;
-            top: 0;
-            width: 40px;
-            height: 40px;
-            background-color: rgba(0, 0, 0, 0.5);
-
-            -webkit-transition: all 0.4s;
-            -o-transition: all 0.4s;
-            -moz-transition: all 0.4s;
-            transition: all 0.4s;
-        }
-
-        .arrow-slick3:hover {
-            background-color: rgba(0, 0, 0, 0.9);
-        }
-
-        .prev-slick3 {
-            left: 0px;
-        }
-
-        .next-slick3 {
-            right: 0px;
-        }
-
-        /*---------------------------------------------*/
-        .wrap-slick3-dots {
-            width: 11.111111%;
-        }
-
-        .slick3 {
-            width: 83.333333%;
-        }
-
-        .slick3-dots li {
-            display: block;
-            position: relative;
-            width: 100%;
-            margin-bottom: 27px;
-        }
-
-        .slick3-dots li img {
-            width: 100%;
-        }
-
-
-
-        .slick3-dot-overlay:hover {
-            border-color: #ccc;
-        }
-
-        .slick3-dots .slick-active .slick3-dot-overlay {
-            border-color: #ccc;
-        }
-
-
-
-        .block1.wrap-pic-w img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            /* recorta si es necesario para llenar el contenedor */
-            transition: transform 0.3s ease;
-        }
-
-        /* Contenedor para imágenes grandes (primeras 2) */
-        .col-xl-6 .block1.wrap-pic-w {
-            height: 400px;
-            /* altura fija */
-        }
-
-        .col-xl-6 .block1.wrap-pic-w img {
-            object-fit: contain;
-            /* muestra la imagen completa sin recortar */
-            width: 100%;
-            height: 100%;
-            background-color: #f5f5f5;
-            /* opcional, para que el fondo no sea vacío */
-        }
-
-        /* Contenedor para imágenes pequeñas (últimas 3) */
-        .col-xl-4 .block1.wrap-pic-w {
-            height: 280px;
-        }
-
-        .col-xl-4 .block1.wrap-pic-w img {
-            object-fit: cover;
-            /* llena el espacio recortando si es necesario */
-            width: 100%;
-            height: 100%;
-        }
-
-        .block1.wrap-pic-w:hover img {
-            transform: scale(1.05);
-        }
-
-        .item-slick1 {
-            height: 450px;
-            /* altura controlada del slider */
-            background-size: cover;
-            background-position: center;
-            position: relative;
-        }
-
-        .item-slick1 .container {
-            height: 100%;
+        .header-content {
             display: flex;
-            flex-direction: column;
+            justify-content: space-between;
+            align-items: center;
+            position: relative;
+            z-index: 2;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+        }
+
+        .logo-icon {
+            width: 60px;
+            height: 60px;
+            background-color: var(--accent);
+            border-radius: 50%;
+            display: flex;
             justify-content: center;
             align-items: center;
-            margin-top: -30px;
-            /* 🔼 Esto realmente lo sube */
-            padding-bottom: 20px;
-            gap: 15px;
+            margin-right: 15px;
+            position: relative;
         }
 
+        .logo-icon::before {
+            content: "";
+            position: absolute;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            background-color: white;
+            top: 10px;
+        }
 
-        .flex-col-c-m {
+        .logo-icon::after {
+            content: "";
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background-color: var(--accent);
+            top: 5px;
+            left: 15px;
+            box-shadow:
+                20px 0 0 var(--accent),
+                0 25px 0 var(--accent),
+                20px 25px 0 var(--accent);
+        }
+
+        .logo-text h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 5px;
+        }
+
+        .logo-text p {
+            font-size: 1rem;
+            opacity: 0.9;
+        }
+
+        .nav-links {
+            display: flex;
+            list-style: none;
+        }
+
+        .nav-links li {
+            margin-left: 30px;
+        }
+
+        .nav-links a {
+            color: white;
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .nav-links a:hover {
+            color: var(--accent);
+        }
+
+        .hero {
+            text-align: center;
+            padding: 80px 0;
+        }
+
+        .hero h2 {
+            font-size: 3rem;
+            margin-bottom: 20px;
+            color: var(--primary);
+        }
+
+        .hero p {
+            font-size: 1.2rem;
+            max-width: 800px;
+            margin: 0 auto 40px;
+            color: var(--text-light);
+        }
+
+        .btn {
+            display: inline-block;
+            background-color: var(--accent);
+            color: white;
+            padding: 12px 30px;
+            border-radius: 30px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            border: none;
+            cursor: pointer;
+        }
+
+        .btn:hover {
+            background-color: #c0392b;
+            transform: translateY(-3px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .services {
+            padding: 80px 0;
+            background-color: white;
+        }
+
+        .section-title {
+            text-align: center;
+            margin-bottom: 60px;
+        }
+
+        .section-title h2 {
+            font-size: 2.5rem;
+            color: var(--primary);
+            position: relative;
+            display: inline-block;
+        }
+
+        .section-title h2::after {
+            content: "";
+            position: absolute;
+            width: 50px;
+            height: 3px;
+            background-color: var(--accent);
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
+        .services-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+        }
+
+        .service-card {
+            background-color: var(--light);
+            border-radius: 10px;
+            padding: 30px;
+            transition: all 0.3s ease;
+            text-align: center;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+        }
+
+        .service-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        .service-icon {
+            font-size: 3rem;
+            color: var(--secondary);
+            margin-bottom: 20px;
+        }
+
+        .service-card h3 {
+            font-size: 1.5rem;
+            margin-bottom: 15px;
+            color: var(--primary);
+        }
+
+        .service-card p {
+            color: var(--text-light);
+        }
+
+        .industries {
+            padding: 80px 0;
+            background-color: #f9f9f9;
+        }
+
+        .industries-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+
+        .industry-item {
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+        }
+
+        .industry-icon {
+            width: 50px;
+            height: 50px;
+            background-color: var(--light);
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-right: 15px;
+            color: var(--secondary);
+            font-size: 1.5rem;
+        }
+
+        .cta {
+            padding: 100px 0;
+            background: linear-gradient(135deg, var(--primary), var(--dark));
+            color: white;
             text-align: center;
         }
 
-        .layer-slick1 {
+        .cta h2 {
+            font-size: 2.5rem;
             margin-bottom: 20px;
-            color: #fff;
         }
 
-        /* responsive */
+        .cta p {
+            font-size: 1.2rem;
+            max-width: 700px;
+            margin: 0 auto 40px;
+            opacity: 0.9;
+        }
+
+        footer {
+            background-color: var(--dark);
+            color: white;
+            padding: 50px 0 20px;
+        }
+
+        .footer-content {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+
+        .footer-column h3 {
+            font-size: 1.3rem;
+            margin-bottom: 20px;
+            position: relative;
+        }
+
+        .footer-column h3::after {
+            content: "";
+            position: absolute;
+            width: 30px;
+            height: 2px;
+            background-color: var(--accent);
+            bottom: -8px;
+            left: 0;
+        }
+
+        .footer-column p {
+            opacity: 0.8;
+            margin-bottom: 15px;
+        }
+
+        .footer-links {
+            list-style: none;
+        }
+
+        .footer-links li {
+            margin-bottom: 10px;
+        }
+
+        .footer-links a {
+            color: white;
+            text-decoration: none;
+            opacity: 0.8;
+            transition: all 0.3s ease;
+        }
+
+        .footer-links a:hover {
+            opacity: 1;
+            padding-left: 5px;
+        }
+
+        .footer-bottom {
+            text-align: center;
+            padding-top: 20px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .footer-bottom p {
+            opacity: 0.7;
+            font-size: 0.9rem;
+        }
+
         @media (max-width: 768px) {
-            .item-slick1 {
-                height: 300px;
+            .header-content {
+                flex-direction: column;
+                text-align: center;
             }
 
-            .layer-slick1 h2 {
-                font-size: 24px;
+            .logo {
+                margin-bottom: 20px;
+                justify-content: center;
+            }
+
+            .nav-links {
+                margin-top: 20px;
+            }
+
+            .nav-links li {
+                margin: 0 10px;
+            }
+
+            .hero h2 {
+                font-size: 2.2rem;
+            }
+
+            .hero p {
+                font-size: 1rem;
             }
         }
 
-        .swal2-container {
-            z-index: 99999 !important;
+        /* Animaciones */
+        @keyframes float {
+
+            0%,
+            100% {
+                transform: translateY(0);
+            }
+
+            50% {
+                transform: translateY(-10px);
+            }
+        }
+
+        .floating {
+            animation: float 3s ease-in-out infinite;
         }
     </style>
 </head>
 
-<body class="animsition">
-
-    <!-- Header -->
-    <header class="header-v3">
-        <!-- Header desktop -->
-        <div class="container-menu-desktop trans-03">
-            <div class="wrap-menu-desktop">
-                <nav class="limiter-menu-desktop p-l-45">
-
-                    <!-- Logo desktop -->
-                    <a href="#" class="logo">
-                        <img src="{{ asset('images/yane/yane2.png') }}" alt="IMG-LOGO">
-                    </a>
-
-                    <!-- Menu desktop -->
-                    <div class="menu-desktop">
-                        <ul class="main-menu">
-                            <li>
-                                <a href="{{ url($empresa->slug) }}">Inicio</a>
-                            </li>
-
-                            <li>
-                                <a href="{{ route('comprar.public', ['slug' => $empresa->slug]) }}">Comprar</a>
-                            </li>
-
-                            <li>
-                                <a href="about.html">Sobre nosotros</a>
-                            </li>
-
-                            <li>
-                                <a href="contact.html">Contacto</a>
-                            </li>
-                        </ul>
-                    </div>
-
-                    <!-- Icon header -->
-                    <div class="wrap-icon-header flex-w flex-r-m h-full">
-                        <div class="flex-c-m h-full p-r-25 bor6">
-                            <div class="icon-header-item cl0 hov-cl1 trans-04 p-lr-11 icon-header-noti js-show-cart" data-notify>
-                                <i class="zmdi zmdi-shopping-cart"></i>
-                            </div>
-                        </div>
-
-                        <div class="flex-c-m h-full p-lr-19">
-                            <div class="icon-header-item cl0 hov-cl1 trans-04 p-lr-11 js-show-sidebar">
-                                <i class="zmdi zmdi-menu"></i>
-                            </div>
-                        </div>
-                    </div>
-                </nav>
-            </div>
-        </div>
-
-        <!-- Header Mobile -->
-        <div class="wrap-header-mobile">
-            <!-- Logo moblie -->
-            <div class="logo-mobile">
-                <a href="{{ url('/') }}"><img src="{{ asset('images/yane/yane2.png') }}" alt="IMG-LOGO"></a>
-            </div>
-
-            <!-- Icon header -->
-            <div class="wrap-icon-header flex-w flex-r-m h-full m-r-15">
-                <div class="flex-c-m h-full p-r-5">
-                    <div class="icon-header-item cl2 hov-cl1 trans-04 p-lr-11 icon-header-noti js-show-cart" data-notify>
-                        <i class="zmdi zmdi-shopping-cart"></i>
+<body>
+    <header>
+        <div class="container">
+            <div class="header-content">
+                <div class="logo">
+                    <img src="{{ asset('images/yane/tuxson1.jpg') }}" alt="" class="logo-icon floating">
+                    <div class="logo-text">
+                        <h1>TUXON</h1>
+                        <p>Soluciones de Software a Medida</p>
                     </div>
                 </div>
+                <ul class="nav-links">
+                    <li><a href="#servicios">Servicios</a></li>
+                    <li><a href="#industrias">Industrias</a></li>
+                    <li><a href="#contacto">Contacto</a></li>
+                </ul>
             </div>
-
-            <!-- Button show menu -->
-            <div class="btn-show-menu-mobile hamburger hamburger--squeeze">
-                <span class="hamburger-box">
-                    <span class="hamburger-inner"></span>
-                </span>
-            </div>
-        </div>
-
-
-        <!-- Menu Mobile -->
-        <div class="menu-mobile">
-            <ul class="main-menu-m">
-                <li>
-                    <a href="{{ url($empresa->slug) }}">Inicio</a>
-                    <span class="arrow-main-menu-m">
-                        <i class="fa fa-angle-right" aria-hidden="true"></i>
-                    </span>
-                </li>
-
-                <li>
-                    <a href="{{ route('comprar.public', ['slug' => $empresa->slug]) }}">Comprar</a>
-                </li>
-
-
-                <li>
-                    <a href="about.html">Sobre nosotros</a>
-                </li>
-
-                <li>
-                    <a href="contact.html">Contacto</a>
-                </li>
-            </ul>
-        </div>
-
-        <!-- Modal Search -->
-        <div class="modal-search-header flex-c-m trans-04 js-hide-modal-search">
-            <button class="flex-c-m btn-hide-modal-search trans-04">
-                <i class="zmdi zmdi-close"></i>
-            </button>
-
-            <form class="container-search-header">
-                <div class="wrap-search-header">
-                    <input class="plh0" type="text" name="search" placeholder="Search...">
-
-                    <button class="flex-c-m trans-04">
-                        <i class="zmdi zmdi-search"></i>
-                    </button>
-                </div>
-            </form>
         </div>
     </header>
 
-
-    <!-- Sidebar -->
-
-    <!-- Cart -->
-    <div class="wrap-header-cart js-panel-cart">
-        <div class="s-full js-hide-cart"></div>
-
-        <div class="header-cart flex-col-l p-l-65 p-r-25">
-            <div class="header-cart-title flex-w flex-sb-m p-b-8">
-                <span class="mtext-103 cl2">
-                    Carrito de compras
-                </span>
-                <div class="fs-35 lh-10 cl2 p-lr-5 pointer hov-cl1 trans-04 js-hide-cart">
-                    <i class="zmdi zmdi-close"></i>
-                </div>
-            </div>
-
-            <!-- CONTENIDO DEL CARRITO -->
-            <div id="carrito-content" class="header-cart-content flex-w js-pscroll">
-                <ul class="header-cart-wrapitem w-full">
-                    <!-- Se rellena con JS -->
-                </ul>
-
-                <div class="w-full">
-                    <div class="header-cart-total w-full p-tb-40">
-                        Total: Bs. 0.00
-                    </div>
-
-                    <div class="header-cart-buttons flex-w w-full">
-                        <button id="btn-whatsapp" class="flex-c-m stext-101 cl0 size-107 bg-success bor2 hov-btn3 p-lr-15 trans-04 m-b-10">
-                            Consultar por WhatsApp
-                        </button>
-                    </div>
-                </div>
-            </div>
-
-            <!-- FORMULARIO DE REGISTRO -->
-            <div id="registro-content" class="header-cart-content flex-w js-pscroll" style="display:none;">
-                <div class="w-full p-t-20">
-                    <h4 class="mtext-105 cl2 p-b-14">Datos para la consulta</h4>
-
-                    <!-- Campo CI primero -->
-                    <div class="m-b-12">
-                        <input id="reg-ci" type="text" class="size-114 bor4 stext-111 p-lr-15" placeholder="CI">
-                        <small id="ci-status" class="stext-111"></small>
-                    </div>
-
-                    <div class="m-b-12">
-                        <input id="reg-nombre" type="text" class="size-114 bor4 stext-111 p-lr-15" placeholder="Nombre completo">
-                    </div>
-                    <div class="m-b-12">
-                        <input id="reg-direccion" type="text" class="size-114 bor4 stext-111 p-lr-15" placeholder="Dirección">
-                    </div>
-                    <div class="m-b-12">
-                        <input id="reg-ciudad" type="text" class="size-114 bor4 stext-111 p-lr-15" placeholder="Ciudad">
-                    </div>
-
-                    <div class="flex-w m-t-20">
-                        <button id="guardar-registro" class="flex-c-m stext-101 cl0 size-121 bg-success bor2 hov-btn3 p-lr-15 trans-04 m-r-8">
-                            Registrar y Consultar
-                        </button>
-                        <button id="volver-carrito" class="flex-c-m stext-101 cl0 size-121 bg2 bor2 hov-btn2 p-lr-15 trans-04">
-                            Volver
-                        </button>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-
-
-
-
-
-    <!-- Slider -->
-    <section class="section-slide">
-        <div class="wrap-slick1 rs2-slick1">
-            <div class="slick1">
-                @foreach ($productos->take(3) as $producto)
-                @php
-                $categoria = $producto->categoria;
-                $imagen = $producto->imagenes->first();
-                $backgroundImage = $imagen ? asset('storage/' . $imagen->ruta) : asset('images/default.jpg');
-                @endphp
-
-                <div class="item-slick1 bg-overlay1" style="background-image: url('{{ $backgroundImage }}');"
-                    data-thumb="{{ $backgroundImage }}"
-                    data-caption="{{ $categoria->nombre ?? 'Categoría' }}">
-                    <div class="container">
-                        <div class="flex-col-c-m">
-                            <div class="layer-slick1 animated visible-false" data-appear="fadeInDown" data-delay="0">
-                                <span class="ltext-202 txt-center cl0 respon2">
-                                    {{ $categoria->nombre ?? 'Categoría' }}
-                                </span>
-                            </div>
-
-                            <div class="layer-slick1 animated visible-false" data-appear="fadeInUp" data-delay="800">
-                                <h2 class="ltext-104 txt-center cl0 p-t-22 p-b-40 respon1">
-                                    {{ $producto->nombre }}
-                                </h2>
-                            </div>
-
-                            <!--<div class="layer-slick1 animated visible-false" data-appear="zoomIn" data-delay="1600">
-                                <a href=""
-                                    class="flex-c-m stext-101 cl0 size-101 bg1 bor1 hov-btn2 p-lr-15 trans-04">
-                                    Comprar Ahora
-                                </a>
-                            </div>-->
-                        </div>
-                    </div>
-                </div>
-
-                @endforeach
-            </div>
-
-            <div class="wrap-slick1-dots p-lr-10"></div>
+    <section class="hero">
+        <div class="container">
+            <h2>Transformamos tu negocio con tecnología</h2>
+            <p>En TUXON desarrollamos sistemas de software personalizados que optimizan tus operaciones, mejoran la experiencia de tus clientes y aumentan tu productividad.</p>
+            <a href="#contacto" class="btn">Contáctanos</a>
         </div>
     </section>
 
-
-
-
-    <!-- Banner -->
-    <!-- Banner dinámico -->
-    <div class="sec-banner bg0 p-t-80 p-b-50">
+    <section class="services" id="servicios">
         <div class="container">
-            <div class="row">
-                @foreach ($categorias->take(5) as $i => $categoria)
-                @php
-                $productoConImagen = $categoria->productos->firstWhere('imagenes.0', '!=', null);
-                if (!$productoConImagen) {
-                $productoConImagen = $categoria->productos->first();
-                }
-                $imagen = ($productoConImagen && $productoConImagen->imagenes->first())
-                ? asset('storage/' . $productoConImagen->imagenes->first()->ruta)
-                : asset('images/default.jpg');
-                @endphp
-
-                <div class="{{ $i < 2 ? 'col-md-6 col-xl-6' : 'col-md-6 col-xl-4' }} p-b-30 m-lr-auto">
-                    <div class="block1 wrap-pic-w">
-                        <img src="{{ $imagen }}" alt="{{ $productoConImagen->nombre ?? 'Producto' }}">
-
-                        <div class="block1-txt ab-t-l s-full flex-col-l-sb p-lr-38 p-tb-34 trans-03 respon3">
-                            <div class="block1-txt-child1 flex-col-l">
-                                <span class="block1-name ltext-102 trans-04 p-b-8">
-                                    {{ $categoria->nombre }}
-                                </span>
-                                <span class="block1-info stext-102 trans-04">
-                                    {{ $productoConImagen->nombre ?? 'Explora nuestros productos' }}
-                                </span>
-                            </div>
-
-                            <!--<div class="block1-txt-child2 p-b-4 trans-05">
-                                <div class="block1-link stext-101 cl0 trans-09">
-                                    Comprar ahora
-                                </div>
-                            </div>-->
-                        </div>
-                    </div>
-                </div>
-                @endforeach
+            <div class="section-title">
+                <h2>Nuestros Servicios</h2>
             </div>
-        </div>
-    </div>
-    <!-- Product -->
-    <section class="bg0 p-t-23 p-b-130">
-        <div class="container">
-            <div class="p-b-10">
-                <h3 class="ltext-103 cl5">
-                    Productos
-                </h3>
-            </div>
-
-            <div class="flex-w flex-sb-m p-b-52">
-                <div class="flex-w flex-l-m filter-tope-group m-tb-10 align-items-center">
-                    <button class="stext-106 cl6 hov1 bor3 trans-04 m-r-32 m-tb-5 how-active1" data-filter="*">
-                        Todos
-                    </button>
-
-                    {{-- Mostrar primeras 5 categorías como botones --}}
-                    @foreach ($categorias->take(5) as $categoria)
-                    <button
-                        class="stext-106 cl6 hov1 bor3 trans-04 m-r-32 m-tb-5"
-                        data-filter=".{{ strtolower(Str::slug($categoria->nombre)) }}">
-                        {{ $categoria->nombre }}
-                    </button>
-                    @endforeach
-
-                    {{-- Si hay más de 5 categorías, mostrar select --}}
-                    @if ($categorias->count() > 5)
-                    <div id="select-categorias-wrapper" class="m-r-32 m-tb-5">
-                        <select id="select-categorias" class="stext-106 cl6 bor3 trans-04 p-lr-10" style="height: 38px; border: 1px solid #ccc;">
-                            <option value="">Más categorías</option>
-                            @foreach ($categorias->skip(5) as $categoria)
-                            <option value=".{{ strtolower(Str::slug($categoria->nombre)) }}">{{ $categoria->nombre }}</option>
-                            @endforeach
-                        </select>
-                    </div>
-                    @endif
+            <div class="services-grid">
+                <div class="service-card">
+                    <div class="service-icon">👨‍💻</div>
+                    <h3>Sistemas para Gimnasios</h3>
+                    <p>Módulos completos para gestión de inventario, control de asistencia por huella digital, registro y verificación biométrica, y gestión de ventas con código de barras.</p>
                 </div>
-
-
-
-                <div class="flex-w flex-c-m m-tb-10">
-                    <div class="flex-c-m stext-106 cl6 size-104 bor4 pointer hov-btn3 trans-04 m-r-8 m-tb-4 js-show-filter">
-                        <i class="icon-filter cl2 m-r-6 fs-15 trans-04 zmdi zmdi-filter-list"></i>
-                        <i class="icon-close-filter cl2 m-r-6 fs-15 trans-04 zmdi zmdi-close dis-none"></i>
-                        Filter
-                    </div>
-
-                    <div class="flex-c-m stext-106 cl6 size-105 bor4 pointer hov-btn3 trans-04 m-tb-4 js-show-search">
-                        <i class="icon-search cl2 m-r-6 fs-15 trans-04 zmdi zmdi-search"></i>
-                        <i class="icon-close-search cl2 m-r-6 fs-15 trans-04 zmdi zmdi-close dis-none"></i>
-                        Buscar
-                    </div>
+                <div class="service-card">
+                    <div class="service-icon">🏪</div>
+                    <h3>Tiendas Virtuales</h3>
+                    <p>Plataformas de consulta por WhatsApp para que tus clientes puedan realizar pedidos fácilmente sin necesidad de pagos en línea.</p>
                 </div>
-
-                <!-- Search product -->
-                <div class="dis-none panel-search w-full p-t-10 p-b-15">
-                    <div class="bor8 dis-flex p-l-15">
-                        <button class="size-113 flex-c-m fs-16 cl2 hov-cl1 trans-04">
-                            <i class="zmdi zmdi-search"></i>
-                        </button>
-
-                        <input class="mtext-107 cl2 size-114 plh2 p-r-15" type="text" name="search-product" placeholder="Buscar producto">
-                    </div>
+                <div class="service-card">
+                    <div class="service-icon">💊</div>
+                    <h3>Sistemas para Farmacias</h3>
+                    <p>Soluciones especializadas para el control de inventario, ventas y gestión de medicamentos en farmacias.</p>
                 </div>
-
-                <!-- Filter -->
-                <div class="dis-none panel-filter w-full p-t-10">
-                    <div class="wrap-filter flex-w bg6 w-full p-lr-40 p-t-27 p-lr-15-sm">
-                        <div class="filter-col2 p-r-15 p-b-27">
-                            <div class="mtext-102 cl2 p-b-15">
-                                Precios
-                            </div>
-
-                            <ul>
-                                <li class="p-b-6">
-                                    <a href="#" class="filter-link stext-106 trans-04 filter-link-active filter-price" data-min="0" data-max="10000">
-                                        Todos
-                                    </a>
-                                </li>
-
-                                <li class="p-b-6">
-                                    <a href="#" class="filter-link stext-106 trans-04 filter-price" data-min="0" data-max="50">
-                                        Bs.0.00 - Bs.50.00
-                                    </a>
-                                </li>
-
-                                <li class="p-b-6">
-                                    <a href="#" class="filter-link stext-106 trans-04 filter-price" data-min="50" data-max="100">
-                                        Bs.50.00 - Bs.100.00
-                                    </a>
-                                </li>
-
-                                <li class="p-b-6">
-                                    <a href="#" class="filter-link stext-106 trans-04 filter-price" data-min="100" data-max="150">
-                                        Bs.100.00 - Bs.150.00
-                                    </a>
-                                </li>
-
-                                <li class="p-b-6">
-                                    <a href="#" class="filter-link stext-106 trans-04 filter-price" data-min="150" data-max="200">
-                                        Bs.150.00 - Bs.200.00
-                                    </a>
-                                </li>
-
-                                <li class="p-b-6">
-                                    <a href="#" class="filter-link stext-106 trans-04 filter-price" data-min="200" data-max="100000">
-                                        Bs.200.00+
-                                    </a>
-                                </li>
-                            </ul>
-
-                        </div>
-
-                    </div>
+                <div class="service-card">
+                    <div class="service-icon">🛠️</div>
+                    <h3>Sistemas para Ferreterías</h3>
+                    <p>Herramientas digitales para la gestión de productos, ventas y control de inventario en ferreterías.</p>
+                </div>
+                <div class="service-card">
+                    <div class="service-icon">🍽️</div>
+                    <h3>Sistemas para Restaurantes</h3>
+                    <p>Plataformas completas para gestión de pedidos, mesas, inventario y ventas en establecimientos gastronómicos.</p>
+                </div>
+                <div class="service-card">
+                    <div class="service-icon">📦</div>
+                    <h3>Sistemas a Medida</h3>
+                    <p>Desarrollamos software personalizado adaptado a las necesidades específicas de tu negocio.</p>
                 </div>
             </div>
-            @if($promociones->count())
-            <section class="p-t-30 p-b-20">
-                <h4 class="text-center m-b-20">🔥 Promociones</h4>
-                @include('catalogo.catalogoNuevos', ['productos' => $promociones])
-            </section>
-            @endif
-
-            @if($nuevos->count())
-            <section class="p-t-30 p-b-20">
-                <h4 class="text-center m-b-20">🆕 Nuevos</h4>
-                @include('catalogo.catalogoNuevos', ['productos' => $nuevos])
-            </section>
-            @endif
-            <div class="row isotope-grid">
-                @foreach($productos as $producto)
-                <div class="col-6 col-sm-6 col-md-4 col-lg-3 p-b-35 isotope-item {{ strtolower(Str::slug($producto->categoria->nombre ?? '')) }}" data-precio="{{ $producto->precio }}">
-                    <div class="block2">
-                        @php
-                        $imagen = $producto->imagenes->first();
-                        $esNuevo = \Carbon\Carbon::parse($producto->created_at)->gt(now()->subDays(5));
-                        @endphp
-                        <div class="block2-pic hov-img0 {{ $esNuevo ? 'label-new' : '' }}" data-label="{{ $esNuevo ? 'New' : '' }}">
-                            <img class="img-fluid" src="{{ $imagen ? asset('storage/' . $imagen->ruta) : asset('images/default.jpg') }}"
-                                alt="IMG-PRODUCT"
-                                style="object-fit: cover; width: 100%; height: 330px;">
-
-                            <a href="#"
-                                class="block2-btn flex-c-m stext-103 cl2 size-102 bg0 bor2 hov-btn1 p-lr-15 trans-04 js-show-modal1"
-                                data-product="{{ $producto->id }}">
-                                Ver Producto
-                            </a>
-                        </div>
-                        <div class="block2-txt flex-w flex-t p-t-14">
-                            <div class="block2-txt-child1 flex-col-l ">
-                                <div class="stext-104 cl4 hov-cl1 trans-04 js-name-b2 p-b-6">
-                                    {{ $producto->nombre }}
-                                </div>
-                                <div class="js-extra-busqueda" style="display:none;">
-                                    {{ $producto->descripcion }} {{ $producto->categoria->nombre ?? '' }}
-                                </div>
-                                <span class="stext-105 cl3">
-                                    Bs. {{ number_format($producto->precio, 2) }}
-                                </span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                @endforeach
-            </div>
-        </div>
-
-        <!-- Pagination -->
-        @php
-        $totalPages = $productos->lastPage();
-        $currentPage = $productos->currentPage();
-        @endphp
-
-        <div class="flex-c-m flex-w w-full p-t-38">
-            @for ($i = 1; $i <= $totalPages; $i++)
-                <a href="{{ $productos->url($i) }}"
-                class="flex-c-m how-pagination1 trans-04 m-all-7 {{ $currentPage == $i ? 'active-pagination1' : '' }}">
-                {{ $i }}
-                </a>
-                @endfor
-        </div>
         </div>
     </section>
 
+    <section class="industries" id="industrias">
+        <div class="container">
+            <div class="section-title">
+                <h2>Industrias que Atendemos</h2>
+            </div>
+            <div class="industries-grid">
+                <div class="industry-item">
+                    <div class="industry-icon">💪</div>
+                    <div>
+                        <h3>Gimnasios</h3>
+                        <p>Control de membresías y asistencia</p>
+                    </div>
+                </div>
+                <div class="industry-item">
+                    <div class="industry-icon">🛒</div>
+                    <div>
+                        <h3>Comercios</h3>
+                        <p>Gestión de ventas e inventario</p>
+                    </div>
+                </div>
+                <div class="industry-item">
+                    <div class="industry-icon">💊</div>
+                    <div>
+                        <h3>Farmacias</h3>
+                        <p>Control de medicamentos</p>
+                    </div>
+                </div>
+                <div class="industry-item">
+                    <div class="industry-icon">🛠️</div>
+                    <div>
+                        <h3>Ferreterías</h3>
+                        <p>Gestión de productos</p>
+                    </div>
+                </div>
+                <div class="industry-item">
+                    <div class="industry-icon">🍽️</div>
+                    <div>
+                        <h3>Restaurantes</h3>
+                        <p>Control de pedidos y mesas</p>
+                    </div>
+                </div>
+                <div class="industry-item">
+                    <div class="industry-icon">📊</div>
+                    <div>
+                        <h3>Empresas Varias</h3>
+                        <p>Soluciones personalizadas</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
 
-    <!-- Footer -->
+    <section class="cta" id="contacto">
+        <div class="container">
+            <h2>¿Listo para digitalizar tu negocio?</h2>
+            <p>En TUXON estamos comprometidos con el éxito de tu empresa a través de soluciones tecnológicas innovadoras y personalizadas.</p>
+            <a href="#" class="btn">Solicitar una Cotización</a>
+        </div>
+    </section>
+
     <footer>
-        <div class="p-t-40">
-            <p class="stext-107 cl6 txt-center">
-                &copy; {{ date('Y') }} Sistema de <strong>TUXSON</strong> | Desarrollado por <strong href="">Juan Burgos</strong>
-
-            </p>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-column">
+                    <h3>Sobre TUXON</h3>
+                    <p>Somos una empresa especializada en desarrollo de software a medida, comprometida con la excelencia y la innovación tecnológica.</p>
+                    <p>Nuestro nombre y logo están inspirados en la elegancia y agilidad de un gato, valores que reflejamos en nuestros productos.</p>
+                </div>
+                <div class="footer-column">
+                    <h3>Servicios</h3>
+                    <ul class="footer-links">
+                        <li><a href="#">Sistemas para Gimnasios</a></li>
+                        <li><a href="#">Tiendas Virtuales</a></li>
+                        <li><a href="#">Sistemas para Farmacias</a></li>
+                        <li><a href="#">Sistemas para Ferreterías</a></li>
+                        <li><a href="#">Sistemas para Restaurantes</a></li>
+                        <li><a href="#">Desarrollo a Medida</a></li>
+                    </ul>
+                </div>
+                <div class="footer-column">
+                    <h3>Contacto</h3>
+                    <p>info@tuxon.com</p>
+                    <p>+123 456 7890</p>
+                    <p>Av. Tecnológica 123, Ciudad Digital</p>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2023 TUXON. Todos los derechos reservados.</p>
+            </div>
         </div>
-
     </footer>
 
-    <!-- Back to top -->
-    <div class="btn-back-to-top" id="myBtn">
-        <span class="symbol-btn-back-to-top">
-            <i class="zmdi zmdi-chevron-up"></i>
-        </span>
-    </div>
-
-    <!-- Modal1 -->
-    <div class="wrap-modal1 js-modal1 p-t-60 p-b-20" style="display:none;">
-        <div class="overlay-modal1 js-hide-modal1"></div>
-
-        <div class="container">
-            <div class="bg0 p-t-60 p-b-30 p-lr-15-lg how-pos3-parent">
-                <button class="how-pos3 hov3 trans-04 js-hide-modal1">
-                    <img src="{{ asset('images/icons/icon-close.png') }}" alt="CLOSE">
-                </button>
-
-                <div class="row">
-                    <div class="col-md-6 col-lg-7 p-b-30">
-                        <div class="p-l-25 p-r-30 p-lr-0-lg">
-                            <div class="wrap-slick3 flex-sb flex-w">
-                                <div class="wrap-slick3-dots"></div>
-                                <div class="wrap-slick3-arrows flex-sb-m flex-w"></div>
-
-                                <div class="slick3 gallery-lb">
-                                    <!-- Aquí cargaremos imágenes y videos dinámicamente -->
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="col-md-6 col-lg-5 p-b-30">
-                        <div class="p-r-50 p-t-5 p-lr-0-lg">
-                            <h4 class="mtext-105 cl2 js-name-detail p-b-14"></h4>
-                            <span class="mtext-106 cl2 js-price-detail"></span>
-                            <p class="stext-102 cl3 p-t-23 js-desc-detail"></p>
-
-                            <!-- Botones debajo de la descripción -->
-                            <div class="p-t-25 flex-w">
-                                <button id="mi-btn-add-to-cart"
-                                    class="flex-c-m stext-101 cl0 size-101 bg1 bor1 hov-btn1 p-lr-15 trans-04 m-r-10">
-                                    <i class="zmdi zmdi-plus-circle-o m-r-5"></i> Agregar
-                                </button>
-
-                                <button id="btn-ver-carrito"
-                                    class="btn-ver-carrito-wrapper flex-c-m stext-101 cl0 size-101 bg3 bor1 hov-btn3 p-lr-15 trans-04"
-                                    style="position: relative;">
-                                    <i class="zmdi zmdi-shopping-cart m-r-5"></i> Ver carrito
-                                    <span id="contador-ver-carrito" style="
-                                    background:red;
-                                    color:white;
-                                    border-radius:50%;
-                                    padding:2px 6px;
-                                    font-size:12px;
-                                    position:absolute;
-                                    top:-8px;
-                                    right:-8px;
-                                    display:none;
-                                ">0</span>
-                                </button>
-                            </div>
-                            <!-- Fin botones -->
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-
-    <!--===============================================================================================-->
-    <script src="{{ asset('vendor/jquery/jquery-3.2.1.min.js') }}"></script>
-    <!--===============================================================================================-->
-    <script src="{{ asset('vendor/animsition/js/animsition.min.js') }}"></script>
-    <!--===============================================================================================-->
-    <script src="{{ asset('vendor/bootstrap/js/popper.js') }}"></script>
-    <script src="{{ asset('vendor/bootstrap/js/bootstrap.min.js') }}"></script>
-    <!--===============================================================================================-->
-    <script src="{{ asset('vendor/select2/select2.min.js') }}"></script>
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
-        $(".js-select2").each(function() {
-            $(this).select2({
-                minimumResultsForSearch: 20,
-                dropdownParent: $(this).next('.dropDownSelect2')
-            });
-        })
-    </script>
-    <!--===============================================================================================-->
-    <script src="{{ asset('vendor/daterangepicker/moment.min.js') }}"></script>
-    <script src="{{ asset('vendor/daterangepicker/daterangepicker.js') }}"></script>
-    <!--===============================================================================================-->
-    <script src="{{ asset('vendor/slick/slick.min.js') }}"></script>
-    <script src="{{ asset('js/slick-custom.js') }}"></script>
-    <!--===============================================================================================-->
-    <script src="{{ asset('vendor/parallax100/parallax100.js') }}"></script>
-    <script>
-        $('.parallax100').parallax100();
-    </script>
-    <!--===============================================================================================-->
-    <script src="{{ asset('vendor/MagnificPopup/jquery.magnific-popup.min.js') }}"></script>
-    <script>
-        $('.gallery-lb').each(function() { // the containers for all your galleries
-            $(this).magnificPopup({
-                delegate: 'a', // the selector for gallery item
-                type: 'image',
-                gallery: {
-                    enabled: true
-                },
-                mainClass: 'mfp-fade'
-            });
-        });
-    </script>
-    <!--===============================================================================================-->
-    <script src="{{ asset('vendor/isotope/isotope.pkgd.min.js') }}"></script>
-    <!--===============================================================================================-->
-    <script src="{{ asset('vendor/sweetalert/sweetalert.min.js') }}"></script>
-
-    <!--===============================================================================================-->
-    <script src="{{ asset('vendor/perfect-scrollbar/perfect-scrollbar.min.js') }}"></script>
-    <script>
-        $('.js-pscroll').each(function() {
-            $(this).css('position', 'relative');
-            $(this).css('overflow', 'hidden');
-            var ps = new PerfectScrollbar(this, {
-                wheelSpeed: 1,
-                scrollingThreshold: 1000,
-                wheelPropagation: false,
-            });
-
-            $(window).on('resize', function() {
-                ps.update();
-            })
-        });
-    </script>
-    <!--===============================================================================================-->
-    <script src="{{ asset('js/main.js') }}"></script>
-    <script>
-        $(document).ready(function() {
-            function initSlick() {
-                $('.wrap-slick3').each(function() {
-                    const $wrap = $(this);
-                    const $gallery = $wrap.find('.slick3');
-                    const $dotsContainer = $wrap.find('.wrap-slick3-dots');
-
-                    $gallery.slick({
-                        slidesToShow: 1,
-                        slidesToScroll: 1,
-                        fade: true,
-                        infinite: true,
-                        autoplay: false,
-                        arrows: true,
-                        appendArrows: $wrap.find('.wrap-slick3-arrows'),
-                        prevArrow: '<button class="arrow-slick3 prev-slick3 slick-arrow" style=""><i class="fa fa-angle-left" aria-hidden="true"></i></button>',
-                        nextArrow: '<button class="arrow-slick3 next-slick3 slick-arrow" style=""><i class="fa fa-angle-right" aria-hidden="true"></i></button>',
-                        dots: true,
-                        appendDots: $dotsContainer,
-                        dotsClass: 'slick3-dots',
-                        customPaging: function(slider, i) {
-                            const thumb = $(slider.$slides[i]).data('thumb') || '';
-                            const isVideo = thumb.toLowerCase().endsWith('.mp4');
-
-                            return `
-                            <li role="presentation">
-                                ${isVideo
-                                    ? `<video src="${thumb}" muted playsinline></video>`
-                                    : `<img src="${thumb}" alt="thumb" />`
-                                }
-                                <div class="slick3-dot-overlay"></div>
-                            </li>`;
-                        }
-                    });
-
-                    // ✅ Actualiza manualmente el active luego del render
-                    setTimeout(() => {
-                        const $dots = $dotsContainer.find('li');
-                        const currentIndex = $gallery.slick('slickCurrentSlide');
-                        $dots.removeClass('slick-active');
-                        $dots.eq(currentIndex).addClass('slick-active');
-                    }, 100);
-
-                    // ✅ Cambio de slide actualiza activo
-                    $gallery.on('afterChange', function(event, slick, currentSlide) {
-                        const $dots = $dotsContainer.find('li');
-                        $dots.removeClass('slick-active');
-                        $dots.eq(currentSlide).addClass('slick-active');
-                    });
-
-                    // ✅ Click manual en thumbnails
-                    $dotsContainer.on('click', 'li', function() {
-                        const index = $(this).index();
-                        $gallery.slick('slickGoTo', index);
-                    });
-                });
-            }
-
-            $(document).on('click', '.js-show-modal1', function(e) {
+        // Efecto smooth scroll para los enlaces
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function(e) {
                 e.preventDefault();
 
-                const productoId = $(this).data('product');
-                console.log('Producto ID:', productoId);
-
-                if (!productoId) return alert('No se encontró el ID del producto.');
-
-                if ($('.wrap-modal1 .slick3').hasClass('slick-initialized')) {
-                    $('.wrap-modal1 .slick3').slick('unslick');
-                }
-                $('.wrap-modal1 .slick3').empty();
-                $('.js-name-detail').text('');
-                $('.js-price-detail').text('');
-                $('.js-desc-detail').text('');
-
-                $('.wrap-modal1').fadeIn();
-
-                $.ajax({
-                    url: '/api/producto/' + productoId + '/detalles',
-                    method: 'GET',
-                    dataType: 'json',
-                    success: function(data) {
-                        console.log('Respuesta AJAX:', data);
-
-                        $('.js-name-detail').text(data.nombre);
-                        if (data.precio_oferta && data.precio_oferta > 0) {
-                            $('.js-price-detail').html(
-                                `<span class="js-price-normal" style="text-decoration: line-through; color: #888;">Bs. ${parseFloat(data.precio).toFixed(2)}</span> 
-         <span class="js-price-promo" style="color: red; font-weight: bold;">Bs. ${parseFloat(data.precio_oferta).toFixed(2)}</span>`
-                            );
-                        } else {
-                            $('.js-price-detail').html(
-                                `<span class="js-price-normal">Bs. ${parseFloat(data.precio).toFixed(2)}</span>`
-                            );
-                        }
-
-                        $('.js-desc-detail').text(data.descripcion);
-
-                        let contenidoSlider = '';
-
-                        if (data.imagenes && data.imagenes.length > 0) {
-                            data.imagenes.forEach(function(item) {
-                                console.log('Imagen/video:', item.ruta);
-
-                                if (item.ruta.match(/\.(mp4|webm|ogg)$/i)) {
-                                    contenidoSlider += `
-                            <div class="item-slick3" data-thumb="${item.ruta}">
-                                <div class="wrap-pic-w pos-relative">
-                                    <video class="w-100" controls style="max-height: 500px; object-fit: contain; margin: 0 auto; display: block;">
-                                        <source src="${item.ruta}" type="video/mp4">
-                                        Tu navegador no soporta el video.
-                                    </video>
-                                    <a class="video-expand-btn" onclick="expandVideo('${item.ruta}')" style="position:absolute; top:10px; right:10px;">
-                                        <i class="fa fa-expand"></i>
-                                    </a>
-                                </div>
-                            </div>`;
-                                } else {
-                                    contenidoSlider += `
-                            <div class="item-slick3" data-thumb="${item.ruta}">
-                                <div class="wrap-pic-w pos-relative">
-                                    <img class="img w-100" src="${item.ruta}" alt="IMG-PRODUCT" style="max-height: 500px; object-fit: contain; margin: 0 auto; display: block;">
-                                    <a class="flex-c-m size-108 how-pos1 bor0 fs-16 cl10 bg0 hov-btn3 trans-04" href="${item.ruta}">
-                                        <i class="fa fa-expand"></i>
-                                    </a>
-                                </div>
-                            </div>`;
-                                }
-                            });
-
-                            $('.wrap-modal1 .slick3').html(contenidoSlider);
-                        } else {
-                            $('.wrap-modal1 .slick3').html('<p>No hay imágenes ni videos disponibles.</p>');
-                        }
-
-                        // Si initSlick() falla, comenta esta línea para probar
-                        initSlick();
-                    },
-                    error: function(xhr, status, error) {
-                        console.error('Error AJAX:', status, error, xhr.responseText);
-                        alert('Error al cargar detalles del producto');
-                        $('.wrap-modal1').fadeOut();
-                    }
+                document.querySelector(this.getAttribute('href')).scrollIntoView({
+                    behavior: 'smooth'
                 });
-            });
-
-
-            $('.js-hide-modal1').on('click', function() {
-                $('.wrap-modal1').fadeOut();
-                if ($('.wrap-modal1 .slick3').hasClass('slick-initialized')) {
-                    $('.wrap-modal1 .slick3').slick('unslick');
-                }
-                $('.wrap-modal1 .slick3').empty();
             });
         });
 
-        // Expande video en pantalla completa
-        function expandVideo(ruta) {
-            const video = document.createElement('video');
-            video.src = ruta;
-            video.controls = true;
-            video.style.display = 'none';
-            document.body.appendChild(video);
-            video.requestFullscreen();
-            video.play();
-            video.onfullscreenchange = () => {
-                if (!document.fullscreenElement) {
-                    video.pause();
-                    video.remove();
+        // Animación al hacer scroll
+        window.addEventListener('scroll', revealOnScroll);
+
+        function revealOnScroll() {
+            const elements = document.querySelectorAll('.service-card, .industry-item');
+            const windowHeight = window.innerHeight;
+
+            elements.forEach(element => {
+                const elementPosition = element.getBoundingClientRect().top;
+                const elementVisible = 150;
+
+                if (elementPosition < windowHeight - elementVisible) {
+                    element.style.opacity = '1';
+                    element.style.transform = 'translateY(0)';
                 }
-            };
+            });
         }
 
+        // Inicializar elementos con opacidad 0 para la animación
         document.addEventListener('DOMContentLoaded', function() {
-            // Inicializar Isotope
-            var $grid = $('.isotope-grid').isotope({
-                itemSelector: '.isotope-item',
-                layoutMode: 'fitRows'
+            const serviceCards = document.querySelectorAll('.service-card');
+            const industryItems = document.querySelectorAll('.industry-item');
+
+            serviceCards.forEach(card => {
+                card.style.opacity = '0';
+                card.style.transform = 'translateY(20px)';
+                card.style.transition = 'all 0.6s ease';
             });
 
-            // Evento al hacer clic en filtro de precio
-            $('.filter-price').on('click', function(e) {
-                e.preventDefault();
-
-                $('.filter-price').removeClass('filter-link-active');
-                $(this).addClass('filter-link-active');
-
-                let min = parseFloat($(this).data('min'));
-                let max = parseFloat($(this).data('max'));
-
-                $grid.isotope({
-                    filter: function() {
-                        let precio = parseFloat($(this).attr('data-precio'));
-                        return precio >= min && precio <= max;
-                    }
-                });
+            industryItems.forEach(item => {
+                item.style.opacity = '0';
+                item.style.transform = 'translateY(20px)';
+                item.style.transition = 'all 0.6s ease';
             });
+
+            // Ejecutar la función una vez al cargar
+            revealOnScroll();
         });
-
-        //buscar product
-        document.addEventListener('DOMContentLoaded', function() {
-            // Inicializar Isotope en todas las grillas que haya
-            var $grid = $('.isotope-grid').isotope({
-                itemSelector: '.isotope-item',
-                layoutMode: 'fitRows'
-            });
-
-            let precioFiltro = {
-                min: 0,
-                max: Infinity
-            };
-            let textoBusqueda = '';
-
-            function filtrarProductos() {
-                $grid.isotope({
-                    filter: function() {
-                        let precio = parseFloat($(this).attr('data-precio')) || 0;
-
-                        // Texto del nombre
-                        let nombre = $(this).find('.js-name-b2').text().toLowerCase();
-
-                        // Texto extra (si lo tienes en algún span oculto)
-                        let extra = $(this).find('.js-extra-busqueda').text().toLowerCase();
-
-                        let textoCompleto = nombre + ' ' + extra;
-
-                        let cumplePrecio = precio >= precioFiltro.min && precio <= precioFiltro.max;
-                        let cumpleTexto = textoCompleto.includes(textoBusqueda.toLowerCase());
-
-                        return cumplePrecio && cumpleTexto;
-                    }
-                });
-            }
-
-            // Filtro por precio
-            $('.filter-price').on('click', function(e) {
-                e.preventDefault();
-                $('.filter-price').removeClass('filter-link-active');
-                $(this).addClass('filter-link-active');
-
-                precioFiltro.min = parseFloat($(this).data('min'));
-                precioFiltro.max = parseFloat($(this).data('max'));
-
-                filtrarProductos();
-            });
-
-            // Búsqueda por texto
-            $('input[name="search-product"]').on('input', function() {
-                textoBusqueda = $(this).val();
-                filtrarProductos();
-            });
-
-
-
-            // Mostrar/ocultar panel de búsqueda y filtro (tu lógica si quieres)
-            $('.js-show-search').on('click', function() {
-                $('.panel-search').toggleClass('dis-none');
-                $('.panel-filter').addClass('dis-none');
-            });
-
-            $('.js-show-filter').on('click', function() {
-                $('.panel-filter').toggleClass('dis-none');
-                $('.panel-search').addClass('dis-none');
-            });
-        });
-
-        //filtrar por categorias
-        document.addEventListener('DOMContentLoaded', function() {
-            // Inicializa Isotope (solo una vez)
-            var $grid = $('.isotope-grid').isotope({
-                itemSelector: '.isotope-item',
-                layoutMode: 'fitRows'
-            });
-
-            // Filtrar al seleccionar del select de categorías
-            document.getElementById('select-categorias')?.addEventListener('change', function() {
-                const filter = this.value;
-
-                // Activar filtro en Isotope
-                $grid.isotope({
-                    filter: filter
-                });
-
-                // Quitar clase activa de botones
-                document.querySelectorAll('.filter-tope-group button').forEach(btn => {
-                    btn.classList.remove('how-active1');
-                });
-
-                // Activar botón "Todos" si se elige "*"
-                const btnTodos = document.querySelector('[data-filter="*"]');
-                if (filter === '*' && btnTodos) {
-                    btnTodos.classList.add('how-active1');
-                }
-            });
-        });
-
-        //agregar al carrito
-        let carrito = [];
-        let totalCarrito = 0;
-
-        // Variable para evitar doble click rápido
-        let agregando = false;
-
-        function agregarAlCarrito(producto) {
-            let existente = carrito.find(p => p.nombre === producto.nombre);
-            if (existente) {
-                existente.cantidad += producto.cantidad;
-            } else {
-                carrito.push(producto);
-            }
-            actualizarCarrito();
-        }
-
-        function eliminarDelCarrito(index) {
-            carrito.splice(index, 1);
-            actualizarCarrito();
-        }
-
-        function cambiarCantidad(index, cantidad) {
-            if (cantidad < 1) cantidad = 1;
-            carrito[index].cantidad = cantidad;
-            actualizarCarrito();
-        }
-
-        function actualizarCarrito() {
-            const cartWrap = document.querySelector(".header-cart-wrapitem");
-            const totalElement = document.querySelector(".header-cart-total");
-
-            cartWrap.innerHTML = "";
-            totalCarrito = 0;
-
-            carrito.forEach((item, i) => {
-                totalCarrito += item.precio * item.cantidad;
-
-                cartWrap.innerHTML += `
-        <li class="header-cart-item flex-w flex-t m-b-12" style="align-items:center;">
-            <div class="header-cart-item-img">
-                <img src="${item.imagen}" alt="${item.nombre}" style="border-radius:8px;">
-            </div>
-            <div class="header-cart-item-txt p-t-8" style="flex:1">
-                <a href="#" class="header-cart-item-name m-b-18 hov-cl1 trans-04" style="font-weight:bold;">
-                    ${item.nombre} ${item.esPromocion ? '<span style="color:red; font-weight:bold;">(Promo)</span>' : ''}
-                </a>
-                <div class="flex-w m-b-10" style="gap:5px;align-items:center;">
-                    <button class="btn-cantidad" onclick="cambiarCantidad(${i}, ${item.cantidad - 1})" 
-                        style="border:none;background:#f44336;color:white;width:28px;height:28px;border-radius:50%;cursor:pointer;">-</button>
-                    <input type="number" value="${item.cantidad}"
-                           onchange="cambiarCantidad(${i}, this.value)" 
-                           style="width:50px;text-align:center;border:1px solid #ccc;border-radius:5px;">
-                    <button class="btn-cantidad" onclick="cambiarCantidad(${i}, ${item.cantidad + 1})" 
-                        style="border:none;background:#4CAF50;color:white;width:28px;height:28px;border-radius:50%;cursor:pointer;">+</button>
-                </div>
-                <span style="color:#555;">Bs. ${item.precio.toFixed(2)}</span>
-            </div>
-            <button onclick="eliminarDelCarrito(${i})" 
-                style="border:none;background:#e0e0e0;border-radius:5px;padding:5px 8px;cursor:pointer;">
-                <i class="zmdi zmdi-delete" style="color:red;font-size:18px;"></i>
-            </button>
-        </li>
-        `;
-            });
-
-            totalElement.textContent = `Total: Bs. ${totalCarrito.toFixed(2)}`;
-
-            // 🔹 Actualiza el contador en todos los íconos de carrito (PC + móvil)
-            document.querySelectorAll(".icon-header-noti").forEach(icon => {
-                icon.setAttribute("data-notify", carrito.length);
-            });
-            const contadorVerCarrito = document.getElementById("contador-ver-carrito");
-            if (contadorVerCarrito) {
-                if (carrito.length > 0) {
-                    contadorVerCarrito.textContent = carrito.length;
-                    contadorVerCarrito.style.display = "inline-block";
-                } else {
-                    contadorVerCarrito.style.display = "none";
-                }
-            }
-        }
-        document.addEventListener("click", function(e) {
-            // Botón agregar al carrito
-            const btnAdd = e.target.closest("#mi-btn-add-to-cart")
-            if (btnAdd) {
-                e.preventDefault();
-                e.stopPropagation();
-
-                if (agregando) return; // evitar doble click rápido
-                agregando = true;
-
-                const nombre = document.querySelector(".js-name-detail").textContent.trim();
-                // Aquí intenta obtener precio promoción, si no existe usar precio normal
-                const precioPromoEl = document.querySelector(".js-price-promo");
-                let precio;
-
-                if (precioPromoEl && precioPromoEl.textContent.trim() !== '') {
-                    // Usar precio promoción, quitar "Bs." y parsear
-                    precio = parseFloat(precioPromoEl.textContent.replace("Bs.", "").trim());
-                } else {
-                    // Precio normal
-                    precio = parseFloat(document.querySelector(".js-price-detail").textContent.replace("Bs.", "").trim());
-                }
-
-                const imagen = document.querySelector(".gallery-lb img")?.src || "{{ asset('images/default.jpg') }}";
-
-                agregarAlCarrito({
-                    nombre,
-                    precio,
-                    cantidad: 1,
-                    imagen,
-                    esPromocion: precioPromoEl && precioPromoEl.textContent.trim() !== ''
-                });
-
-                Swal.fire({
-                    icon: 'success',
-                    title: 'Producto agregado',
-                    text: `${nombre} fue agregado al carrito.`,
-                    timer: 1500,
-                    showConfirmButton: false
-                });
-
-                // Permitir otro click después de 300ms
-                setTimeout(() => {
-                    agregando = false;
-                }, 300);
-
-                return;
-            }
-
-            // Botón ver carrito
-            const btnVer = e.target.closest("#btn-ver-carrito");
-            if (btnVer) {
-                e.preventDefault();
-                e.stopPropagation();
-
-                document.querySelector(".wrap-modal1").style.display = "none";
-                document.querySelector(".overlay-modal1").classList.remove("show-modal1");
-
-                document.querySelector(".js-panel-cart").classList.add("show-header-cart");
-                return;
-            }
-        });
-
-
-        //consultar al whatpsap
-
-        let usuarioRegistrado = false;
-        let datosUsuario = {};
-
-        // Detectar escritura o pérdida de foco en el CI
-        document.addEventListener("input", function(e) {
-            if (e.target && e.target.id === "reg-ci") {
-                let ci = e.target.value.trim();
-                if (ci.length > 0) {
-                    verificarCI(ci);
-                } else {
-                    limpiarCamposRegistro();
-                    document.getElementById("ci-status").textContent = "";
-                }
-            }
-        });
-
-        document.addEventListener("click", function(e) {
-            // Agregar al carrito
-            if (e.target && e.target.id === "btn-add-to-cart") {
-                const nombre = document.querySelector(".js-name-detail").textContent.trim();
-                const precio = parseFloat(document.querySelector(".js-price-detail").textContent.replace("Bs.", "").trim());
-                const imagen = document.querySelector(".gallery-lb img")?.src || "{{ asset('images/default.jpg') }}";
-
-                agregarAlCarrito({
-                    nombre,
-                    precio,
-                    cantidad: 1,
-                    imagen
-                });
-
-                Swal.fire({
-                    icon: 'success',
-                    title: nombre,
-                    text: '¡Se agregó al carrito!',
-                    showConfirmButton: false,
-                    timer: 1500
-                });
-            }
-
-            // Botón WhatsApp → mostrar formulario si no está registrado
-            if (e.target && e.target.id === "btn-whatsapp") {
-                if (!usuarioRegistrado) {
-                    document.getElementById("carrito-content").style.display = "none";
-                    document.getElementById("registro-content").style.display = "block";
-                    return;
-                }
-                enviarWhatsApp();
-            }
-
-            // Guardar registro
-            if (e.target && e.target.id === "guardar-registro") {
-                let ci = document.getElementById("reg-ci").value.trim();
-                let nombre = document.getElementById("reg-nombre").value.trim();
-                let direccion = document.getElementById("reg-direccion").value.trim();
-                let ciudad = document.getElementById("reg-ciudad").value.trim();
-
-                if (!ci || !nombre || !direccion || !ciudad) {
-                    Swal.fire('Error', 'Por favor completa todos los campos', 'error');
-                    return;
-                }
-
-                datosUsuario = {
-                    ci,
-                    nombre,
-                    direccion,
-                    ciudad
-                };
-                console.log('Datos del usuario: ', datosUsuario)
-                Swal.fire({
-                    title: 'Confirmar registro',
-                    text: '¿Deseas registrarte y consultar por WhatsApp?',
-                    icon: 'question',
-                    showCancelButton: true,
-                    confirmButtonText: 'Sí, continuar',
-                    cancelButtonText: 'Cancelar'
-                }).then((result) => {
-                    if (result.isConfirmed) {
-                        registrarCliente(datosUsuario);
-                    }
-                });
-            }
-
-            // Volver al carrito
-            if (e.target && e.target.id === "volver-carrito") {
-                document.getElementById("registro-content").style.display = "none";
-                document.getElementById("carrito-content").style.display = "block";
-            }
-        });
-
-        // Verificar CI en Laravel
-        function verificarCI(ci) {
-            fetch(`/clientes/buscar-ci/${ci}`)
-                .then(res => res.json())
-                .then(data => {
-                    if (data.encontrado) {
-                        document.getElementById("ci-status").innerHTML = `<strong style="color:green">Cliente encontrado</strong>`;
-                        document.getElementById("reg-nombre").value = data.cliente.nombre;
-                        document.getElementById("reg-direccion").value = data.cliente.direccion;
-                        document.getElementById("reg-ciudad").value = data.cliente.ciudad;
-                        usuarioRegistrado = true;
-                        datosUsuario = data.cliente;
-                    } else {
-                        document.getElementById("ci-status").innerHTML = `<strong style="color:red">Cliente no registrado</strong>`;
-                        limpiarCamposRegistro();
-                        usuarioRegistrado = false;
-                    }
-                });
-        }
-        const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
-        // Registrar cliente en Laravel
-        function registrarCliente(datos) {
-            fetch(`/clientes/registrar`, {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json",
-                        "X-CSRF-TOKEN": csrfToken
-                    },
-                    body: JSON.stringify(datos)
-                })
-                .then(res => {
-                    if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
-                    return res.json();
-                })
-                .then(data => {
-                    if (data.success) {
-                        usuarioRegistrado = true;
-                        enviarWhatsApp();
-                        setTimeout(() => location.reload(), 1500);
-                    } else {
-                        Swal.fire('Error', data.message || 'No se pudo registrar', 'error');
-                    }
-                })
-                .catch(error => {
-                    console.error("Fetch error:", error);
-                    Swal.fire('Error', 'Ocurrió un error en el servidor', 'error');
-                });
-        }
-
-        // Enviar mensaje a WhatsApp
-        function enviarWhatsApp() {
-            let telefono = "{{ $empresa->telefono_whatsapp ?? '0000000' }}";
-            console.log('telefono del usuario: ', telefono)
-            let mensaje = `Hola, quiero consultar los siguientes productos:\n\n`;
-
-            carrito.forEach(p => {
-                mensaje += `- ${p.nombre} (${p.cantidad} x Bs. ${p.precio.toFixed(2)})\n`;
-            });
-            mensaje += `\nTotal: Bs. ${totalCarrito.toFixed(2)}`;
-            mensaje += `\n\nMis datos:\nCI: ${datosUsuario.ci}\nNombre: ${datosUsuario.nombre}\nDirección: ${datosUsuario.direccion}\nCiudad: ${datosUsuario.ciudad}`;
-
-            let url = `https://wa.me/${telefono}?text=${encodeURIComponent(mensaje)}`;
-            window.open(url, "_blank");
-        }
-
-        function limpiarCamposRegistro() {
-            document.getElementById("reg-nombre").value = "";
-            document.getElementById("reg-direccion").value = "";
-            document.getElementById("reg-ciudad").value = "";
-        }
     </script>
 </body>
 

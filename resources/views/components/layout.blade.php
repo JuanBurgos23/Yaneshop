@@ -5,7 +5,7 @@
     <!-- Required meta tags -->
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <title>Yane - Shop</title>
+    <title>{{ auth()->user()->empresa->nombre ?? 'Sin nombre' }}</title>
     <!-- plugins:css -->
     <link rel="stylesheet" href="{{ asset('assets/vendors/mdi/css/materialdesignicons.min.css') }}">
     <link rel="stylesheet" href="{{ asset('assets/vendors/ti-icons/css/themify-icons.css') }}">
@@ -23,7 +23,8 @@
     <!-- Layout styles -->
     <link rel="stylesheet" href="{{ asset('assets/css/style.css') }}">
     <!-- End layout styles -->
-    <link rel="shortcut icon" href="{{ asset('inicio/images/11 (3).jpg') }}" />
+    <link rel="shortcut icon" href="{{ asset('storage/' . auth()->user()->empresa->logo) }}" />
+
 
 
 </head>
@@ -36,20 +37,31 @@
         <!-- partial:partials/_sidebar.html -->
         <nav class="sidebar sidebar-offcanvas" id="sidebar">
             <div class="sidebar-brand-wrapper d-none d-lg-flex align-items-center justify-content-center fixed-top">
+                <!-- Nombre completo -->
                 <a class="sidebar-brand brand-logo" href="{{ route('home') }}">
-                    <p style="font-size: 28px; color: black; font-weight: bold; margin-top: 10px; font-family: 'Times New Roman', Times, serif;">YANE SHOP</p>
+                    <p style="font-size: 28px; color: black; font-weight: bold; margin-top: 10px; font-family: 'Times New Roman', Times, serif; color: aliceblue;">
+                        {{ auth()->user()->empresa->nombre ?? 'Sin nombre'}}
+                    </p>
                 </a>
 
+                <!-- Solo iniciales -->
                 <a class="sidebar-brand brand-logo-mini" href="{{ route('home') }}">
-                    <p style="font-size: 28px; color: black; font-weight: bold; margin-top: 10px; font-family: 'Times New Roman', Times, serif;">YS</p>
+                    <p style="font-size: 24px; color: black; font-weight: bold; margin-top: 10px; font-family: 'Times New Roman', Times, serif; color: aliceblue;">
+                        {{
+                collect(explode(' ', auth()->user()->empresa->nombre ?? 'Sin nombre'))
+                    ->map(fn($word) => strtoupper(substr($word, 0, 1)))
+                    ->join('')
+            }}
+                    </p>
                 </a>
             </div>
+
             <ul class="nav">
                 <li class="nav-item profile">
                     <div class="profile-desc">
                         <div class="profile-pic">
                             <div class="count-indicator">
-                                <img class="img-xs rounded-circle " src="{{ auth::user()->imagen ? asset('storage/'.auth::user()->imagen) : asset('inicio/images/avatar.jpg') }}" alt="">
+                                <img class="img-xs rounded-circle " src="{{ auth::user()->imagen ? asset('storage/'.auth::user()->imagen) : asset('images/yane/defecto.png') }}" alt="">
                                 <span class="count bg-success"></span>
                             </div>
                             <div class="profile-name">
@@ -71,7 +83,7 @@
                 'productos',
                 'mostrar_categoria',
                 'productos.masivo',
-                
+
                 ];
                 @endphp
                 <li class="nav-item nav-category">
@@ -211,7 +223,7 @@
                         <li class="nav-item dropdown">
                             <a class="nav-link" id="profileDropdown" href="#" data-toggle="dropdown">
                                 <div class="navbar-profile">
-                                    <img class="img-xs rounded-circle" src="{{ auth::user()->imagen ? asset('storage/'.auth::user()->imagen) : asset('inicio/images/avatar.jpg') }}" alt="">
+                                    <img class="img-xs rounded-circle" src="{{ auth::user()->imagen ? asset('storage/'.auth::user()->imagen) : asset('images/yane/defecto.png') }}" alt="">
                                     <p class="mb-0 d-none d-sm-block navbar-profile-name">{{ auth::user()->name }}</p>
                                     <i class="mdi mdi-menu-down d-none d-sm-block"></i>
                                 </div>

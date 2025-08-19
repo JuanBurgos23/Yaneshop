@@ -126,7 +126,7 @@
         }
 
         .descripcionEdit {
-            
+
             field-sizing: content;
         }
     </style>
@@ -222,45 +222,56 @@
                                 });
                             </script>
 
-                            <table class="table align-items-center mb-0">
-                                <thead>
-                                    <tr>
-                                        <th class="text-center">Categoría / Subcategoría</th>
-                                        <th class="text-center">Producto</th>
-                                        <th class="text-center">Precio (Bs.)</th>
-                                        <th class="text-center">Precio Oferta(Bs.)</th>
-                                        <th class="text-center">Descripción</th>
-                                        <th class="text-center">Stock</th>
-                                        <th class="text-center">Acciones</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    @forelse($productos as $producto)
-                                    <tr>
-                                        <td class="text-center">
-                                            {{ $producto->categoria->nombre ?? 'Sin categoría' }} /
-                                            {{ $producto->categoria->subcategorias->first()->nombre ?? 'Sin subcategoría' }}
-                                        </td>
-                                        <td class="text-center">{{ $producto->nombre }}</td>
-                                        <td class="text-center">{{ $producto->precio }}</td>
-                                        <td class="text-center">{{ $producto->precio_oferta }}</td>
-                                        <td class="text-center" style="white-space: pre-wrap; word-wrap: break-word;">
-                                            {{ $producto->descripcion }}
-                                        </td>
-                                        <td class="text-center">{{ $producto->cantidad }}</td>
-                                        <td class="text-center">
-                                            <button class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#editModal" data-id="{{ $producto->id }}">
-                                                <i class="fa fa-edit"></i> Editar
-                                            </button>
-                                        </td>
-                                    </tr>
-                                    @empty
-                                    <tr>
-                                        <td colspan="6" class="text-center">No hay productos registrados.</td>
-                                    </tr>
-                                    @endforelse
-                                </tbody>
-                            </table>
+                            <div class="table-responsive">
+                                <table class="table align-items-center mb-0 table-hover">
+                                    <thead class="thead-light">
+                                        <tr>
+                                            <th class="text-center">Categoría / Subcategoría</th>
+                                            <th class="text-center">Producto</th>
+                                            <th class="text-center">Precio (Bs.)</th>
+                                            <th class="text-center">Precio Oferta (Bs.)</th>
+                                            <th class="text-center">Descripción</th>
+                                            <th class="text-center">Stock</th>
+                                            <th class="text-center">Estado</th>
+                                            <th class="text-center">Acciones</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @forelse($productos as $producto)
+                                        <tr>
+                                            <td class="text-center">
+                                                {{ $producto->categoria->nombre ?? 'Sin categoría' }} /
+                                                {{ $producto->subcategoria->nombre ?? 'Sin subcategoría' }}
+                                            </td>
+                                            <td class="text-center">{{ $producto->nombre }}</td>
+                                            <td class="text-center">{{ number_format($producto->precio, 2) }}</td>
+                                            <td class="text-center">{{ number_format($producto->precio_oferta, 2) }}</td>
+                                            <td class="text-center text-truncate" style="max-width: 200px;" title="{{ $producto->descripcion }}">
+                                                {{ $producto->descripcion }}
+                                            </td>
+                                            <td class="text-center">{{ $producto->cantidad }}</td>
+                                            <td class="text-center">
+                                                @if($producto->estado === 'activo')
+                                                <span class="badge bg-success">Activo</span>
+                                                @else
+                                                <span class="badge bg-danger">Inactivo</span>
+                                                @endif
+                                            </td>
+                                            <td class="text-center">
+                                                <button class="btn btn-warning btn-sm" data-bs-toggle="modal" data-bs-target="#editModal" data-id="{{ $producto->id }}">
+                                                    <i class="fa fa-edit"></i> Editar
+                                                </button>
+                                            </td>
+                                        </tr>
+                                        @empty
+                                        <tr>
+                                            <td colspan="8" class="text-center">No hay productos registrados.</td>
+                                        </tr>
+                                        @endforelse
+                                    </tbody>
+                                </table>
+                            </div>
+
 
                             <div class="d-flex justify-content-center mt-4">
                                 {{ $productos->links('pagination::bootstrap-4') }}

@@ -87,7 +87,7 @@
                                         @foreach($categorias as $categoria)
                                         <tr>
                                             <td>{{ $categoria->nombre }}</td>
-                                            <td>{{ $categoria->descripcion }}</td>
+                                            <td class="text-center text-truncate" style="max-width: 200px;" title="{{ $categoria->descripcion }}">{{ $categoria->descripcion }}</td>
                                             <td>
                                                 <button class="btn btn-warning btn-sm" onclick="editarCategoria({{ $categoria }})">
                                                     <i class="fa fa-edit"></i> Editar

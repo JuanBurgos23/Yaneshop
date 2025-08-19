@@ -17,7 +17,8 @@ class Cliente extends Model
         "telefono",
         "correo",
         "direccion",
-        "ciudad"
+        "ciudad",
+        "id_empresa"
     ];
 
     public function getNombreCompletoAttribute()

@@ -48,7 +48,17 @@
                 }, 3000);
             </script>
             @endif
-
+            @if(session('noEmpresa') || isset($noEmpresa))
+            <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+            <script>
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Atención',
+                    text: 'Debe registrar su empresa primero para ver los clientes.',
+                    confirmButtonText: 'OK'
+                });
+            </script>
+            @endif
             <div class="col-12">
 
                 <div class="card my-4">
@@ -67,8 +77,6 @@
                                     <i class="fas fa-search"></i> Buscar
                                 </button>
                             </form>
-
-
                         </div>
                     </div>
 
@@ -81,9 +89,9 @@
                                         <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">CI</th>
                                         <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Teléfono</th>
                                         <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Correo</th>
-                                       
+
                                         <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Acciones</th>
-                                    
+
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -109,7 +117,7 @@
                                                 <h6 class="mb-0 text-sm">{{ $cliente->correo }}</h6>
                                             </div>
                                         </td>
-                                        @role('Administrador') <!-- Asegurarse de que solo los administradores puedan editar -->
+
                                         <td class="align-middle text-center">
                                             <button class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#editModal" data-id="{{ $cliente->id }}">
                                                 <i class="fas fa-edit"></i> Editar
@@ -148,7 +156,7 @@
                                                 });
                                             </script>
                                         </td>
-                                        @endrole
+
                                     </tr>
                                     @empty
                                     <tr>

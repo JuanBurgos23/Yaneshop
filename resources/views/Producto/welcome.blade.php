@@ -2,10 +2,10 @@
 <html lang="en">
 
 <head>
-    <title>{{ $empresa->nombre }}</title>
+    <title>Yane Shop</title>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="icon" type="image/png" href="{{ Storage::url($empresa->logo) }}" />
+    <link rel="icon" type="image/png" href="{{ asset('images/icons/favicon.png') }}" />
 
     <link rel="stylesheet" type="text/css" href="{{ asset('vendor/bootstrap/css/bootstrap.min.css') }}">
     <link rel="stylesheet" type="text/css" href="{{ asset('fonts/font-awesome-4.7.0/css/font-awesome.min.css') }}">
@@ -214,214 +214,6 @@
         .swal2-container {
             z-index: 99999 !important;
         }
-
-        /** header */
-        /* Header general */
-        .header-v3 .wrap-menu-desktop {
-            background-color: #fff;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
-        }
-
-        .header-v3 .main-menu>li>a {
-            color: #222 !important;
-            font-weight: 600;
-            padding: 20px 15px;
-            transition: color 0.3s;
-        }
-
-        .header-v3 .main-menu>li>a:hover {
-            color: #007bff !important;
-            /* azul elegante al pasar el mouse */
-        }
-
-        .icon-header-item {
-            color: #000 !important;
-            /* Negro arriba */
-            transition: color 0.3s;
-        }
-
-        .icon-header-item:hover {
-            color: #007bff !important;
-        }
-
-        /* Mobile header background */
-        .wrap-header-mobile {
-            background-color: #fff;
-            border-bottom: 1px solid #e5e5e5;
-        }
-
-        .logo-mobile img {
-            max-height: 55px;
-        }
-
-        .menu-mobile {
-            background-color: #fff;
-        }
-
-        .menu-mobile .main-menu-m li a {
-            color: #333 !important;
-            font-weight: 500;
-        }
-
-        .menu-mobile .main-menu-m li a:hover {
-            color: #007bff !important;
-        }
-
-        .hamburger-inner,
-        .hamburger-inner::before,
-        .hamburger-inner::after {
-            background-color: #333 !important;
-        }
-
-        /* Mejoras en botones/cart */
-        .icon-header-noti::after {
-            background-color: red;
-            color: white;
-            font-size: 12px;
-        }
-
-        /* Espaciado en íconos mobile */
-        .wrap-icon-header .icon-header-item {
-            font-size: 20px;
-        }
-
-        @media (max-width: 768px) {
-            .main-menu>li>a {
-                font-size: 14px;
-            }
-
-            .icon-header-item {
-                font-size: 18px;
-            }
-        }
-
-        /* Efecto al hacer scroll */
-        .container-menu-desktop {
-            transition: background-color 0.3s, box-shadow 0.3s;
-        }
-
-        .container-menu-desktop.scrolled {
-            background-color: #222 !important;
-            /* negro elegante */
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-        }
-
-        .container-menu-desktop.scrolled .main-menu>li>a,
-        .container-menu-desktop.scrolled .icon-header-item {
-            color: #fff !important;
-            /* letras blancas cuando está scrolleado */
-        }
-
-        .container-menu-desktop.scrolled .icon-header-item:hover {
-            color: #007bff !important;
-            /* azul si deseas al pasar mouse */
-        }
-
-        .empresa-nombre {
-            font-size: 28px;
-            font-weight: bold;
-            text-align: center;
-            color: black;
-            white-space: nowrap;
-            overflow: hidden;
-            border-right: 3px solid;
-            text-transform: uppercase;
-            animation: blink 0.7s step-end infinite;
-        }
-
-        /* Pantallas pequeñas */
-        @media (max-width: 768px) {
-            .empresa-nombre {
-                white-space: normal;
-                /* 🔥 permite salto de línea */
-                font-size: 20px;
-            }
-        }
-
-        @media (max-width: 480px) {
-            .empresa-nombre {
-                font-size: 16px;
-                /* 🔥 aún más chico */
-            }
-        }
-
-        /* parpadeo del cursor */
-        @keyframes blink {
-            50% {
-                border-color: transparent;
-            }
-        }
-
-        .empresa-nombre {
-            animation: blink 0.7s step-end infinite;
-        }
-
-        /* Cambia a blanco cuando el header esté con fondo negro */
-        .header-scroll .empresa-nombre {
-            color: white;
-        }
-
-        .limiter-menu-desktop {
-            position: relative;
-            /* importante para posicionar el título */
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .menu-desktop {
-            position: absolute;
-            left: 50%;
-            transform: translateX(-50%);
-        }
-
-        /* MOBILE: Estado inicial */
-        .wrap-header-mobile .icon-header-item {
-            color: #000 !important;
-            /* Negro arriba */
-        }
-
-        /* MOBILE: Cuando se hace scroll */
-        .wrap-header-mobile.scrolled .icon-header-item {
-            color: #fff !important;
-            /* Blanco al bajar */
-        }
-
-        .icon-header-item {
-            color: #000 !important;
-            /* Negro arriba */
-            transition: color 0.3s ease;
-        }
-
-        /* Hover */
-        .icon-header-item:hover {
-            color: #007bff !important;
-            /* Azul en hover */
-        }
-
-        /* Escritorio: scroll */
-        .container-menu-desktop.scrolled .icon-header-item {
-            color: #fff !important;
-            /* Blanco al bajar */
-        }
-
-        /* Móvil: scroll */
-        .wrap-header-mobile.scrolled .icon-header-item {
-            color: #fff !important;
-            /* Blanco al bajar */
-        }
-
-        /* Fondo del header móvil arriba */
-        .wrap-header-mobile {
-            background-color: transparent;
-            transition: background-color 0.3s ease;
-        }
-
-        /* Fondo del header móvil al hacer scroll */
-        .wrap-header-mobile.scrolled {
-            background-color: rgba(0, 0, 0, 0.8);
-            /* Fondo oscuro */
-        }
     </style>
 </head>
 
@@ -433,17 +225,33 @@
         <div class="container-menu-desktop trans-03">
             <div class="wrap-menu-desktop">
                 <nav class="limiter-menu-desktop p-l-45">
+
                     <!-- Logo desktop -->
-                    <a href="{{ url($empresa->slug) }}" class="logo">
-                        <img src="{{ Storage::url($empresa->logo) }}" alt="IMG-LOGO">
+                    <a href="#" class="logo">
+                        <img src="{{ asset('images/yane/yane2.png') }}" alt="IMG-LOGO">
                     </a>
+
                     <!-- Menu desktop -->
                     <div class="menu-desktop">
-                        <h1 class="empresa-nombre" id="empresaNombre" data-text="{{ $empresa->nombre }}">
-                            {{ $empresa->nombre }}
-                        </h1>
+                        <ul class="main-menu">
+                            <li>
+                                <a href="{{ url($empresa->slug) }}">Inicio</a>
+                            </li>
+
+                            <li>
+                                <a href="{{ route('comprar.public', ['slug' => $empresa->slug]) }}">Comprar</a>
+                            </li>
+
+                            <li>
+                                <a href="about.html">Sobre nosotros</a>
+                            </li>
+
+                            <li>
+                                <a href="contact.html">Contacto</a>
+                            </li>
+                        </ul>
                     </div>
-                    <input type="number" name="empresa_id" hidden value="{{ $empresa->id }}" id="empresaId">
+
                     <!-- Icon header -->
                     <div class="wrap-icon-header flex-w flex-r-m h-full">
                         <div class="flex-c-m h-full p-r-25 bor6">
@@ -451,21 +259,24 @@
                                 <i class="zmdi zmdi-shopping-cart"></i>
                             </div>
                         </div>
+
+                        <div class="flex-c-m h-full p-lr-19">
+                            <div class="icon-header-item cl0 hov-cl1 trans-04 p-lr-11 js-show-sidebar">
+                                <i class="zmdi zmdi-menu"></i>
+                            </div>
+                        </div>
                     </div>
                 </nav>
             </div>
         </div>
+
         <!-- Header Mobile -->
         <div class="wrap-header-mobile">
             <!-- Logo moblie -->
             <div class="logo-mobile">
-                <a href="{{ url($empresa->slug) }}" class="logo">
-                    <img src="{{ Storage::url($empresa->logo) }}" alt="IMG-LOGO">
-                </a>
+                <a href="{{ url('/') }}"><img src="{{ asset('images/yane/yane2.png') }}" alt="IMG-LOGO"></a>
             </div>
-            <h1 class="empresa-nombre" id="empresaNombre" data-text="{{ $empresa->nombre }}">
-                {{ $empresa->nombre }}
-            </h1>
+
             <!-- Icon header -->
             <div class="wrap-icon-header flex-w flex-r-m h-full m-r-15">
                 <div class="flex-c-m h-full p-r-5">
@@ -474,17 +285,41 @@
                     </div>
                 </div>
             </div>
+
             <!-- Button show menu -->
-            <!-- <div class="btn-show-menu-mobile hamburger hamburger--squeeze">
+            <div class="btn-show-menu-mobile hamburger hamburger--squeeze">
                 <span class="hamburger-box">
                     <span class="hamburger-inner"></span>
                 </span>
-            </div>-->
+            </div>
         </div>
+
+
         <!-- Menu Mobile -->
         <div class="menu-mobile">
+            <ul class="main-menu-m">
+                <li>
+                    <a href="{{ url($empresa->slug) }}">Inicio</a>
+                    <span class="arrow-main-menu-m">
+                        <i class="fa fa-angle-right" aria-hidden="true"></i>
+                    </span>
+                </li>
 
+                <li>
+                    <a href="{{ route('comprar.public', ['slug' => $empresa->slug]) }}">Comprar</a>
+                </li>
+
+
+                <li>
+                    <a href="about.html">Sobre nosotros</a>
+                </li>
+
+                <li>
+                    <a href="contact.html">Contacto</a>
+                </li>
+            </ul>
         </div>
+
         <!-- Modal Search -->
         <div class="modal-search-header flex-c-m trans-04 js-hide-modal-search">
             <button class="flex-c-m btn-hide-modal-search trans-04">
@@ -546,8 +381,8 @@
 
                     <!-- Campo CI primero -->
                     <div class="m-b-12">
-                        <input id="reg-telefono" type="text" class="size-114 bor4 stext-111 p-lr-15" placeholder="Teléfono">
-                        <small id="telefono-status" class="stext-111"></small>
+                        <input id="reg-ci" type="text" class="size-114 bor4 stext-111 p-lr-15" placeholder="CI">
+                        <small id="ci-status" class="stext-111"></small>
                     </div>
 
                     <div class="m-b-12">
@@ -573,11 +408,101 @@
         </div>
     </div>
 
+
+
+
+
+
     <!-- Slider -->
+    <section class="section-slide">
+        <div class="wrap-slick1 rs2-slick1">
+            <div class="slick1">
+                @foreach ($productos->take(3) as $producto)
+                @php
+                $categoria = $producto->categoria;
+                $imagen = $producto->imagenes->first();
+                $backgroundImage = $imagen ? asset('storage/' . $imagen->ruta) : asset('images/default.jpg');
+                @endphp
+
+                <div class="item-slick1 bg-overlay1" style="background-image: url('{{ $backgroundImage }}');"
+                    data-thumb="{{ $backgroundImage }}"
+                    data-caption="{{ $categoria->nombre ?? 'Categoría' }}">
+                    <div class="container">
+                        <div class="flex-col-c-m">
+                            <div class="layer-slick1 animated visible-false" data-appear="fadeInDown" data-delay="0">
+                                <span class="ltext-202 txt-center cl0 respon2">
+                                    {{ $categoria->nombre ?? 'Categoría' }}
+                                </span>
+                            </div>
+
+                            <div class="layer-slick1 animated visible-false" data-appear="fadeInUp" data-delay="800">
+                                <h2 class="ltext-104 txt-center cl0 p-t-22 p-b-40 respon1">
+                                    {{ $producto->nombre }}
+                                </h2>
+                            </div>
+
+                            <!--<div class="layer-slick1 animated visible-false" data-appear="zoomIn" data-delay="1600">
+                                <a href=""
+                                    class="flex-c-m stext-101 cl0 size-101 bg1 bor1 hov-btn2 p-lr-15 trans-04">
+                                    Comprar Ahora
+                                </a>
+                            </div>-->
+                        </div>
+                    </div>
+                </div>
+
+                @endforeach
+            </div>
+
+            <div class="wrap-slick1-dots p-lr-10"></div>
+        </div>
+    </section>
+
+
+
 
     <!-- Banner -->
     <!-- Banner dinámico -->
+    <div class="sec-banner bg0 p-t-80 p-b-50">
+        <div class="container">
+            <div class="row">
+                @foreach ($categorias->take(5) as $i => $categoria)
+                @php
+                $productoConImagen = $categoria->productos->firstWhere('imagenes.0', '!=', null);
+                if (!$productoConImagen) {
+                $productoConImagen = $categoria->productos->first();
+                }
+                $imagen = ($productoConImagen && $productoConImagen->imagenes->first())
+                ? asset('storage/' . $productoConImagen->imagenes->first()->ruta)
+                : asset('images/default.jpg');
+                @endphp
 
+                <div class="{{ $i < 2 ? 'col-md-6 col-xl-6' : 'col-md-6 col-xl-4' }} p-b-30 m-lr-auto">
+                    <div class="block1 wrap-pic-w">
+                        <img src="{{ $imagen }}" alt="{{ $productoConImagen->nombre ?? 'Producto' }}">
+
+                        <div class="block1-txt ab-t-l s-full flex-col-l-sb p-lr-38 p-tb-34 trans-03 respon3">
+                            <div class="block1-txt-child1 flex-col-l">
+                                <span class="block1-name ltext-102 trans-04 p-b-8">
+                                    {{ $categoria->nombre }}
+                                </span>
+                                <span class="block1-info stext-102 trans-04">
+                                    {{ $productoConImagen->nombre ?? 'Explora nuestros productos' }}
+                                </span>
+                            </div>
+
+                            <!--<div class="block1-txt-child2 p-b-4 trans-05">
+                                <div class="block1-link stext-101 cl0 trans-09">
+                                    Comprar ahora
+                                </div>
+                            </div>-->
+                        </div>
+                    </div>
+                </div>
+                @endforeach
+            </div>
+        </div>
+    </div>
     <!-- Product -->
     <section class="bg0 p-t-23 p-b-130">
         <div class="container">
@@ -696,68 +621,69 @@
             @if($promociones->count())
             <section class="p-t-30 p-b-20">
                 <h4 class="text-center m-b-20">🔥 Promociones</h4>
-                <div id="contenedorPromociones">
-                    @include('catalogo.catalogoNuevos', ['productos' => $promociones])
-                </div>
-
+                @include('catalogo.catalogoNuevos', ['productos' => $promociones])
             </section>
             @endif
 
             @if($nuevos->count())
             <section class="p-t-30 p-b-20">
                 <h4 class="text-center m-b-20">🆕 Nuevos</h4>
-                <div id="contenedorNuevos">
-                    @include('catalogo.catalogoNuevos', ['productos' => $nuevos])
-                </div>
-
+                @include('catalogo.catalogoNuevos', ['productos' => $nuevos])
             </section>
             @endif
+            <div class="row isotope-grid">
+                @foreach($productos as $producto)
+                <div class="col-6 col-sm-6 col-md-4 col-lg-3 p-b-35 isotope-item {{ strtolower(Str::slug($producto->categoria->nombre ?? '')) }}" data-precio="{{ $producto->precio }}">
+                    <div class="block2">
+                        @php
+                        $imagen = $producto->imagenes->first();
+                        $esNuevo = \Carbon\Carbon::parse($producto->created_at)->gt(now()->subDays(5));
+                        @endphp
+                        <div class="block2-pic hov-img0 {{ $esNuevo ? 'label-new' : '' }}" data-label="{{ $esNuevo ? 'New' : '' }}">
+                            <img class="img-fluid" src="{{ $imagen ? asset('storage/' . $imagen->ruta) : asset('images/default.jpg') }}"
+                                alt="IMG-PRODUCT"
+                                style="object-fit: cover; width: 100%; height: 330px;">
 
-            @if($productos->count())
-            <section class="p-t-30 p-b-20">
-                <h4 class="text-center m-b-20">📦 Productos</h4>
-                <div id="contenedorProductosNormales" class="row isotope-grid">
-                    @foreach($productos as $producto)
-                    <div class="col-6 col-sm-6 col-md-4 col-lg-3 p-b-35 isotope-item {{ strtolower(Str::slug($producto->categoria->nombre ?? '')) }}" data-precio="{{ $producto->precio }}">
-                        <div class="block2">
-                            @php
-                            $imagen = $producto->imagenes->first();
-                            $esNuevo = \Carbon\Carbon::parse($producto->created_at)->gt(now()->subDays(5));
-                            @endphp
-                            <div class="block2-pic hov-img0 {{ $esNuevo ? 'label-new' : '' }}" data-label="{{ $esNuevo ? 'New' : '' }}">
-                                <img class="img-fluid" src="{{ $imagen ? asset('storage/' . $imagen->ruta) : asset('images/default.jpg') }}"
-                                    alt="IMG-PRODUCT" style="object-fit: cover; width: 100%; height: 330px;">
-
-                                <a href="#"
-                                    class="block2-btn flex-c-m stext-103 cl2 size-102 bg0 bor2 hov-btn1 p-lr-15 trans-04 js-show-modal1"
-                                    data-product="{{ $producto->id }}">
-                                    Ver Producto
-                                </a>
-                            </div>
-                            <div class="block2-txt flex-w flex-t p-t-14">
-                                <div class="block2-txt-child1 flex-col-l ">
-                                    <div class="stext-104 cl4 hov-cl1 trans-04 js-name-b2 p-b-6">
-                                        {{ $producto->nombre }}
-                                    </div>
-                                    <div class="js-extra-busqueda" style="display:none;">
-                                        {{ $producto->descripcion }} {{ $producto->categoria->nombre ?? '' }}
-                                    </div>
-                                    <span class="stext-105 cl3">
-                                        Bs. {{ number_format($producto->precio, 2) }}
-                                    </span>
+                            <a href="#"
+                                class="block2-btn flex-c-m stext-103 cl2 size-102 bg0 bor2 hov-btn1 p-lr-15 trans-04 js-show-modal1"
+                                data-product="{{ $producto->id }}">
+                                Ver Producto
+                            </a>
+                        </div>
+                        <div class="block2-txt flex-w flex-t p-t-14">
+                            <div class="block2-txt-child1 flex-col-l ">
+                                <div class="stext-104 cl4 hov-cl1 trans-04 js-name-b2 p-b-6">
+                                    {{ $producto->nombre }}
                                 </div>
+                                <div class="js-extra-busqueda" style="display:none;">
+                                    {{ $producto->descripcion }} {{ $producto->categoria->nombre ?? '' }}
+                                </div>
+                                <span class="stext-105 cl3">
+                                    Bs. {{ number_format($producto->precio, 2) }}
+                                </span>
                             </div>
                         </div>
                     </div>
-                    @endforeach
                 </div>
-
-            </section>
-            @endif
-
+                @endforeach
+            </div>
         </div>
 
+        <!-- Pagination -->
+        @php
+        $totalPages = $productos->lastPage();
+        $currentPage = $productos->currentPage();
+        @endphp
 
+        <div class="flex-c-m flex-w w-full p-t-38">
+            @for ($i = 1; $i <= $totalPages; $i++)
+                <a href="{{ $productos->url($i) }}"
+                class="flex-c-m how-pagination1 trans-04 m-all-7 {{ $currentPage == $i ? 'active-pagination1' : '' }}">
+                {{ $i }}
+                </a>
+                @endfor
+        </div>
+        </div>
     </section>
 
 
@@ -765,13 +691,12 @@
     <footer>
         <div class="p-t-40">
             <p class="stext-107 cl6 txt-center">
-                &copy; {{ date('Y') }} Sistema de <strong>TUXSON</strong>
+                &copy; {{ date('Y') }} Sistema de <strong>TUXSON</strong> | Desarrollado por <strong href="">Juan Burgos</strong>
 
             </p>
         </div>
 
     </footer>
-
 
     <!-- Back to top -->
     <div class="btn-back-to-top" id="myBtn">
@@ -1022,7 +947,9 @@
                                         <source src="${item.ruta}" type="video/mp4">
                                         Tu navegador no soporta el video.
                                     </video>
-                                    
+                                    <a class="video-expand-btn" onclick="expandVideo('${item.ruta}')" style="position:absolute; top:10px; right:10px;">
+                                        <i class="fa fa-expand"></i>
+                                    </a>
                                 </div>
                             </div>`;
                                 } else {
@@ -1357,13 +1284,13 @@
 
         // Detectar escritura o pérdida de foco en el CI
         document.addEventListener("input", function(e) {
-            if (e.target && e.target.id === "reg-telefono") {
+            if (e.target && e.target.id === "reg-ci") {
                 let ci = e.target.value.trim();
                 if (ci.length > 0) {
-                    verificarTelefono(ci);
+                    verificarCI(ci);
                 } else {
                     limpiarCamposRegistro();
-                    document.getElementById("telefono-status").textContent = "";
+                    document.getElementById("ci-status").textContent = "";
                 }
             }
         });
@@ -1403,24 +1330,23 @@
 
             // Guardar registro
             if (e.target && e.target.id === "guardar-registro") {
-                let telefono = document.getElementById("reg-telefono").value.trim();
+                let ci = document.getElementById("reg-ci").value.trim();
                 let nombre = document.getElementById("reg-nombre").value.trim();
                 let direccion = document.getElementById("reg-direccion").value.trim();
                 let ciudad = document.getElementById("reg-ciudad").value.trim();
-                let empresaId = document.getElementById("empresaId").value;
 
-                if (!telefono || !nombre || !direccion || !ciudad) {
+                if (!ci || !nombre || !direccion || !ciudad) {
                     Swal.fire('Error', 'Por favor completa todos los campos', 'error');
                     return;
                 }
+
                 datosUsuario = {
-                    telefono,
+                    ci,
                     nombre,
                     direccion,
-                    ciudad,
-                    id_empresa: empresaId // coincide con el nombre de columna en DB
+                    ciudad
                 };
-                //console.log('Datos del usuario: ', datosUsuario);
+                console.log('Datos del usuario: ', datosUsuario)
                 Swal.fire({
                     title: 'Confirmar registro',
                     text: '¿Deseas registrarte y consultar por WhatsApp?',
@@ -1434,6 +1360,7 @@
                     }
                 });
             }
+
             // Volver al carrito
             if (e.target && e.target.id === "volver-carrito") {
                 document.getElementById("registro-content").style.display = "none";
@@ -1442,20 +1369,19 @@
         });
 
         // Verificar CI en Laravel
-        function verificarTelefono(telefono) {
-            const empresaId = document.getElementById("empresaId").value; // tu input oculto
-            fetch(`/clientes/buscar-telefono/${telefono}?empresa_id=${empresaId}`)
+        function verificarCI(ci) {
+            fetch(`/clientes/buscar-ci/${ci}`)
                 .then(res => res.json())
                 .then(data => {
                     if (data.encontrado) {
-                        document.getElementById("telefono-status").innerHTML = `<strong style="color:green">Cliente encontrado</strong>`;
+                        document.getElementById("ci-status").innerHTML = `<strong style="color:green">Cliente encontrado</strong>`;
                         document.getElementById("reg-nombre").value = data.cliente.nombre;
                         document.getElementById("reg-direccion").value = data.cliente.direccion;
                         document.getElementById("reg-ciudad").value = data.cliente.ciudad;
                         usuarioRegistrado = true;
                         datosUsuario = data.cliente;
                     } else {
-                        document.getElementById("telefono-status").innerHTML = `<strong style="color:red">Cliente no registrado</strong>`;
+                        document.getElementById("ci-status").innerHTML = `<strong style="color:red">Cliente no registrado</strong>`;
                         limpiarCamposRegistro();
                         usuarioRegistrado = false;
                     }
@@ -1464,7 +1390,6 @@
         const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
         // Registrar cliente en Laravel
         function registrarCliente(datos) {
-            //console.log('Datos a registrar: ', datos);
             fetch(`/clientes/registrar`, {
                     method: "POST",
                     headers: {
@@ -1502,7 +1427,7 @@
                 mensaje += `- ${p.nombre} (${p.cantidad} x Bs. ${p.precio.toFixed(2)})\n`;
             });
             mensaje += `\nTotal: Bs. ${totalCarrito.toFixed(2)}`;
-            mensaje += `\n\nMis datos:\nNombre: ${datosUsuario.nombre}\nDirección: ${datosUsuario.direccion}\nCiudad: ${datosUsuario.ciudad}`;
+            mensaje += `\n\nMis datos:\nCI: ${datosUsuario.ci}\nNombre: ${datosUsuario.nombre}\nDirección: ${datosUsuario.direccion}\nCiudad: ${datosUsuario.ciudad}`;
 
             let url = `https://wa.me/${telefono}?text=${encodeURIComponent(mensaje)}`;
             window.open(url, "_blank");
@@ -1513,114 +1438,6 @@
             document.getElementById("reg-direccion").value = "";
             document.getElementById("reg-ciudad").value = "";
         }
-
-        //header
-        document.addEventListener("DOMContentLoaded", function() {
-            const headers = document.querySelectorAll('.empresa-nombre');
-            const texto = headers[0]?.getAttribute('data-text') || '';
-            let i = 0;
-            let borrando = false;
-
-            function escribir() {
-                if (!borrando && i <= texto.length) {
-                    headers.forEach(h => h.textContent = texto.substring(0, i));
-                    i++;
-                } else if (borrando && i >= 0) {
-                    headers.forEach(h => h.textContent = texto.substring(0, i));
-                    i--;
-                }
-
-                if (i > texto.length) {
-                    borrando = true;
-                    setTimeout(escribir, 1000); // pausa antes de borrar
-                    return;
-                } else if (i < 0) {
-                    borrando = false;
-                }
-                setTimeout(escribir, borrando ? 100 : 150); // velocidad
-            }
-
-            escribir();
-
-            // cambio de color con scroll (desktop y mobile)
-            window.addEventListener('scroll', () => {
-                const desktopHeader = document.querySelector(".container-menu-desktop");
-                const mobileHeader = document.querySelector(".wrap-header-mobile");
-                if (window.scrollY > 50) {
-                    desktopHeader?.classList.add("header-scroll", "scrolled");
-                    mobileHeader?.classList.add("scrolled");
-                } else {
-                    desktopHeader?.classList.remove("header-scroll", "scrolled");
-                    mobileHeader?.classList.remove("scrolled");
-                }
-            });
-        });
-        //cargar mas 8 productos
-        document.addEventListener('DOMContentLoaded', function() {
-            const btnPromos = document.getElementById('btnVerMasPromociones');
-            const btnNuevos = document.getElementById('btnVerMasNuevos');
-
-            if (btnPromos) {
-                btnPromos.addEventListener('click', function() {
-                    console.log('Clic en botón promociones');
-                    const offset = parseInt(this.dataset.offset);
-                    const empresaId = this.dataset.empresa;
-
-                    fetch(`/ajax/load-more-promociones?offset=${offset}&empresa_id=${empresaId}`)
-                        .then(res => res.json())
-                        .then(data => {
-                            if (data.html) {
-                                document.getElementById('contenedorPromociones').insertAdjacentHTML('beforeend', data.html);
-                                const nuevosOffset = offset + 8;
-                                this.dataset.offset = nuevosOffset;
-                                if (data.total < 8) this.remove();
-                            } else {
-                                this.remove();
-                            }
-                        });
-                });
-            }
-
-            if (btnNuevos) {
-                btnNuevos.addEventListener('click', function() {
-                    const offset = parseInt(this.dataset.offset);
-                    const empresaId = this.dataset.empresa;
-
-                    fetch(`/ajax/load-more-nuevos?offset=${offset}&empresa_id=${empresaId}`)
-                        .then(res => res.json())
-                        .then(data => {
-                            if (data.html) {
-                                document.getElementById('contenedorNuevos').insertAdjacentHTML('beforeend', data.html);
-                                const nuevosOffset = offset + 8;
-                                this.dataset.offset = nuevosOffset;
-                                if (data.total < 8) this.remove();
-                            } else {
-                                this.remove();
-                            }
-                        });
-                });
-            }
-            const btnProductos = document.getElementById('btnVerMasProductos');
-            if (btnProductos) {
-                btnProductos.addEventListener('click', function() {
-                    const offset = parseInt(this.dataset.offset);
-                    const empresaId = this.dataset.empresa;
-
-                    fetch(`/ajax/load-more-productos?offset=${offset}&empresa_id=${empresaId}`)
-                        .then(res => res.json())
-                        .then(data => {
-                            if (data.html) {
-                                document.getElementById('contenedorProductosNormales').insertAdjacentHTML('beforeend', data.html);
-                                const nuevosOffset = offset + 8;
-                                this.dataset.offset = nuevosOffset;
-                                if (data.total < 8) this.remove();
-                            } else {
-                                this.remove();
-                            }
-                        });
-                });
-            }
-        });
     </script>
 </body>
 

@@ -57,7 +57,7 @@
                     <div class="card shadow-lg p-4">
                         <div class="row">
                             <div class="col-md-4 text-center">
-                                <img id="profileImage" src="{{ $user->imagen ? asset('storage/'.$user->imagen) : asset('inicio/images/avatar.jpg') }}"
+                                <img id="profileImage" src="{{ $user->imagen ? asset('storage/'.$user->imagen) : asset('images/yane/defecto.png') }}"
                                     class="rounded-circle shadow-sm" width="150" height="150">
                                 <button class="btn btn-primary mt-3" data-bs-toggle="modal" data-bs-target="#editPhotoModal">Cambiar Foto</button>
                             </div>
@@ -109,7 +109,7 @@
                                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
                             </div>
                             <div class="modal-body text-center">
-                                <img id="previewImage" src="{{ $user->imagen ? asset('storage/'.$user->imagen) : asset('inicio/images/avatar.jpg') }}"
+                                <img id="previewImage" src="{{ $user->imagen ? asset('storage/'.$user->imagen) : asset('images/yane/defecto.png') }}"
                                     class="rounded-circle shadow-sm mb-3" width="150" height="150">
                                 <form method="POST" action="{{ route('user.updateAvatar', $user->id) }}" enctype="multipart/form-data">
                                     @csrf

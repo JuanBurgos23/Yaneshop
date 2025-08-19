@@ -4,20 +4,41 @@ namespace App\Http\Controllers;
 
 use App\Models\Cliente;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Pagination\LengthAwarePaginator;
 
 class ClienteController extends Controller
 {
+
+
     public function index(Request $request)
     {
-        // Filtrado
-        $query = Cliente::query();
+        $usuario = Auth::user();
 
-        if ($request->has('search') && $request->search != '') {
-            $query->where('ci', 'like', '%' . $request->search . '%')
-                ->orWhere('paterno', 'like', '%' . $request->search . '%');
+        // Verificar si tiene empresa
+        if (!$usuario->empresa) {
+            // Paginador vacío para evitar error con links()
+            $clientes = new LengthAwarePaginator([], 0, 10);
+            $noEmpresa = true; // flag para el modal
+            return view('cliente.cliente', compact('clientes', 'noEmpresa'));
         }
 
-        // Paginación (10 clientes por página) y orden por fecha de creación (último agregado primero)
+        $empresaId = $usuario->empresa->id;
+
+        // Query base: solo clientes de esta empresa
+        $query = Cliente::where('id_empresa', $empresaId);
+
+        // Filtro de búsqueda
+        if ($request->has('search') && $request->search != '') {
+            $search = $request->search;
+            $query->where(function ($q) use ($search) {
+                $q->where('ci', 'like', '%' . $search . '%')
+                    ->orWhere('paterno', 'like', '%' . $search . '%')
+                    ->orWhere('nombre', 'like', '%' . $search . '%');
+            });
+        }
+
+        // Paginación y orden
         $clientes = $query->orderBy('created_at', 'desc')->paginate(10);
 
         return view('cliente.cliente', compact('clientes'));
@@ -82,42 +103,50 @@ class ClienteController extends Controller
     }
 
 
-    //formulario del carrito
-    public function buscarPorTelefono($telefono)
+    // Buscar cliente por teléfono para la empresa actual
+    public function buscarPorTelefono($telefono, Request $request)
     {
-        $cliente = Cliente::where('telefono', $telefono)->first();
+        // Espera que envíes la empresa_id en query (desde fetch)
+        $empresaId = $request->query('empresa_id');
+        if (!$empresaId) {
+            return response()->json(['error' => 'Empresa no definida'], 400);
+        }
+
+        $cliente = Cliente::where('telefono', $telefono)
+            ->where('id_empresa', $empresaId)
+            ->first();
+
         if ($cliente) {
             return response()->json([
                 'encontrado' => true,
                 'cliente' => $cliente
             ]);
         }
+
         return response()->json(['encontrado' => false]);
     }
 
+    // Registrar cliente para la empresa actual
     public function registrar(Request $request)
     {
-        $request->validate([
-            'telefono' => 'required|string',
-            'nombre'   => 'required|string',
-            'direccion' => 'required|string',
-            'ciudad'   => 'required|string',
-            'ci'       => 'nullable|string'
-        ]);
+        // Obtenemos la empresa correctamente
+        $empresaId = $request->id_empresa;
 
-        // Buscar cliente existente por teléfono
-        $cliente = Cliente::where('telefono', $request->telefono)->first();
+        $cliente = Cliente::where('telefono', $request->telefono)
+            ->where('id_empresa', $empresaId)
+            ->first();
 
         if ($cliente) {
-            // Cliente ya existe
             return response()->json([
                 'success' => true,
                 'cliente' => $cliente
             ]);
         }
 
-        // Crear nuevo cliente
-        $cliente = Cliente::create($request->only(['telefono', 'nombre', 'direccion', 'ciudad', 'ci']));
+        $cliente = Cliente::create(array_merge(
+            $request->only(['telefono', 'nombre', 'direccion', 'ciudad', 'ci']),
+            ['id_empresa' => $empresaId]
+        ));
 
         return response()->json([
             'success' => true,
