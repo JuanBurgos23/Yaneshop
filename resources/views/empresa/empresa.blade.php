@@ -5,10 +5,14 @@
             <div class="col-12">
                 <div class="card my-4">
                     <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2 d-flex justify-content-between align-items-center">
-                        <h2 class="text-primary">Mis Empresas</h2>
+                        <h2 class="text-primary">Mi Empresa</h2>
+
+                        @if(!auth()->user()->empresa)
+                        <!-- Si el usuario NO tiene empresa, mostramos el botón -->
                         <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#modalRegistro">
                             <i class="fas fa-plus"></i> Nueva Empresa
                         </button>
+                        @endif
                     </div>
                     <div class="card-body px-0 pb-2">
                         <div class="table-responsive p-0">
