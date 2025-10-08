@@ -25,6 +25,16 @@ class ProductoController extends Controller
     {
         // Buscar la empresa por slug
         $empresa = Empresa::where('slug', $slug)->firstOrFail();
+
+        // Verificar suscripción
+        $fechaFin = $empresa->fecha_fin_suscripcion ? \Carbon\Carbon::parse($empresa->fecha_fin_suscripcion) : null;
+        $hoy = \Carbon\Carbon::now();
+
+        if (!$fechaFin || $fechaFin->lt($hoy)) {
+            // Suscripción expirada -> redirigir a inicio
+            return redirect('/');
+        }
+
         $empresaId = $empresa->id;
 
         // Categorías con productos activos
@@ -44,7 +54,7 @@ class ProductoController extends Controller
             ->orderBy('created_at', 'desc')
             ->get();
 
-        // Productos nuevos (todos)
+        // Productos nuevos (últimos 7 días)
         $nuevos = Producto::with('categoria', 'imagenes')
             ->whereBetween('created_at', [now()->subDays(7), now()])
             ->where('id_empresa', $empresaId)
