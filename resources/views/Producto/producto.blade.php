@@ -170,27 +170,30 @@
                     </div>
                     <div class="card-body px-0 pb-2">
                         <div class="table-responsive p-0">
-                            <div class="select-categorias-wrapper">
-                                <form method="GET" action="{{ route('productos') }}" class="mx-3 my-2 d-flex align-items-center">
-                                    <label for="categorias" class="me-2">Filtrar por Categorías:</label>
-                                    <select name="categorias[]" id="categorias" class="form-select select2" multiple></select>
-                                    <button type="submit" class="btn btn-primary ms-2"><i class="fa fa-search"></i> Filtrar</button>
-                                    <a href="{{ route('productos') }}" class="btn btn-secondary ms-2">
-                                        <i class="fa fa-list"></i> Mostrar Todos
-                                    </a>
-                                    <a href="{{ route('productos.exportar', ['categorias' => request()->input('categorias', [])]) }}" class="btn btn-success ms-2">
-                                        <i class="fas fa-file-pdf"></i> Exportar PDF
-                                    </a>
+                            <div class="select-categorias-wrapper p-2">
+                                <form method="GET" action="{{ route('productos') }}" class="d-flex flex-wrap align-items-center gap-2">
+                                    <label for="categorias" class="me-2 flex-shrink-0">Filtrar por Categorías:</label>
+                                    <select name="categorias[]" id="categorias" class="form-select select2 flex-grow-1" multiple></select>
 
+                                    <div class="d-flex flex-wrap gap-2">
+                                        <button type="submit" class="btn btn-primary">
+                                            <i class="fa fa-search"></i> Filtrar
+                                        </button>
+                                        <a href="{{ route('productos') }}" class="btn btn-secondary">
+                                            <i class="fa fa-list"></i> Mostrar Todos
+                                        </a>
+                                        <a href="{{ route('productos.exportar', ['categorias' => request()->input('categorias', [])]) }}" class="btn btn-success">
+                                            <i class="fas fa-file-pdf"></i> Exportar PDF
+                                        </a>
+                                    </div>
                                 </form>
                             </div>
                             <style>
-                                /* Select2 Bootstrap-5 compacto SOLO para #categorias */
+                                /* Ajustes Select2 Bootstrap 5 */
                                 #categorias+.select2-container--bootstrap-5 .select2-selection {
-                                    min-height: 32px !important;
+                                    min-height: 36px !important;
                                     padding: 0.25rem 0.5rem !important;
                                     font-size: 0.875rem !important;
-                                    line-height: 1.2 !important;
                                 }
 
                                 #categorias+.select2-container--bootstrap-5 .select2-selection__rendered {
@@ -203,9 +206,26 @@
                                     right: 0.75rem;
                                 }
 
-                                #categorias~.select2-container--bootstrap-5 {
-                                    width: 350px !important;
-                                    /* o el ancho que prefieras */
+                                /* Responsive: ancho completo en móviles */
+                                @media (max-width: 768px) {
+                                    #categorias~.select2-container--bootstrap-5 {
+                                        width: 100% !important;
+                                    }
+
+                                    .select-categorias-wrapper form .d-flex.flex-wrap {
+                                        flex-direction: column;
+                                        align-items: stretch;
+                                        gap: 0.5rem;
+                                    }
+
+                                    .select-categorias-wrapper form .d-flex.flex-wrap .d-flex.flex-wrap.gap-2 {
+                                        justify-content: flex-start;
+                                        flex-wrap: wrap;
+                                    }
+
+                                    .select-categorias-wrapper form .btn {
+                                        width: 100%;
+                                    }
                                 }
                             </style>
                             <script>

@@ -26,6 +26,8 @@ class EmpresaController extends Controller
             'telefono_whatsapp' => 'required|string|max:20',
             'logo'              => 'nullable|image|mimes:png,jpg,jpeg|max:2048',
             'direccion'         => 'nullable|string|max:255',
+            'tipo_suscripcion'  => 'required|string',
+            'cantidad_meses'    => 'nullable|integer|min:1'
         ]);
 
         $data = $request->only(['nombre', 'telefono_whatsapp', 'direccion']);
@@ -34,6 +36,30 @@ class EmpresaController extends Controller
         if ($request->hasFile('logo')) {
             $data['logo'] = $request->file('logo')->store('logos', 'public');
         }
+
+        // Calcular fechas de suscripción
+        $data['fecha_inicio_suscripcion'] = now();
+
+        switch ($request->tipo_suscripcion) {
+            case 'mes':
+                $data['fecha_fin_suscripcion'] = now()->addMonth();
+                break;
+            case 'trimestre':
+                $data['fecha_fin_suscripcion'] = now()->addMonths(3);
+                break;
+            case 'semestre':
+                $data['fecha_fin_suscripcion'] = now()->addMonths(6);
+                break;
+            case 'anual':
+                $data['fecha_fin_suscripcion'] = now()->addYear();
+                break;
+            case 'opcional':
+                $meses = $request->cantidad_meses ?? 1;
+                $data['fecha_fin_suscripcion'] = now()->addMonths($meses);
+                break;
+        }
+
+        $data['tipo_suscripcion'] = $request->tipo_suscripcion;
 
         $empresa = Empresa::create($data);
 
@@ -62,6 +88,8 @@ class EmpresaController extends Controller
                 'telefono_whatsapp' => 'required|string|max:20',
                 'logo'              => 'nullable|image|mimes:png,jpg,jpeg|max:2048',
                 'direccion'         => 'nullable|string|max:255',
+                'tipo_suscripcion'  => 'required|string',
+                'cantidad_meses'    => 'nullable|integer|min:1'
             ]);
 
             $data = $request->only(['nombre', 'telefono_whatsapp', 'direccion']);
@@ -72,6 +100,30 @@ class EmpresaController extends Controller
                 }
                 $data['logo'] = $request->file('logo')->store('logos', 'public');
             }
+
+            // 👇 Recalcular fechas de suscripción
+            $data['fecha_inicio_suscripcion'] = now();
+
+            switch ($request->tipo_suscripcion) {
+                case 'mes':
+                    $data['fecha_fin_suscripcion'] = now()->addMonth();
+                    break;
+                case 'trimestre':
+                    $data['fecha_fin_suscripcion'] = now()->addMonths(3);
+                    break;
+                case 'semestre':
+                    $data['fecha_fin_suscripcion'] = now()->addMonths(6);
+                    break;
+                case 'anual':
+                    $data['fecha_fin_suscripcion'] = now()->addYear();
+                    break;
+                case 'opcional':
+                    $meses = $request->cantidad_meses ?? 1;
+                    $data['fecha_fin_suscripcion'] = now()->addMonths($meses);
+                    break;
+            }
+
+            $data['tipo_suscripcion'] = $request->tipo_suscripcion;
 
             $empresa->update($data);
 
@@ -88,6 +140,7 @@ class EmpresaController extends Controller
             ], 500);
         }
     }
+
 
     public function showPublic($slug)
     {

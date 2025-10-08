@@ -422,6 +422,67 @@
             background-color: rgba(0, 0, 0, 0.8);
             /* Fondo oscuro */
         }
+        /* Botón flotante - estilo corporativo */
+.btn-carrito-flotante {
+    display: none;
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    width: 60px;
+    height: 60px;
+    background: #007bff;
+    color: #fff;
+    border: none;
+    border-radius: 50%;
+    font-size: 26px;
+    cursor: pointer;
+    align-items: center;
+    justify-content: center;
+    z-index: 9999;
+    opacity: 0;
+    transform: scale(0);
+    transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+/* Contador */
+.btn-carrito-flotante span {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    background: #dc3545;
+    color: #fff;
+    font-size: 13px;
+    font-weight: bold;
+    padding: 3px 7px;
+    border-radius: 50%;
+    display: none;
+}
+
+/* Animación cuando aparece */
+.btn-carrito-flotante.show {
+    opacity: 1;
+    transform: scale(1);
+}
+
+/* Animación burbuja al agregar */
+.btn-carrito-flotante.pop {
+    animation: pop 0.4s ease;
+}
+
+@keyframes pop {
+    0% { transform: scale(1); }
+    40% { transform: scale(1.4); }
+    70% { transform: scale(0.9); }
+    100% { transform: scale(1); }
+}
+
+/* Mostrar solo en móvil */
+@media (max-width: 768px) {
+    .btn-carrito-flotante {
+        display: flex;
+    }
+}
+
     </style>
 </head>
 
@@ -765,7 +826,7 @@
     <footer>
         <div class="p-t-40">
             <p class="stext-107 cl6 txt-center">
-                &copy; {{ date('Y') }} Sistema de <strong>TUXSON</strong>
+                &copy; {{ date('Y') }} Sistema de <strong>TUXON</strong>
 
             </p>
         </div>
@@ -841,7 +902,10 @@
             </div>
         </div>
     </div>
-
+<!-- Botón flotante carrito (solo móvil) -->
+<button id="btn-carrito-flotante" class="btn-carrito-flotante">
+    <i class="fa fa-shopping-cart"></i> <span id="contador-flotante">0</span>
+</button>
 
     <!--===============================================================================================-->
     <script src="{{ asset('vendor/jquery/jquery-3.2.1.min.js') }}"></script>
@@ -1285,6 +1349,7 @@
                     contadorVerCarrito.style.display = "none";
                 }
             }
+            actualizarBotonFlotante();
         }
         document.addEventListener("click", function(e) {
             // Botón agregar al carrito
@@ -1621,6 +1686,58 @@
                 });
             }
         });
+   const btnCarritoFlotante = document.getElementById("btn-carrito-flotante");
+const contadorFlotante = document.getElementById("contador-flotante");
+
+// 🔹 Actualiza contador y animación al agregar
+function actualizarBotonFlotante() {
+    if (carrito.length > 0) {
+        contadorFlotante.textContent = carrito.length;
+        contadorFlotante.style.display = 'inline-block';
+
+        // Animación "pop" cada vez que se actualiza
+        btnCarritoFlotante.classList.remove("pop");
+        void btnCarritoFlotante.offsetWidth; // truco para reiniciar animación
+        btnCarritoFlotante.classList.add("pop");
+    } else {
+        contadorFlotante.style.display = 'none';
+    }
+}
+
+// 🔹 Mostrar botón solo en scroll
+window.addEventListener("scroll", () => {
+    if (window.innerWidth <= 768) {
+        if (window.scrollY > 200 && carrito.length > 0) {
+            btnCarritoFlotante.classList.add("show");
+        } else {
+            btnCarritoFlotante.classList.remove("show");
+        }
+    }
+});
+
+// 🔹 Clic en botón flotante → cierra modal y abre carrito
+btnCarritoFlotante.addEventListener("click", () => {
+    // Si hay un modal abierto lo cierra
+    const modal = document.querySelector(".wrap-modal1.js-modal1");
+    if (modal && modal.style.display !== "none") {
+        modal.style.display = "none";
+        document.querySelector(".overlay-modal1").classList.remove("show-modal1");
+    }
+
+    // Abre carrito
+    const panelCart = document.querySelector(".js-panel-cart");
+    panelCart.classList.add("show-header-cart");
+});
+
+// 🔹 Ocultar botón cuando se abre el carrito
+document.querySelectorAll(".js-hide-cart").forEach(btn => {
+    btn.addEventListener("click", () => {
+        btnCarritoFlotante.classList.add("show");
+    });
+});
+document.querySelector(".js-panel-cart").addEventListener("transitionstart", () => {
+    btnCarritoFlotante.classList.remove("show");
+});
     </script>
 </body>
 

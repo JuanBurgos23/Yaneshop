@@ -30,7 +30,7 @@ class CategoriaController extends Controller
             return $categoria;
         });
 
-        return view('categoria.categoria', [
+        return view('Categoria.categoria', [
             'categorias' => $categoriasConProductos,
             'subcategorias' => $subcategorias
         ]);

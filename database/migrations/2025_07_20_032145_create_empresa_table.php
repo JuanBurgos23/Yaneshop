@@ -19,6 +19,9 @@ return new class extends Migration
             $table->string('logo')->nullable();
             $table->string('direccion');
             $table->string('slug',255)->nullable();
+            $table->dateTime('fecha_inicio_suscripcion')->nullable();
+            $table->dateTime('fecha_fin_suscripcion')->nullable();
+            $table->string('tipo_suscripcion')->nullable();
             $table->timestamps();
         });
     }

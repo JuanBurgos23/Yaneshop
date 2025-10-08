@@ -6,7 +6,6 @@
                 <div class="card my-4">
                     <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2 d-flex justify-content-between align-items-center">
                         <h2 class="text-primary">Mi Empresa</h2>
-
                         @if(!auth()->user()->empresa)
                         <!-- Si el usuario NO tiene empresa, mostramos el botón -->
                         <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#modalRegistro">
@@ -82,6 +81,21 @@
                                 <input type="text" name="direccion" class="form-control">
                             </div>
                             <div class="mb-3">
+                                <label>Tipo de Suscripción</label>
+                                <select name="tipo_suscripcion" id="tipoSuscripcion" class="form-control" required>
+                                    <option value="mes">Mensual</option>
+                                    <option value="trimestre">Trimestral</option>
+                                    <option value="semestre">Semestral</option>
+                                    <option value="anual">Anual</option>
+                                    <option value="opcional">Opcional</option>
+                                </select>
+                            </div>
+
+                            <div class="mb-3" id="opcionalMesesWrapper" style="display:none; transition: all 0.3s ease;">
+                                <label>Cantidad de Meses</label>
+                                <input type="number" name="cantidad_meses" id="cantidadMeses" class="form-control" min="1">
+                            </div>
+                            <div class="mb-3">
                                 <label>Logotipo</label>
                                 <input type="file" name="logo" class="form-control" id="inputLogo" accept="image/*">
                                 <div class="mt-2" id="previewLogo" style="display:none;">
@@ -123,6 +137,23 @@
                                 <label>Dirección</label>
                                 <input type="text" name="direccion" id="editDireccion" class="form-control">
                             </div>
+                           
+                                <div class="mb-3" @unlessrole('admin') style="display:none;" @endunlessrole>
+                                    <label>Tipo de Suscripción</label>
+                                    <select name="tipo_suscripcion" id="editTipoSuscripcion" class="form-control">
+                                        <option value="mes">Mensual</option>
+                                        <option value="trimestre">Trimestral</option>
+                                        <option value="semestre">Semestral</option>
+                                        <option value="anual">Anual</option>
+                                        <option value="opcional">Opcional</option>
+                                    </select>
+                                </div>
+
+                                <div class="mb-3" id="editOpcionalMesesWrapper" style="display:none; transition: all 0.3s ease;">
+                                    <label>Cantidad de Meses</label>
+                                    <input type="number" name="cantidad_meses" id="editCantidadMeses" class="form-control" min="1">
+                                </div>
+                           
                             <div class="mb-3">
                                 <label>Logotipo</label>
                                 <input type="file" name="logo" id="editLogoInput" class="form-control" accept="image/*">
@@ -143,6 +174,17 @@
     </main>
 
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+    document.getElementById('editTipoSuscripcion').addEventListener('change', function () {
+        const wrapper = document.getElementById('editOpcionalMesesWrapper');
+        if (this.value === 'opcional') {
+            wrapper.style.display = 'block';
+        } else {
+            wrapper.style.display = 'none';
+            document.getElementById('editCantidadMeses').value = '';
+        }
+    });
+    </script>
     <script>
         // Previsualizar logo en registro
         document.getElementById('inputLogo').addEventListener('change', function(e) {
@@ -171,20 +213,38 @@
             btn.addEventListener('click', function() {
                 const id = this.dataset.id;
                 fetch(`/empresa/${id}/edit`)
-                    .then(res => res.json())
-                    .then(data => {
-                        document.getElementById('editId').value = data.id;
-                        document.getElementById('editNombre').value = data.nombre;
-                        document.getElementById('editTelefono').value = data.telefono_whatsapp;
-                        document.getElementById('editDireccion').value = data.direccion;
-                        if (data.logo) {
-                            document.getElementById('editPreviewLogo').style.display = 'block';
-                            document.getElementById('editLogoPreviewImg').src = `/storage/${data.logo}`;
-                        } else {
-                            document.getElementById('editPreviewLogo').style.display = 'none';
+                .then(res => res.json())
+                .then(data => {
+                    document.getElementById('editId').value = data.id;
+                    document.getElementById('editNombre').value = data.nombre;
+                    document.getElementById('editTelefono').value = data.telefono_whatsapp;
+                    document.getElementById('editDireccion').value = data.direccion;
+
+                    // 👇 Suscripción
+                    document.getElementById('editTipoSuscripcion').value = data.tipo_suscripcion || 'mes';
+                    if (data.tipo_suscripcion === 'opcional') {
+                        document.getElementById('editOpcionalMesesWrapper').style.display = 'block';
+                        // calcular diferencia entre fechas (meses) y asignar
+                        if (data.fecha_inicio_suscripcion && data.fecha_fin_suscripcion) {
+                            const start = new Date(data.fecha_inicio_suscripcion);
+                            const end = new Date(data.fecha_fin_suscripcion);
+                            const diff = (end.getFullYear() - start.getFullYear()) * 12 + (end.getMonth() - start.getMonth());
+                            document.getElementById('editCantidadMeses').value = diff;
                         }
-                        new bootstrap.Modal(document.getElementById('modalEditar')).show();
-                    });
+                    } else {
+                        document.getElementById('editOpcionalMesesWrapper').style.display = 'none';
+                    }
+
+                    // Logo
+                    if (data.logo) {
+                        document.getElementById('editPreviewLogo').style.display = 'block';
+                        document.getElementById('editLogoPreviewImg').src = `/storage/${data.logo}`;
+                    } else {
+                        document.getElementById('editPreviewLogo').style.display = 'none';
+                    }
+
+                    new bootstrap.Modal(document.getElementById('modalEditar')).show();
+                });
             });
         });
 
@@ -249,6 +309,17 @@
                     Swal.fire('Error', err.message || 'Hubo un problema en el servidor', 'error');
                 });
         });
+        
     </script>
-
+<script>
+    document.getElementById('tipoSuscripcion').addEventListener('change', function () {
+        const wrapper = document.getElementById('opcionalMesesWrapper');
+        if (this.value === 'opcional') {
+            wrapper.style.display = 'block';
+        } else {
+            wrapper.style.display = 'none';
+            document.getElementById('cantidadMeses').value = '';
+        }
+    });
+</script>
 </x-layout>

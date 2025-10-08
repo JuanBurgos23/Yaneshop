@@ -309,7 +309,7 @@ class ProductoController extends Controller
             $categoria->productos = Producto::where('id_categoria', $categoria->id)->get();
         }
 
-        $pdf = Pdf::loadView('producto.exportarPdf', compact('categorias'));
+        $pdf = Pdf::loadView('Producto.exportarPdf', compact('categorias'));
 
         // Mostrar en navegador directamente
         return $pdf->stream('productos_filtrados.pdf', ['Attachment' => false]);

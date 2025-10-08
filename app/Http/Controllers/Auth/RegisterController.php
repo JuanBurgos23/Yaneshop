@@ -63,10 +63,15 @@ class RegisterController extends Controller
      */
     protected function create(array $data)
     {
-        return User::create([
+        $user = User::create([
             'name' => $data['name'],
             'email' => $data['email'],
             'password' => Hash::make($data['password']),
         ]);
+
+        // Asignar rol cliente a todos los que se registren (menos el admin creado en el seeder)
+        $user->assignRole('cliente');
+
+        return $user;
     }
 }
