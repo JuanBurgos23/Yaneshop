@@ -142,7 +142,20 @@ class ProductoController extends Controller
 
     public function index(Request $request)
     {
-        $empresaId = Auth::user()->empresa->id;
+        $user = Auth::user();
+
+        // Solo aplicar restricción a clientes
+        if ($user->hasRole('cliente')) {
+            $empresa = $user->empresa;
+
+            if (!$empresa || !$empresa->fecha_fin_suscripcion || \Carbon\Carbon::now()->gt(\Carbon\Carbon::parse($empresa->fecha_fin_suscripcion))) {
+                // Suscripción vencida o no definida → redirigir a la vista de aviso
+                return view('empresa.suscripcion_vencida');
+            }
+        }
+
+        // Si es admin o cliente con suscripción vigente
+        $empresaId = $user->empresa->id;
 
         // Categorías solo de la empresa
         $todasLasCategorias = Categoria::where('id_empresa', $empresaId)->get();
@@ -174,6 +187,7 @@ class ProductoController extends Controller
             'categoriasSeleccionadas' => $categoriasFiltradas
         ]);
     }
+
 
     public function store(Request $request)
     {

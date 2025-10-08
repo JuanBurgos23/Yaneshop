@@ -3,6 +3,7 @@
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\CategoriaController;
 use App\Http\Controllers\ClienteController;
+use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\EmpresaController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\PerfilController;
@@ -20,7 +21,7 @@ Route::get('iniciar-sesion', [LoginController::class, 'showLoginForm'])->name('l
 Route::post('iniciar-sesion', [LoginController::class, 'login']);
 Route::post('cerrar-sesion', [LoginController::class, 'logout'])->name('logout');
 
-Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
+Route::get('/home', [DashboardController::class, 'dashboard'])->name('home');
 //User
 Route::get('user', [PerfilController::class, 'index'])->name('mostrar_perfil');
 Route::post('/user/{id}/update-avatar', [PerfilController::class, 'updateAvatar'])->name('user.updateAvatar');

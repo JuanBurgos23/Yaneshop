@@ -11,11 +11,34 @@ use Illuminate\Support\Facades\Storage;
 
 class EmpresaController extends Controller
 {
-    // Listar empresas del usuario
-    public function index()
+    // Listar empresas según rol
+   public function index()
     {
-        $empresas = Empresa::where('id_user', Auth::id())->get();
-        return view('empresa.empresa', compact('empresas'));
+        if (auth()->user()->hasRole('admin')) {
+            // Admin puede ver todas las empresas
+            $empresas = Empresa::all();
+            return view('empresa.empresa', compact('empresas'));
+        } else {
+            // Cliente solo ve su empresa
+            $empresa = auth()->user()->empresa;
+
+            if (!$empresa) {
+                // Cliente sin empresa registrada
+                return redirect()->route('home')->with('error', 'No tienes una empresa registrada.');
+            }
+
+            // Verificar fecha de fin de suscripción
+            $fechaFin = $empresa->fecha_fin_suscripcion ? \Carbon\Carbon::parse($empresa->fecha_fin_suscripcion) : null;
+            $hoy = \Carbon\Carbon::now();
+
+            if (!$fechaFin || $fechaFin->lt($hoy)) {
+                // Suscripción expirada
+                return view('empresa.suscripcion_vencida'); // crea esta vista
+            }
+
+            // Suscripción vigente, mostrar empresa
+            return view('empresa.empresa', ['empresas' => [$empresa]]);
+        }
     }
 
     // Guardar nueva empresa
@@ -70,18 +93,31 @@ class EmpresaController extends Controller
         return redirect()->back()->with('success', 'Empresa registrada correctamente');
     }
 
-    // Obtener datos para editar
+   // Obtener datos para editar
     public function edit($id)
     {
-        $empresa = Empresa::where('id_user', Auth::id())->findOrFail($id);
+        if (auth()->user()->hasRole('admin')) {
+            // Admin puede editar cualquier empresa
+            $empresa = Empresa::findOrFail($id);
+        } else {
+            // Cliente solo puede editar su empresa
+            $empresa = Empresa::where('id_user', auth()->id())->findOrFail($id);
+        }
+
         return response()->json($empresa);
     }
 
+
     // Actualizar empresa
-    public function update(Request $request, $id)
+   public function update(Request $request, $id)
     {
         try {
-            $empresa = Empresa::where('id_user', Auth::id())->findOrFail($id);
+            // Cliente solo puede actualizar su empresa
+            if(auth()->user()->hasRole('admin')){
+                $empresa = Empresa::findOrFail($id);
+            } else {
+                $empresa = Empresa::where('id_user', auth()->id())->findOrFail($id);
+            }
 
             $request->validate([
                 'nombre'            => 'required|string|max:255',
@@ -94,6 +130,7 @@ class EmpresaController extends Controller
 
             $data = $request->only(['nombre', 'telefono_whatsapp', 'direccion']);
 
+            // Manejo del logo
             if ($request->hasFile('logo')) {
                 if ($empresa->logo && Storage::disk('public')->exists($empresa->logo)) {
                     Storage::disk('public')->delete($empresa->logo);
@@ -101,7 +138,7 @@ class EmpresaController extends Controller
                 $data['logo'] = $request->file('logo')->store('logos', 'public');
             }
 
-            // 👇 Recalcular fechas de suscripción
+            // Recalcular fechas de suscripción
             $data['fecha_inicio_suscripcion'] = now();
 
             switch ($request->tipo_suscripcion) {
@@ -120,6 +157,10 @@ class EmpresaController extends Controller
                 case 'opcional':
                     $meses = $request->cantidad_meses ?? 1;
                     $data['fecha_fin_suscripcion'] = now()->addMonths($meses);
+                    break;
+                default:
+                    // Si no se reconoce el tipo, mantener la fecha de fin actual
+                    $data['fecha_fin_suscripcion'] = $empresa->fecha_fin_suscripcion;
                     break;
             }
 
@@ -140,6 +181,7 @@ class EmpresaController extends Controller
             ], 500);
         }
     }
+
 
 
     public function showPublic($slug)

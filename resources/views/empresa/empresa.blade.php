@@ -1,5 +1,6 @@
 <x-layout bodyClass="g-sidenav-show bg-gray-200">
     <meta name="csrf-token" content="{{ csrf_token() }}">
+    @extends('layouts.suscripcionAviso')
     <main class="main-content position-relative max-height-vh-100 h-100 border-radius-lg">
         <div class="container-fluid py-4">
             <div class="col-12">

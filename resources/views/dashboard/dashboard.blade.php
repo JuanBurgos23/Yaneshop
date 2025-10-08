@@ -139,92 +139,128 @@
                     </div>
 
                 </div>
-                <div class="main-panel">
-                    <div class="content-wrapper">
-                        <div class="row">
-                            <div class="col-lg-6 grid-margin stretch-card">
-                                <div class="card">
-                                    <div class="card-body">
-                                        <h4 class="card-title">Grafico Torta</h4>
-                                        <figure class="highcharts-figure">
-                                            <div id="container"></div>
-                                            <p class="grafica-ingresos-descripcion">
-                                                Este gráfico muestra el porcentaje de cada paquete mas inscrito.
-                                            </p>
-                                        </figure>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-lg-6 grid-margin stretch-card">
-                                <div class="card">
-                                    <div class="card-body">
-                                        <h4 class="card-title">Grafico Columna</h4>
-                                        <figure class="grafica-ingresos-figure">
-                                            <div id="grafica-ingresos-container"></div>
-                                            <p class="grafica-ingresos-descripcion">
-                                                Este gráfico muestra los ingresos por mes durante el año actual.
-                                            </p>
-                                        </figure>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+                <div class="row">
+
+            <!-- Gráfico de Productos por Categoría (Pie) -->
+            <div class="col-lg-6 col-md-12 mb-4">
+                <div class="card shadow-sm">
+                    <div class="card-body">
+                        <h5 class="card-title text-center">Productos por Categoría</h5>
+                        <div id="grafico-pie" style="width:100%; height:350px;"></div>
+                        <p class="text-center mt-2">Porcentaje de productos por categoría.</p>
                     </div>
                 </div>
             </div>
-            <script src="https://code.highcharts.com/highcharts.js"></script>
-            <script src="https://code.highcharts.com/modules/exporting.js"></script>
-            <script src="https://code.highcharts.com/modules/export-data.js"></script>
-            <script src="https://code.highcharts.com/modules/accessibility.js"></script>
 
-            <script>
-                document.addEventListener('DOMContentLoaded', function() {
-                    Highcharts.chart('container', {
-                        chart: {
-                            type: 'pie'
-                        },
-                        title: {
-                            text: 'Paquetes Más Inscritos'
-                        },
-                        series: [{
-                            name: 'Porcentaje',
-                            data: [{
-                                    name: 'Paquete A',
-                                    y: 45
-                                },
-                                {
-                                    name: 'Paquete B',
-                                    y: 30
-                                },
-                                {
-                                    name: 'Paquete C',
-                                    y: 25
-                                }
-                            ]
-                        }]
-                    });
+            <!-- Gráfico de Clientes Registrados por Mes (Column) -->
+            <div class="col-lg-6 col-md-12 mb-4">
+                <div class="card shadow-sm">
+                    <div class="card-body">
+                        <h5 class="card-title text-center">Clientes Registrados por Mes</h5>
+                        <div id="grafico-column" style="width:100%; height:350px;"></div>
+                        <p class="text-center mt-2">Cantidad de clientes registrados por mes.</p>
+                    </div>
+                </div>
+            </div>
 
-                    Highcharts.chart('grafica-ingresos-container', {
-                        chart: {
-                            type: 'column'
-                        },
-                        title: {
-                            text: 'Ingresos por Mes'
-                        },
-                        xAxis: {
-                            categories: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio']
-                        },
-                        yAxis: {
-                            title: {
-                                text: 'Ingresos (Bs.)'
-                            }
-                        },
-                        series: [{
-                            name: 'Ingresos',
-                            data: [5000, 7000, 8000, 6000, 9000, 10000]
-                        }]
-                    });
-                });
-            </script>
+        </div>
+
+    </div>
+</div>
+
+<!-- Highcharts -->
+<script src="https://code.highcharts.com/highcharts.js"></script>
+<script src="https://code.highcharts.com/modules/exporting.js"></script>
+<script src="https://code.highcharts.com/modules/export-data.js"></script>
+<script src="https://code.highcharts.com/modules/accessibility.js"></script>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+
+    // Pie chart - Productos por Categoría
+    Highcharts.chart('grafico-pie', {
+        chart: { type: 'pie', backgroundColor: 'transparent' },
+        title: { text: '' },
+        tooltip: { pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>' },
+        accessibility: { point: { valueSuffix: '%' } },
+        plotOptions: {
+            pie: {
+                allowPointSelect: true,
+                cursor: 'pointer',
+                dataLabels: { enabled: true, format: '<b>{point.name}</b>: {point.percentage:.1f} %' },
+                showInLegend: true
+            }
+        },
+        series: [{
+            name: 'Porcentaje',
+            colorByPoint: true,
+            data: @json($productosPorCategoria)
+        }],
+        responsive: {
+            rules: [{
+                condition: { maxWidth: 768 },
+                chartOptions: {
+                    plotOptions: {
+                        pie: { dataLabels: { style: { fontSize: '10px' } } }
+                    }
+                }
+            }]
+        }
+    });
+
+    // Column chart - Clientes por Mes
+    Highcharts.chart('grafico-column', {
+        chart: { type: 'column', backgroundColor: 'transparent' },
+        title: { text: '' },
+        xAxis: {
+            categories: @json($meses),
+            crosshair: true
+        },
+        yAxis: {
+            min: 0,
+            title: { text: 'Clientes Registrados' }
+        },
+        tooltip: {
+            headerFormat: '<span style="font-size:10px">{point.key}</span><table>',
+            pointFormat: '<tr><td style="color:{series.color};padding:0">{series.name}: </td>' +
+                '<td style="padding:0"><b>{point.y} clientes</b></td></tr>',
+            footerFormat: '</table>',
+            shared: true,
+            useHTML: true
+        },
+        plotOptions: {
+            column: { borderRadius: 5, pointPadding: 0.2, borderWidth: 0 }
+        },
+        series: [{
+            name: 'Clientes',
+            data: @json($clientesPorMes),
+            color: '#7cb5ec'
+        }],
+        responsive: {
+            rules: [{
+                condition: { maxWidth: 768 },
+                chartOptions: {
+                    chart: { type: 'bar' },
+                    plotOptions: { bar: { dataLabels: { enabled: true, style: { fontSize: '10px' } } } },
+                    xAxis: { labels: { style: { fontSize: '10px' } } },
+                    yAxis: { labels: { style: { fontSize: '10px' } } }
+                }
+            }]
+        }
+    });
+
+});
+</script>
+
+<style>
+.card-body { padding: 20px; }
+.highcharts-figure { margin: 0 auto; max-width: 100%; }
+.grafica-descripcion { font-size: 0.9rem; color: #555; }
+
+@media (max-width: 767px) {
+    .card-title { font-size: 1rem; text-align: center; }
+    #grafico-pie, #grafico-column { height: 300px !important; }
+}
+</style>
     </main>
 </x-layout>
