@@ -79,7 +79,7 @@
                             </div>
                             <div class="mb-3">
                                 <label>Dirección</label>
-                                <input type="text" name="direccion" class="form-control">
+                                <input type="text" name="direccion" class="form-control" required>
                             </div>
                             <div class="mb-3">
                                 <label>Tipo de Suscripción</label>

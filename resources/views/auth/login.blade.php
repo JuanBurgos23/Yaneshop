@@ -129,7 +129,7 @@
         <form method="POST" action="{{ route('login') }}">
             @csrf
 
-            <label for="email">{{ __('Email Address') }}</label>
+            <label for="email">{{ __('Dirección de Correo Electrónico') }}</label>
             <div class="input-group">
                 <input id="email" type="email"
                     class="@error('email') is-invalid @enderror"
@@ -142,7 +142,7 @@
                 @enderror
             </div>
 
-            <label for="password">{{ __('Password') }}</label>
+            <label for="password">{{ __('Contraseña') }}</label>
             <div class="input-group">
                 <input id="password" type="password"
                     class="@error('password') is-invalid @enderror"
@@ -159,17 +159,17 @@
                 <input class="form-check-input" type="checkbox" name="remember" id="remember"
                     {{ old('remember') ? 'checked' : '' }}>
                 <label class="form-check-label" for="remember">
-                    {{ __('Remember Me') }}
+                    {{ __('Recordarme') }}
                 </label>
             </div>
 
             <button type="submit" class="btn-primary">
-                {{ __('Login') }}
+                {{ __('Iniciar Sesión') }}
             </button>
 
             @if (Route::has('password.request'))
             <a class="btn-link" href="{{ route('password.request') }}">
-                {{ __('Forgot Your Password?') }}
+                {{ __('Se olvidó su contraseña?') }}
             </a>
             @endif
         </form>

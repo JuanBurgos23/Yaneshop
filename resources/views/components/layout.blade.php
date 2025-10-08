@@ -80,14 +80,14 @@
                 @php
                 $registrosRoutes = [
                 'mostrar_cliente',
-                'empresa.index'
+                'empresa.index',
+                'admin.usuarios.index'
                 ];
 
                 $productosRoutes = [
                 'productos',
                 'mostrar_categoria',
                 'productos.masivo',
-
                 ];
                 @endphp
                 <li class="nav-item nav-category">
@@ -125,7 +125,13 @@
                                     Empresa
                                 </a>
                             </li>
-
+                            @role('admin')
+                             <li class="nav-item">
+                                <a class="nav-link {{ Route::is('admin.usuarios.index') ? 'active' : '' }}" href="{{ route('admin.usuarios.index') }}">
+                                    Usuarios
+                                </a>
+                            </li>
+                            @endrole
                         </ul>
                     </div>
                 </li>

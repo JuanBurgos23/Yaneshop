@@ -8,6 +8,7 @@ use App\Http\Controllers\EmpresaController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\PerfilController;
 use App\Http\Controllers\ProductoController;
+use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 use SebastianBergmann\CodeCoverage\Report\Html\Dashboard;
 
@@ -74,6 +75,13 @@ Route::prefix('ajax')->group(function () {
     Route::get('/load-more-nuevos', [ProductoController::class, 'loadMoreNuevos'])->name('ajax.loadMoreNuevos');
     Route::get('/load-more-productos', [ProductoController::class, 'loadMoreProductos'])->name('ajax.loadMoreProductos');
 });
+
+//rutas para ver usuarioo desde el admin
+Route::get('/admin/usuarios', [UserController::class, 'index'])->name('admin.usuarios.index');
+Route::get('/admin/usuarios/buscar', [UserController::class, 'buscar'])->name('admin.usuarios.buscar');
+Route::post('/admin/usuarios/{id}/empresa', [UserController::class, 'crearEmpresa'])->name('admin.usuarios.crearEmpresa');
+Route::post('/admin/usuarios/crear', [UserController::class, 'crearUsuario'])->name('admin.usuarios.crear');
+
 
 Route::get('/{slug}', [ProductoController::class, 'productoInicio'])->name('empresa.public');
 

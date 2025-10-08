@@ -17,7 +17,7 @@ return new class extends Migration
             $table->string('nombre');
             $table->string('telefono_whatsapp')->nullable();
             $table->string('logo')->nullable();
-            $table->string('direccion');
+            $table->string('direccion')->nullable();
             $table->string('slug',255)->nullable();
             $table->dateTime('fecha_inicio_suscripcion')->nullable();
             $table->dateTime('fecha_fin_suscripcion')->nullable();
