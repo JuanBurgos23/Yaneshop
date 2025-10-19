@@ -812,7 +812,6 @@
                     </div>
                     @endforeach
                 </div>
-
             </section>
             @endif
 

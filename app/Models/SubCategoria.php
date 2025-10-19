@@ -10,7 +10,8 @@ class SubCategoria extends Model
     protected $fillable = [
         'nombre',
         'id_categoria',
-        'id_empresa'
+        'id_empresa',
+        'estado'
     ];
 
     public function categoria()

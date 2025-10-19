@@ -46,7 +46,7 @@ class ProductoController extends Controller
             })
             ->get();
 
-        // Productos en promoción (todos)
+        // 🏷️ Productos en promoción
         $promociones = Producto::with('categoria', 'imagenes')
             ->whereNotNull('precio_oferta')
             ->where('id_empresa', $empresaId)
@@ -54,7 +54,7 @@ class ProductoController extends Controller
             ->orderBy('created_at', 'desc')
             ->get();
 
-        // Productos nuevos (últimos 7 días)
+        // 🆕 Productos nuevos (últimos 7 días)
         $nuevos = Producto::with('categoria', 'imagenes')
             ->whereBetween('created_at', [now()->subDays(7), now()])
             ->where('id_empresa', $empresaId)
@@ -62,16 +62,23 @@ class ProductoController extends Controller
             ->orderBy('created_at', 'desc')
             ->get();
 
-        // Productos normales (todos)
+        // ❌ IDs de productos ya mostrados
+        $excluirIds = $promociones->pluck('id')
+            ->merge($nuevos->pluck('id'))
+            ->unique();
+
+        // 📦 Productos normales (sin repetir)
         $productos = Producto::with('categoria', 'imagenes')
             ->whereNull('precio_oferta')
             ->where('id_empresa', $empresaId)
             ->where('estado', 'activo')
+            ->whereNotIn('id', $excluirIds)
             ->orderBy('created_at', 'desc')
             ->get();
 
         return view('Producto.ProductoInicio', compact('empresa', 'categorias', 'productos', 'nuevos', 'promociones'));
     }
+
 
 
     //cargar mas  8

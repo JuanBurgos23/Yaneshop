@@ -75,22 +75,29 @@
                         <div class="card-footer">
                             <h6>Listado de Categorías</h6>
                             <div class="table-responsive">
-                                <table class="table table-striped">
+                                <table class="table table-striped align-middle">
                                     <thead>
                                         <tr>
                                             <th>Nombre</th>
                                             <th>Descripción</th>
-                                            <th>Acciones</th>
+                                            <th class="text-center">Acciones</th>
                                         </tr>
                                     </thead>
                                     <tbody>
                                         @foreach($categorias as $categoria)
-                                        <tr>
+                                        <tr id="categoria-{{ $categoria->id }}">
                                             <td>{{ $categoria->nombre }}</td>
-                                            <td class="text-center text-truncate" style="max-width: 200px;" title="{{ $categoria->descripcion }}">{{ $categoria->descripcion }}</td>
-                                            <td>
-                                                <button class="btn btn-warning btn-sm" onclick="editarCategoria({{ $categoria }})">
+                                            <td class="text-center text-truncate" style="max-width: 200px;" title="{{ $categoria->descripcion }}">
+                                                {{ $categoria->descripcion }}
+                                            </td>
+                                            <td class="text-center">
+                                                <button class="btn btn-warning btn-sm"
+                                                    onclick='editarCategoria(@json($categoria))'>
                                                     <i class="fa fa-edit"></i> Editar
+                                                </button>
+
+                                                <button class="btn btn-danger btn-sm" onclick="eliminarCategoria({{ $categoria->id }})">
+                                                    <i class="fa fa-trash"></i> Eliminar
                                                 </button>
                                             </td>
                                         </tr>
@@ -147,17 +154,21 @@
                                     </thead>
                                     <tbody>
                                         @foreach($subcategorias as $subcategoria)
-                                        <tr>
+                                        <tr id="subcategoria-{{ $subcategoria->id }}">
                                             <td>{{ $subcategoria->categoria->nombre }}</td>
                                             <td>{{ $subcategoria->nombre }}</td>
-                                            <td>
+                                            <td class="text-center">
                                                 <button class="btn btn-warning btn-sm"
                                                     onclick='editarSubcategoria(@json([
-                                                            "id" => $subcategoria->id,
-                                                            "nombre" => $subcategoria->nombre,
-                                                            "id_categoria" => $subcategoria->id_categoria
-                                                        ]))'>
+                                                        "id" => $subcategoria->id,
+                                                        "nombre" => $subcategoria->nombre,
+                                                        "id_categoria" => $subcategoria->id_categoria
+                                                    ]))'>
                                                     <i class="fa fa-edit"></i> Editar
+                                                </button>
+
+                                                <button class="btn btn-danger btn-sm" onclick="eliminarSubcategoria({{ $subcategoria->id }})">
+                                                    <i class="fa fa-trash"></i> Eliminar
                                                 </button>
                                             </td>
                                         </tr>
@@ -173,6 +184,98 @@
         </div>
 
         {{-- Scripts --}}
+        <script>
+            async function eliminarCategoria(id) {
+                const confirm = await Swal.fire({
+                    title: '¿Eliminar categoría?',
+                    text: 'Se marcará como eliminada junto con sus subcategorías relacionadas.',
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonText: 'Sí, eliminar',
+                    cancelButtonText: 'Cancelar',
+                    confirmButtonColor: '#d33',
+                    cancelButtonColor: '#3085d6'
+                });
+
+                if (confirm.isConfirmed) {
+                    try {
+                        const res = await fetch(`/categorias/${id}/eliminar`, {
+                            method: 'PUT',
+                            headers: {
+                                'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                                'Accept': 'application/json'
+                            }
+                        });
+
+                        const data = await res.json();
+
+                        if (data.success) {
+                            Swal.fire({
+                                title: 'Eliminada',
+                                text: data.message,
+                                icon: 'success',
+                                timer: 2000,
+                                showConfirmButton: false
+                            });
+
+                            // Eliminar visualmente la fila
+                            document.querySelector(`#categoria-${id}`)?.remove();
+                        } else {
+                            Swal.fire('Error', 'No se pudo eliminar la categoría.', 'error');
+                        }
+                    } catch (error) {
+                        Swal.fire('Error', 'Ocurrió un error inesperado.', 'error');
+                        console.error(error);
+                    }
+                }
+            }
+        </script>
+        <script>
+            async function eliminarSubcategoria(id) {
+                const confirm = await Swal.fire({
+                    title: '¿Eliminar subcategoría?',
+                    text: 'Se marcará como eliminada y no se mostrará más en la lista.',
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonText: 'Sí, eliminar',
+                    cancelButtonText: 'Cancelar',
+                    confirmButtonColor: '#d33',
+                    cancelButtonColor: '#3085d6'
+                });
+
+                if (confirm.isConfirmed) {
+                    try {
+                        const res = await fetch(`/subcategorias/${id}/eliminar`, {
+                            method: 'PUT',
+                            headers: {
+                                'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                                'Accept': 'application/json'
+                            }
+                        });
+
+                        const data = await res.json();
+
+                        if (data.success) {
+                            Swal.fire({
+                                title: 'Eliminada',
+                                text: data.message,
+                                icon: 'success',
+                                timer: 2000,
+                                showConfirmButton: false
+                            });
+
+                            // Eliminar fila visualmente sin recargar
+                            document.querySelector(`#subcategoria-${id}`)?.remove();
+                        } else {
+                            Swal.fire('Error', 'Ocurrió un problema al eliminar.', 'error');
+                        }
+                    } catch (error) {
+                        Swal.fire('Error', 'Ocurrió un error inesperado.', 'error');
+                        console.error(error);
+                    }
+                }
+            }
+        </script>
         <script>
             //categoria
             function editarCategoria(categoria) {

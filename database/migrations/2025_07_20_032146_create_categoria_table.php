@@ -16,6 +16,7 @@ return new class extends Migration
             $table->string('nombre');
             $table->text('descripcion')->nullable();
             $table->foreignId('id_empresa')->constrained('empresa')->onDelete('cascade');
+            $table->string('estado')->default('activo');
             $table->timestamps();
         });
     }

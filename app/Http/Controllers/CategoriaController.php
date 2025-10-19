@@ -13,16 +13,19 @@ class CategoriaController extends Controller
 
     public function index()
     {
-        // Si el usuario está autenticado y su empresa es la que queremos filtrar
         $empresaId = Auth::user()->empresa->id;
 
-        // Traer solo categorías de esa empresa
-        $categorias = Categoria::where('id_empresa', $empresaId)->get();
+        // 🔹 Traer solo categorías activas de la empresa
+        $categorias = Categoria::where('id_empresa', $empresaId)
+            ->where('estado', 'activo')
+            ->get();
 
-        // Subcategorías solo de esas categorías
-        $subcategorias = SubCategoria::whereIn('id_categoria', $categorias->pluck('id'))->get();
+        // 🔹 Subcategorías activas solo de esas categorías
+        $subcategorias = SubCategoria::whereIn('id_categoria', $categorias->pluck('id'))
+            ->where('estado', 'activo')
+            ->get();
 
-        // Cargar productos paginados por categoría
+        // 🔹 Cargar productos paginados por categoría (si existen)
         $categoriasConProductos = $categorias->map(function ($categoria) {
             $productosPaginados = Producto::where('id_categoria', $categoria->id)
                 ->paginate(10, ['*'], "pagina_categoria_{$categoria->id}");
@@ -35,6 +38,7 @@ class CategoriaController extends Controller
             'subcategorias' => $subcategorias
         ]);
     }
+
 
 
     public function store(Request $request)
@@ -82,8 +86,9 @@ class CategoriaController extends Controller
         $empresaId = Auth::user()->empresa->id;
 
         $categorias = Categoria::where('id_empresa', $empresaId)
-            ->where(function ($q) use ($query) {
-                $q->where('nombre', 'like', '%' . $query . '%')
+            ->where('estado', 'activo') // 🔹 Solo categorías activas
+            ->where(function ($q2) use ($query) {
+                $q2->where('nombre', 'like', '%' . $query . '%')
                     ->orWhere('descripcion', 'like', '%' . $query . '%');
             })
             ->limit(10)
@@ -91,6 +96,7 @@ class CategoriaController extends Controller
 
         return response()->json($categorias);
     }
+
 
     public function edit($id)
     {
@@ -161,6 +167,34 @@ class CategoriaController extends Controller
 
         return redirect()->back()->with('success', 'Subcategoría actualizada correctamente');
     }
+    public function eliminarCategoria($id)
+    {
+        $empresaId = Auth::user()->empresa->id;
+
+        $categoria = Categoria::where('id_empresa', $empresaId)->findOrFail($id);
+
+        // Cambiar estado a eliminado
+        $categoria->update(['estado' => 'eliminado']);
+
+        // También eliminar sus subcategorías relacionadas
+        SubCategoria::where('id_categoria', $categoria->id)
+            ->where('id_empresa', $empresaId)
+            ->update(['estado' => 'eliminado']);
+
+        return response()->json(['success' => true, 'message' => 'Categoría eliminada correctamente']);
+    }
+
+    public function eliminarSubCategoria($id)
+    {
+        $empresaId = Auth::user()->empresa->id;
+
+        $subcategoria = SubCategoria::where('id_empresa', $empresaId)->findOrFail($id);
+
+        $subcategoria->update(['estado' => 'eliminado']);
+
+        return response()->json(['success' => true, 'message' => 'Subcategoría eliminada correctamente']);
+    }
+
 
     public function subcategoriasPorCategoria($id)
     {

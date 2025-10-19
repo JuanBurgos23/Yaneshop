@@ -42,12 +42,15 @@ Route::get('/categorias/buscar', [CategoriaController::class, 'buscar'])->name('
 Route::post('/categoria-register', [CategoriaController::class, 'store'])->name('categoria.store');
 Route::get('/categoria/edit/{id}', [CategoriaController::class, 'edit'])->name('categoria.edit');
 Route::put('/categoria-update/{id}', [CategoriaController::class, 'update'])->name('categoria.update');
+Route::put('/categorias/{id}/eliminar', [CategoriaController::class, 'eliminarCategoria'])->name('categoria.eliminar');
+
 //sub Categoria
 Route::post('/subcategoria-register', [CategoriaController::class, 'storeSubCategoria'])->name('subcategoria.store');
 Route::get('/subcategoria/edit/{id}', [CategoriaController::class, 'editSubCategoria'])->name('subcategoria.edit');
 Route::put('/subcategoria-update/{id}', [CategoriaController::class, 'updateSubCategoria'])->name('subcategoria.update');
 Route::get('/subcategorias/por-categoria', [CategoriaController::class, 'porCategoria'])->name('subcategorias.porCategoria');
 Route::get('/subcategorias/{id}', [CategoriaController::class, 'subcategoriasPorCategoria']);
+Route::put('/subcategorias/{id}/eliminar', [CategoriaController::class, 'eliminarSubCategoria'])->name('subcategoria.eliminar');
 
 //Producto
 Route::get('/productos', [ProductoController::class, 'index'])->name('productos');
