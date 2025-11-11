@@ -13,6 +13,8 @@ class Producto extends Model
         'precio',
         'cantidad',
         'precio_oferta',
+        'oferta_tipo',
+        'precio_oferta_tipo',
         'id_categoria',
         'id_subcategoria',
         'codigo_barras',

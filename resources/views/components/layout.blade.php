@@ -160,8 +160,11 @@
                                     Registrar un Producto
                                 </a>
                             </li>
-
-
+                            <li class="nav-item">
+                                <a class="nav-link {{ Route::is('productos.masivo') ? 'active' : '' }}" href="{{ route('productos.masivo') }}">
+                                    Registrar Productos Masivos
+                                </a>
+                            </li>
 
                         </ul>
                     </div>

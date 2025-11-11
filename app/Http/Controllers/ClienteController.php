@@ -129,10 +129,9 @@ class ClienteController extends Controller
     // Registrar cliente para la empresa actual
     public function registrar(Request $request)
     {
-        // Obtenemos la empresa correctamente
-        $empresaId = $request->id_empresa;
+        $empresaId = $request->input('empresa_id');
 
-        $cliente = Cliente::where('telefono', $request->telefono)
+        $cliente = Cliente::where('telefono', $request->input('telefono'))
             ->where('id_empresa', $empresaId)
             ->first();
 

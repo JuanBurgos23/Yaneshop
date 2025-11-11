@@ -283,6 +283,14 @@
                                                 <button class="btn btn-warning btn-sm" data-bs-toggle="modal" data-bs-target="#editModal" data-id="{{ $producto->id }}">
                                                     <i class="fa fa-edit"></i> Editar
                                                 </button>
+
+                                                <form action="{{ route('productos.eliminar', $producto->id) }}" method="POST" class="d-inline" onsubmit="return confirmarEliminacion(event)">
+                                                    @csrf
+                                                    @method('PUT')
+                                                    <button type="submit" class="btn btn-danger btn-sm">
+                                                        <i class="fa fa-trash"></i> Eliminar
+                                                    </button>
+                                                </form>
                                             </td>
                                         </tr>
                                         @empty
@@ -327,6 +335,21 @@
                                     <div class="col-md-6">
                                         <label for="precio" class="form-label">Precio Oferta(Bs.) Opcional</label>
                                         <input type="number" step="0.01" class="form-control" id="precioOferta" name="precio_oferta">
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label for="oferta_tipo" class="form-label">Tipo de Oferta (Opcional)</label>
+                                        <div style="display:flex; gap:4px; align-items:center;">
+                                            <input type="number" min="1" class="form-control oferta-num" id="oferta_num1" placeholder="2">
+                                            <span style="font-weight:bold;">X</span>
+                                            <input type="number" min="1" class="form-control oferta-num" id="oferta_num2" placeholder="1">
+                                        </div>
+                                        <!-- input oculto que se enviará al backend -->
+                                        <input type="hidden" name="oferta_tipo" id="oferta_tipo">
+                                        <small class="text-muted">Formato permitido: número X número (ej: 2 X 1)</small>
+                                    </div>
+                                    <div class="col-md-6" id="precio_oferta_tipo_container" style="display:none; opacity:0; transition: all 0.3s ease;">
+                                        <label for="precio_oferta_tipo" class="form-label">Precio Oferta de Cantidad (Bs.)</label>
+                                        <input type="number" step="0.01" class="form-control" id="precio_oferta_tipo" name="precio_oferta_tipo" placeholder="Precio total para la oferta">
                                     </div>
                                     <div class="col-md-12">
                                         <label for="descripcion" class="form-label">Descripción</label>
@@ -397,6 +420,21 @@
                                 <div class="mb-3">
                                     <label for="edit_precioOferta" class="form-label">Precio Oferta (Bs.) Opcional</label>
                                     <input type="text" class="form-control" id="edit_precioOferta" name="precio_oferta">
+                                </div>
+                                <div class="mb-3">
+                                    <label for="edit_oferta_tipo" class="form-label">Tipo de Oferta (Opcional)</label>
+                                    <div style="display:flex; gap:4px; align-items:center;">
+                                        <input type="number" min="1" class="form-control oferta-num" id="edit_oferta_num1" placeholder="2">
+                                        <span style="font-weight:bold;">X</span>
+                                        <input type="number" min="1" class="form-control oferta-num" id="edit_oferta_num2" placeholder="1">
+                                    </div>
+                                    <!-- input oculto que se enviará al backend -->
+                                    <input type="hidden" name="oferta_tipo" id="edit_oferta_tipo">
+                                    <small class="text-muted">Formato permitido: número X número (ej: 2 X 1)</small>
+                                </div>
+                                <div class="mb-3" id="edit_precio_oferta_tipo_container" style="display:none; opacity:0; transition: all 0.3s ease;">
+                                    <label for="edit_precio_oferta_tipo" class="form-label">Precio Oferta de Cantidad (Bs.)</label>
+                                    <input type="number" step="0.01" class="form-control" id="edit_precio_oferta_tipo" name="precio_oferta_tipo" placeholder="Precio total para la oferta">
                                 </div>
                                 <div class="mb-3">
                                     <label for="edit_descripcion" class="form-label">Descripción</label>
@@ -497,6 +535,114 @@
             <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
             <!-- Scripts -->
             <script>
+                const num1 = document.getElementById('oferta_num1');
+                const num2 = document.getElementById('oferta_num2');
+                const precioContainer = document.getElementById('precio_oferta_tipo_container');
+                const precioInput = document.getElementById('precio_oferta_tipo');
+                const ofertaHidden = document.getElementById('oferta_tipo');
+
+                function actualizarOferta() {
+                    const val1 = parseInt(num1.value);
+                    const val2 = parseInt(num2.value);
+
+                    if (val1 > 0 && val2 > 0) {
+                        // Mostrar con animación suave
+                        precioContainer.style.display = 'block';
+                        setTimeout(() => precioContainer.style.opacity = 1, 10);
+
+                        // Actualizar el input oculto
+                        ofertaHidden.value = `${val1}x${val2}`;
+                    } else {
+                        // Ocultar suavemente
+                        precioContainer.style.opacity = 0;
+                        setTimeout(() => {
+                            precioContainer.style.display = 'none';
+                            precioInput.value = '';
+                            ofertaHidden.value = '';
+                        }, 300);
+                    }
+                }
+
+                // Escuchar cambios en ambos inputs
+                num1.addEventListener('input', actualizarOferta);
+                num2.addEventListener('input', actualizarOferta);
+
+                function confirmarEliminacion(event) {
+                    event.preventDefault();
+                    const form = event.target;
+
+                    Swal.fire({
+                        title: '¿Eliminar producto?',
+                        text: 'El estado del producto cambiará a Eliminado.',
+                        icon: 'warning',
+                        showCancelButton: true,
+                        confirmButtonText: 'Sí, eliminar',
+                        cancelButtonText: 'Cancelar',
+                        confirmButtonColor: '#d33',
+                        cancelButtonColor: '#3085d6'
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            form.submit();
+                        }
+                    });
+
+                    return false;
+                }
+            </script>
+            <script>
+                function cargarOfertaEdicion(producto) {
+                    const oferta_tipo = producto.oferta_tipo || '';
+                    const precio_oferta_tipo = producto.precio_oferta_tipo || '';
+
+                    const container = document.getElementById('edit_precio_oferta_tipo_container');
+                    const inputPrecio = document.getElementById('edit_precio_oferta_tipo');
+                    const inputHidden = document.getElementById('edit_oferta_tipo');
+
+                    const inputNum1 = document.getElementById('edit_oferta_num1');
+                    const inputNum2 = document.getElementById('edit_oferta_num2');
+
+                    if (oferta_tipo && oferta_tipo.includes('x')) {
+                        const partes = oferta_tipo.split('x');
+                        inputNum1.value = partes[0] || '';
+                        inputNum2.value = partes[1] || '';
+
+                        // Mostrar precio de oferta con animación
+                        container.style.display = 'block';
+                        setTimeout(() => container.style.opacity = 1, 10);
+
+                        inputPrecio.value = precio_oferta_tipo;
+                    } else {
+                        container.style.opacity = 0;
+                        setTimeout(() => container.style.display = 'none', 300);
+                        inputNum1.value = '';
+                        inputNum2.value = '';
+                        inputPrecio.value = '';
+                    }
+
+                    // Actualizar input oculto
+                    inputHidden.value = oferta_tipo;
+
+                    // Escuchar cambios en los inputs numéricos
+                    [inputNum1, inputNum2].forEach(input => {
+                        input.addEventListener('input', () => {
+                            const val1 = inputNum1.value || '';
+                            const val2 = inputNum2.value || '';
+                            if (val1 && val2) {
+                                inputHidden.value = `${val1}x${val2}`;
+                                // Mostrar precio de oferta si no visible
+                                if (container.style.display === 'none') {
+                                    container.style.display = 'block';
+                                    setTimeout(() => container.style.opacity = 1, 10);
+                                }
+                            } else {
+                                inputHidden.value = '';
+                                container.style.opacity = 0;
+                                setTimeout(() => container.style.display = 'none', 300);
+                                inputPrecio.value = '';
+                            }
+                        });
+                    });
+                }
                 const editModal = document.getElementById('editModal');
                 editModal.addEventListener('show.bs.modal', function(event) {
                     const button = event.relatedTarget;
@@ -514,7 +660,7 @@
                             $('#edit_cantidad').val(producto.cantidad);
                             $('#edit_codigo_barras').val(producto.codigo_barras);
                             $('#estado').val(producto.estado);
-
+                            cargarOfertaEdicion(producto);
                             const $categoria = $('#edit_categoria');
                             const $subcategoria = $('#edit_subcategoria');
 
@@ -585,23 +731,35 @@
                                 });
                             }
 
-                            // 🖼️ Cargar imágenes actuales
                             const contenedor = document.getElementById('imagenes-actuales');
                             contenedor.innerHTML = '';
+
                             producto.imagenes.forEach((img) => {
+                                if (!img.url) return;
+
                                 const wrapper = document.createElement('div');
                                 wrapper.className = 'position-relative';
 
+                                // ⚡ Detectar si es URL externa
+                                let imageUrl;
+                                if (/^https?:\/\//i.test(img.url)) {
+                                    imageUrl = img.url; // URL externa, no tocar
+                                    console.log('URL externa detectada:', imageUrl);
+                                } else {
+                                    imageUrl = `/storage/${img.url}`; // Ruta local
+                                    console.log('URL local detectada:', imageUrl);
+                                }
+
+                                const esVideo = imageUrl.endsWith('.mp4') || imageUrl.endsWith('.webm') || imageUrl.endsWith('.ogg');
                                 let media;
-                                const esVideo = img.url.endsWith('.mp4') || img.url.endsWith('.webm') || img.url.endsWith('.ogg');
 
                                 if (esVideo) {
                                     media = document.createElement('video');
-                                    media.src = img.url;
+                                    media.src = imageUrl;
                                     media.controls = true;
                                 } else {
                                     media = document.createElement('img');
-                                    media.src = img.url;
+                                    media.src = imageUrl;
                                     media.alt = 'Imagen producto';
                                 }
 
@@ -615,13 +773,13 @@
 
                                     if (esVideo) {
                                         visorImg.style.display = 'none';
-                                        visorVideo.src = img.url;
+                                        visorVideo.src = imageUrl;
                                         visorVideo.style.display = 'block';
                                         visorVideo.load();
                                     } else {
                                         visorVideo.pause();
                                         visorVideo.style.display = 'none';
-                                        visorImg.src = img.url;
+                                        visorImg.src = imageUrl;
                                         visorImg.style.display = 'block';
                                     }
 
@@ -638,8 +796,6 @@
                                 wrapper.appendChild(btnDelete);
                                 contenedor.appendChild(wrapper);
                             });
-
-
                         })
                         .catch(error => {
                             console.error('Error al obtener los datos del producto:', error);

@@ -64,6 +64,7 @@ class CategoriaController extends Controller
             // Solo subcategorías de la empresa logueada o la empresa correspondiente
             $subcategorias = Subcategoria::where('id_categoria', $request->categoria_id)
                 ->where('id_empresa', Auth::user()->empresa->id)
+                ->where('estado', 'activo')
                 ->get();
 
             return response()->json(

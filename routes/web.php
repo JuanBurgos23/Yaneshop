@@ -59,6 +59,13 @@ Route::get('/producto/edit/{id}', [ProductoController::class, 'edit'])->name('pr
 Route::put('/producto-update/{id}', [ProductoController::class, 'update'])->name('producto.update');
 Route::get('/productos/exportar', [ProductoController::class, 'exportar'])->name('productos.exportar');
 Route::delete('/producto/imagen/{id}', [ProductoController::class, 'eliminarImagen']);
+//productos masivos
+Route::get('/producto/masivo', [ProductoController::class, 'indexMasivo'])->name('productos.masivo');
+Route::get('/productos/plantilla-excel', [ProductoController::class, 'plantillaExcelProductos'])->name('productos.plantilla');
+Route::post('/productos/cargar-excel', [ProductoController::class, 'previsualizarExcel'])->name('productos.previsualizarExcel');
+Route::post('/producto-register-masivo', [ProductoController::class, 'guardarMasivo']);
+//eliminar producto
+Route::put('/productos/{id}/eliminar', [ProductoController::class, 'eliminar'])->name('productos.eliminar');
 
 
 //consultar si existe el cliente por ci para el formulario
@@ -87,6 +94,10 @@ Route::post('/admin/usuarios/crear', [UserController::class, 'crearUsuario'])->n
 
 
 Route::get('/{slug}', [ProductoController::class, 'productoInicio'])->name('empresa.public');
+// Endpoint para cargar los productos vía fetch
+Route::get('/api/empresa/{slug}', [ProductoController::class, 'empresaJson'])->name('empresa.json');
+Route::get('/api/producto/{id}/detalles', [ProductoController::class, 'productoDetalles'])->name('api.producto.detalles');
+
 
 
 //Route::get('/{slug}/comprar', [ProductoController::class, 'productoInicio'])->name('comprar.public');
