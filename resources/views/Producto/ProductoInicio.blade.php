@@ -1526,7 +1526,7 @@
                 <div class="footer-section">
                     <h3 class="footer-title">Contacto</h3>
                     <ul class="footer-links">
-                        <li><i class="fas fa-map-marker-alt"></i> Dirección de la empresa</li>
+                        <li><i class="fas fa-map-marker-alt"></i> Santa Cruz - Montero</li>
                         <li><i class="fas fa-phone"></i> Teléfono: +591 78548094</li>
                         <li><i class="fas fa-phone"></i> Teléfono: +591 64455289</li>
                         <!--<li><i class="fas fa-envelope"></i> Email: info@empresa.com</li>-->

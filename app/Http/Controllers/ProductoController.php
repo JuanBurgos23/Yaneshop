@@ -96,8 +96,13 @@ class ProductoController extends Controller
 
         $empresaId = $empresa->id;
 
-        // ✅ Categorías con sus subcategorías
-        $categorias = Categoria::with('subCategorias:id,id_categoria,nombre')
+        // ✅ Categorías con subcategorías que tengan productos activos
+        $categorias = Categoria::with(['subCategorias' => function ($q) use ($empresaId) {
+            $q->whereHas('productos', function ($q2) use ($empresaId) {
+                $q2->where('id_empresa', $empresaId)
+                    ->where('estado', 'activo');
+            });
+        }])
             ->where('id_empresa', $empresaId)
             ->whereHas('productos', function ($q) use ($empresaId) {
                 $q->where('id_empresa', $empresaId)
@@ -155,16 +160,14 @@ class ProductoController extends Controller
                 'descripcion' => $p->descripcion,
                 'precio' => (float)$p->precio,
                 'precio_oferta' => $p->precio_oferta ? (float)$p->precio_oferta : null,
-                'oferta_tipo' => $p->oferta_tipo,              // 🔹 agregado
-                'precio_oferta_tipo' => $p->precio_oferta_tipo, // 🔹 agregado
+                'oferta_tipo' => $p->oferta_tipo,
+                'precio_oferta_tipo' => $p->precio_oferta_tipo,
                 'categoria' => $p->categoria?->nombre ?? 'Sin categoría',
                 'subcategoria' => $p->subcategoria?->nombre ?? 'Sin subcategoría',
                 'imagenes' => $p->imagenes->map(function ($img) {
-                    // Si empieza con http o https, es externa
                     if (Str::startsWith($img->ruta, ['http://', 'https://'])) {
                         return $img->ruta;
                     }
-                    // Si no, asumimos que es local en storage
                     return asset('storage/' . $img->ruta);
                 }),
                 'nuevo' => $tipo === 'nuevo',
@@ -172,7 +175,6 @@ class ProductoController extends Controller
             ];
         });
 
-        // ✅ Combinar todo
         $todosLosProductos = collect()
             ->merge($formatear($promociones, 'promocion'))
             ->merge($formatear($nuevos, 'nuevo'))
@@ -183,12 +185,13 @@ class ProductoController extends Controller
             'empresa' => [
                 'nombre' => $empresa->nombre,
                 'logo' => asset('storage/' . $empresa->logo),
-                'telefono_whatsapp' => $empresa->telefono_whatsapp, // <-- Agregar esto
+                'telefono_whatsapp' => $empresa->telefono_whatsapp,
             ],
             'categorias' => $categorias,
             'productos' => $todosLosProductos,
         ]);
     }
+
     public function productoDetalles($id)
     {
         $producto = Producto::with([

@@ -333,8 +333,9 @@
                                         <input type="number" step="0.01" class="form-control" id="precio" name="precio" required>
                                     </div>
                                     <div class="col-md-6">
-                                        <label for="precio" class="form-label">Precio Oferta(Bs.) Opcional</label>
+                                        <label for="precioOferta" class="form-label">Precio Oferta (Bs.) Opcional</label>
                                         <input type="number" step="0.01" class="form-control" id="precioOferta" name="precio_oferta">
+                                        <div id="precioOfertaError" class="text-danger mt-1" style="display:none;">El precio de oferta debe ser menor que el precio normal.</div>
                                     </div>
                                     <div class="col-md-6">
                                         <label for="oferta_tipo" class="form-label">Tipo de Oferta (Opcional)</label>
@@ -415,11 +416,14 @@
                                 </div>
                                 <div class="mb-3">
                                     <label for="edit_precio" class="form-label">Precio (Bs.)</label>
-                                    <input type="text" class="form-control" id="edit_precio" name="precio" required>
+                                    <input type="number" step="0.01" class="form-control" id="edit_precio" name="precio" required>
                                 </div>
                                 <div class="mb-3">
                                     <label for="edit_precioOferta" class="form-label">Precio Oferta (Bs.) Opcional</label>
-                                    <input type="text" class="form-control" id="edit_precioOferta" name="precio_oferta">
+                                    <input type="number" step="0.01" class="form-control" id="edit_precioOferta" name="precio_oferta">
+                                    <div id="edit_precioOfertaError" class="text-danger mt-1" style="display:none;">
+                                        El precio de oferta debe ser menor que el precio normal.
+                                    </div>
                                 </div>
                                 <div class="mb-3">
                                     <label for="edit_oferta_tipo" class="form-label">Tipo de Oferta (Opcional)</label>
@@ -534,6 +538,53 @@
             <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
             <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
             <!-- Scripts -->
+            <script>
+                const editPrecioInput = document.getElementById('edit_precio');
+                const editPrecioOfertaInput = document.getElementById('edit_precioOferta');
+                const editErrorDiv = document.getElementById('edit_precioOfertaError');
+
+                function validarEditPrecioOferta() {
+                    const precio = parseFloat(editPrecioInput.value) || 0;
+                    const precioOferta = parseFloat(editPrecioOfertaInput.value) || 0;
+
+                    if (precioOferta > 0 && precioOferta >= precio) {
+                        // Mostrar error y evitar enviar
+                        editErrorDiv.style.display = 'block';
+                        editPrecioOfertaInput.setCustomValidity('El precio de oferta debe ser menor que el precio normal.');
+                    } else {
+                        editErrorDiv.style.display = 'none';
+                        editPrecioOfertaInput.setCustomValidity('');
+                    }
+                }
+
+                // Validar en tiempo real al cambiar los valores
+                editPrecioInput.addEventListener('input', validarEditPrecioOferta);
+                editPrecioOfertaInput.addEventListener('input', validarEditPrecioOferta);
+            </script>
+            <script>
+                const precioInput = document.getElementById('precio');
+                const precioOfertaInput = document.getElementById('precioOferta');
+                const errorDiv = document.getElementById('precioOfertaError');
+
+                function validarPrecioOferta() {
+                    const precio = parseFloat(precioInput.value) || 0;
+                    const precioOferta = parseFloat(precioOfertaInput.value) || 0;
+
+                    if (precioOferta > 0 && precioOferta >= precio) {
+                        // Mostrar error y deshabilitar botón enviar
+                        errorDiv.style.display = 'block';
+                        precioOfertaInput.setCustomValidity('El precio de oferta debe ser menor que el precio normal.');
+                    } else {
+                        // Todo bien
+                        errorDiv.style.display = 'none';
+                        precioOfertaInput.setCustomValidity('');
+                    }
+                }
+
+                // Validar en tiempo real al escribir
+                precioInput.addEventListener('input', validarPrecioOferta);
+                precioOfertaInput.addEventListener('input', validarPrecioOferta);
+            </script>
             <script>
                 const num1 = document.getElementById('oferta_num1');
                 const num2 = document.getElementById('oferta_num2');
