@@ -438,7 +438,7 @@
             animation: fadeIn 0.5s ease;
         }
 
-        /* Contenedor para mantener los stickers arriba */
+        /* Contenedor para mantener los stickers arriba a la izquierda */
         .sticker-container {
             position: absolute;
             top: 10px;
@@ -447,22 +447,19 @@
             display: flex;
             flex-direction: column;
             gap: 6px;
-            visibility: visible !important;
-            transition: none !important;
         }
 
         /* Estilos base de sticker */
         .sticker {
-            font-size: 0.8rem;
+            font-size: 0.9rem;
             font-weight: bold;
             color: #fff;
-            padding: 4px 10px;
-            border-radius: 4px;
-            transform: rotate(-8deg);
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+            padding: 6px 14px;
+            border-radius: 6px;
             text-transform: uppercase;
-            opacity: 1 !important;
-            transform: rotate(-8deg) !important;
+            box-shadow: 0 3px 8px rgba(0, 0, 0, 0.3);
+            opacity: 1;
+            transform: rotate(-8deg);
         }
 
         /* Sticker de "Nuevo" */
@@ -473,6 +470,43 @@
         /* Sticker de "Oferta" */
         .sticker-oferta {
             background: linear-gradient(135deg, #e63946, #ff6b6b);
+        }
+
+        /* Sticker de oferta_tipo (2x1, 3x2, etc.) */
+        .sticker-oferta-tipo {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: linear-gradient(135deg, #ffbe0b, #fb5607);
+            /* colores más llamativos */
+            color: white;
+            font-weight: 900;
+            font-size: 1.1rem;
+            /* más grande */
+            padding: 8px 16px;
+            /* más grande y elegante */
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+            text-transform: uppercase;
+            transform: rotate(5deg);
+            /* ángulo diferente para que destaque */
+            z-index: 10;
+            animation: stickerBounce 0.7s ease-out;
+        }
+
+        /* Animación ligera para hacerlo más llamativo */
+        @keyframes stickerBounce {
+            0% {
+                transform: rotate(5deg) scale(0.8);
+            }
+
+            50% {
+                transform: rotate(5deg) scale(1.1);
+            }
+
+            100% {
+                transform: rotate(5deg) scale(1);
+            }
         }
 
         /* Ajuste para que no tapen el borde superior */
@@ -1301,6 +1335,38 @@
             border-radius: 8px;
             object-fit: contain;
         }
+
+        .price-type-badge {
+            display: inline-block;
+            margin-left: 6px;
+            padding: 4px 10px;
+            background: linear-gradient(135deg, #ffbe0b, #fb5607);
+            color: #fff;
+            font-weight: bold;
+            border-radius: 6px;
+            font-size: 0.9rem;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+        }
+
+        /* Badge de oferta tipo en el carrito */
+        .price-type-badge-cart {
+            display: inline-block;
+            background: linear-gradient(135deg, #ff6b6b, #ff3d00);
+            color: #fff;
+            font-weight: bold;
+            font-size: 0.85rem;
+            padding: 4px 8px;
+            border-radius: 6px;
+            box-shadow: 0 3px 6px rgba(0, 0, 0, 0.25);
+            transform: rotate(-5deg);
+            margin-left: 5px;
+            text-transform: uppercase;
+            transition: transform 0.2s ease;
+        }
+
+        .price-type-badge-cart:hover {
+            transform: rotate(0deg) scale(1.1);
+        }
     </style>
 </head>
 
@@ -1350,6 +1416,7 @@
                 <div class="filter-options">
                     <button class="btn btn-secondary" data-filter="nuevos">Nuevos</button>
                     <button class="btn btn-secondary" data-filter="promociones">Promociones</button>
+                    <button class="btn" data-filter="ofertas-tipo">Ofertas Especiales</button>
                     <button id="btnVerTodos" class="btn btn-secondary">Ver Todos</button>
                 </div>
             </aside>
@@ -1661,39 +1728,46 @@
                 const productCard = document.createElement('div');
                 productCard.className = 'product-card';
 
-                const precioMostrar = producto.precio_oferta || producto.precio;
                 const tieneDescuento = producto.precio_oferta !== null;
                 const porcentajeDescuento = tieneDescuento ? Math.round((1 - producto.precio_oferta / producto.precio) * 100) : 0;
+
+                // Mostrar precio: normal u oferta
+                const precioMostrar = tieneDescuento ? producto.precio_oferta : producto.precio;
 
                 const esNuevo = producto.nuevo;
                 const esOferta = producto.promocion || tieneDescuento;
 
                 productCard.innerHTML = `
-    <div class="sticker-container">
-        ${esNuevo ? '<span class="sticker sticker-nuevo">Nuevo</span>' : ''}
-        ${esOferta ? '<span class="sticker sticker-oferta">Oferta</span>' : ''}
-    </div>
-    <img src="${producto.imagenes[0]}" alt="${producto.nombre}" class="product-image">
-    <div class="product-info">
-        <div class="product-category">${producto.categoria} / ${producto.subcategoria}</div>
-        <h3 class="product-name">${producto.nombre}</h3>
-        <div class="product-price">
-            <span class="current-price">Bs. ${precioMostrar.toFixed(2)}</span>
-            ${tieneDescuento ? `
-                <span class="original-price">Bs. ${producto.precio.toFixed(2)}</span>
-                <span class="discount-badge">-${porcentajeDescuento}%</span>
-            ` : ''}
+        <div class="sticker-container">
+            ${esNuevo ? '<span class="sticker sticker-nuevo">Nuevo</span>' : ''}
+            ${esOferta ? '<span class="sticker sticker-oferta">Oferta</span>' : ''}
         </div>
-        <div class="product-actions">
-            <button class="btn btn-primary btn-add-cart" data-id="${producto.id}">
-                <i class="fas fa-cart-plus"></i> Agregar
-            </button>
-            <button class="btn btn-secondary btn-view-product" data-id="${producto.id}">
-                <i class="fas fa-eye"></i> Ver
-            </button>
+        ${producto.oferta_tipo ? `<span class="sticker-oferta-tipo">${producto.oferta_tipo}</span>` : ''}
+        <img src="${producto.imagenes[0]}" alt="${producto.nombre}" class="product-image">
+        <div class="product-info">
+            <div class="product-category">${producto.categoria} / ${producto.subcategoria}</div>
+            <h3 class="product-name">${producto.nombre}</h3>
+            <div class="product-price">
+                <!-- Precio principal -->
+                <span class="current-price">Bs. ${parseFloat(precioMostrar).toFixed(2)}</span>
+
+                <!-- Precio original tachado si hay descuento -->
+                ${tieneDescuento ? `<span class="original-price">Bs. ${parseFloat(producto.precio).toFixed(2)}</span>
+                                     <span class="discount-badge">-${porcentajeDescuento}%</span>` : ''}
+
+                <!-- Precio de oferta tipo (2x1, 3x2, etc.) -->
+                ${producto.precio_oferta_tipo ? `<span class="price-type-badge">Bs. ${parseFloat(producto.precio_oferta_tipo).toFixed(2)}</span>` : ''}
+            </div>
+            <div class="product-actions">
+                <button class="btn btn-primary btn-add-cart" data-id="${producto.id}">
+                    <i class="fas fa-cart-plus"></i> Agregar
+                </button>
+                <button class="btn btn-secondary btn-view-product" data-id="${producto.id}">
+                    <i class="fas fa-eye"></i> Ver
+                </button>
+            </div>
         </div>
-    </div>
-`;
+    `;
 
                 productsGrid.appendChild(productCard);
             });
@@ -1816,35 +1890,42 @@
             } else {
                 // Sin filtros de categoría
                 productosFiltrados = productos.filter(p =>
+                    // Filtro especial por botón
                     (filtroActivo ? aplicarFiltroEspecial(p) : true) &&
-                    (terminoBusqueda ? p.nombre.toLowerCase().includes(terminoBusqueda.toLowerCase()) : true)
+                    // Filtro por término de búsqueda
+                    (terminoBusqueda ? p.nombre.toLowerCase().includes(terminoBusqueda.toLowerCase()) : true) &&
+                    // Nuevo filtro de ofertas tipo
+                    (filtroActivo === 'ofertas-tipo' ? !!p.oferta_tipo : true)
                 );
 
                 let titulo = 'Todos los productos';
                 if (filtroActivo === 'nuevos') titulo = 'Productos Nuevos';
                 if (filtroActivo === 'promociones') titulo = 'Promociones';
+                if (filtroActivo === 'ofertas-tipo') titulo = 'Ofertas Especiales';
 
                 document.getElementById('sectionTitle').textContent = titulo;
-                const botonesFiltro = document.querySelectorAll('.filter-options .btn');
-
-                botonesFiltro.forEach(btn => {
-                    btn.addEventListener('click', () => {
-                        // Quitar 'active' de todos
-                        botonesFiltro.forEach(b => b.classList.remove('active'));
-
-                        // Agregar 'active' al botón clickeado
-                        btn.classList.add('active');
-
-                        // Actualizar filtroActivo según el botón
-                        const filtro = btn.getAttribute('data-filter');
-                        filtroActivo = filtro || null;
-
-                        // Aplicar filtros
-                        aplicarFiltros();
-                    });
-                });
-                cargarProductos();
             }
+
+            // Configurar botones de filtro
+            const botonesFiltro = document.querySelectorAll('.filter-options .btn');
+            botonesFiltro.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    // Quitar 'active' de todos
+                    botonesFiltro.forEach(b => b.classList.remove('active'));
+
+                    // Agregar 'active' al botón clickeado
+                    btn.classList.add('active');
+
+                    // Actualizar filtroActivo según el botón
+                    const filtro = btn.getAttribute('data-filter');
+                    filtroActivo = filtro || null;
+
+                    // Aplicar filtros
+                    aplicarFiltros();
+                });
+            });
+
+            cargarProductos();
         }
 
         // Agregar producto al carrito
@@ -1854,29 +1935,40 @@
 
             const itemExistente = carrito.find(item => item.id === productId);
 
+            // Guardamos precio unitario normal u oferta simple
+            const precioUnitario = producto.precio_oferta !== null ? parseFloat(producto.precio_oferta) : parseFloat(producto.precio);
+
             if (itemExistente) {
                 itemExistente.cantidad++;
             } else {
                 carrito.push({
                     id: producto.id,
                     nombre: producto.nombre,
-                    precio: producto.precio_oferta || producto.precio,
+                    precio_unitario: precioUnitario,
                     imagen: producto.imagenes[0],
-                    cantidad: 1
+                    cantidad: 1,
+                    ofertaTipo: producto.oferta_tipo || null, // ej. "2x1"
+                    precioOfertaTipo: producto.precio_oferta_tipo ? parseFloat(producto.precio_oferta_tipo) : null
                 });
             }
 
             actualizarCarrito();
+            animarCarrito();
+            notificarProducto(producto.nombre);
+        }
 
-            // Animación del botón de carrito
+        // Animación carrito
+        function animarCarrito() {
             const cartIcon = document.getElementById('cartIcon');
             cartIcon.classList.add('animate');
             setTimeout(() => cartIcon.classList.remove('animate'), 500);
+        }
 
-            // Mostrar notificación
+        // Notificación
+        function notificarProducto(nombre) {
             Swal.fire({
                 title: '¡Producto agregado!',
-                text: `${producto.nombre} se agregó al carrito`,
+                text: `${nombre} se agregó al carrito`,
                 icon: 'success',
                 toast: true,
                 position: 'top-end',
@@ -1886,7 +1978,32 @@
             });
         }
 
-        // Actualizar interfaz del carrito
+        // Calcular precio con oferta tipo
+        function calcularPrecioItem(item) {
+            if (!item.ofertaTipo || !item.precioOfertaTipo) {
+                return {
+                    total: item.precio_unitario * item.cantidad,
+                    detalle: null
+                };
+            }
+
+            const [comprar, pagar] = item.ofertaTipo.split('x').map(Number);
+            const fullGroups = Math.floor(item.cantidad / comprar);
+            const remainder = item.cantidad % comprar;
+
+            const total = fullGroups * item.precioOfertaTipo + remainder * item.precio_unitario;
+
+            return {
+                total,
+                detalle: {
+                    fullGroups,
+                    pagar,
+                    remainder
+                }
+            };
+        }
+
+        // Actualizar carrito
         function actualizarCarrito() {
             const cartCount = carrito.reduce((total, item) => total + item.cantidad, 0);
             document.getElementById('cartCount').textContent = cartCount;
@@ -1895,44 +2012,62 @@
             const cartItems = document.getElementById('cartItems');
             cartItems.innerHTML = '';
 
-            let total = 0;
+            let totalCarrito = 0;
 
             carrito.forEach(item => {
-                const itemTotal = item.precio * item.cantidad;
-                total += itemTotal;
+                const {
+                    total,
+                    detalle
+                } = calcularPrecioItem(item);
+                totalCarrito += total;
+
+                let ofertaTexto = '';
+                if (item.ofertaTipo && item.precioOfertaTipo) {
+                    const [comprar, pagar] = item.ofertaTipo.split('x').map(Number);
+                    const fullGroups = Math.floor(item.cantidad / comprar);
+                    const remainder = item.cantidad % comprar;
+
+                    if (fullGroups > 0) {
+                        ofertaTexto = `${item.ofertaTipo} aplicado x${fullGroups}`;
+                    } else {
+                        ofertaTexto = item.ofertaTipo;
+                    }
+                }
 
                 const cartItem = document.createElement('div');
                 cartItem.className = 'cart-item';
                 cartItem.innerHTML = `
-                    <img src="${item.imagen}" alt="${item.nombre}" class="cart-item-image">
-                    <div class="cart-item-details">
-                        <h4 class="cart-item-name">${item.nombre}</h4>
-                        <div class="cart-item-price">Bs. ${item.precio.toFixed(2)}</div>
-                        <div class="cart-item-actions">
-                            <button class="quantity-btn decrease" data-id="${item.id}">
-                                <i class="fas fa-minus"></i>
-                            </button>
-                            <span class="quantity-display">${item.cantidad}</span>
-                            <button class="quantity-btn increase" data-id="${item.id}">
-                                <i class="fas fa-plus"></i>
-                            </button>
-                            <button class="remove-item" data-id="${item.id}">
-                                <i class="fas fa-trash"></i>
-                            </button>
-                        </div>
-                    </div>
-                `;
-
+            <img src="${item.imagen}" alt="${item.nombre}" class="cart-item-image">
+            <div class="cart-item-details">
+                <h4 class="cart-item-name">${item.nombre}</h4>
+                <div class="cart-item-price">
+                    Bs. ${total.toFixed(2)}
+                    ${ofertaTexto ? `<span class="price-type-badge-cart">${ofertaTexto}</span>` : ''}
+                </div>
+                <div class="cart-item-actions">
+                    <button class="quantity-btn decrease" data-id="${item.id}">
+                        <i class="fas fa-minus"></i>
+                    </button>
+                    <span class="quantity-display">${item.cantidad}</span>
+                    <button class="quantity-btn increase" data-id="${item.id}">
+                        <i class="fas fa-plus"></i>
+                    </button>
+                    <button class="remove-item" data-id="${item.id}">
+                        <i class="fas fa-trash"></i>
+                    </button>
+                </div>
+            </div>
+        `;
                 cartItems.appendChild(cartItem);
             });
 
-            document.getElementById('cartTotal').textContent = `Bs. ${total.toFixed(2)}`;
+            document.getElementById('cartTotal').textContent = `Bs. ${totalCarrito.toFixed(2)}`;
 
-            // Agregar eventos a los botones del carrito
+            // Eventos botones
             document.querySelectorAll('.increase').forEach(btn => {
                 btn.addEventListener('click', function() {
                     const productId = parseInt(this.getAttribute('data-id'));
-                    const item = carrito.find(item => item.id === productId);
+                    const item = carrito.find(i => i.id === productId);
                     if (item) {
                         item.cantidad++;
                         actualizarCarrito();
@@ -1943,7 +2078,7 @@
             document.querySelectorAll('.decrease').forEach(btn => {
                 btn.addEventListener('click', function() {
                     const productId = parseInt(this.getAttribute('data-id'));
-                    const item = carrito.find(item => item.id === productId);
+                    const item = carrito.find(i => i.id === productId);
                     if (item && item.cantidad > 1) {
                         item.cantidad--;
                         actualizarCarrito();
@@ -1954,7 +2089,7 @@
             document.querySelectorAll('.remove-item').forEach(btn => {
                 btn.addEventListener('click', function() {
                     const productId = parseInt(this.getAttribute('data-id'));
-                    carrito = carrito.filter(item => item.id !== productId);
+                    carrito = carrito.filter(i => i.id !== productId);
                     actualizarCarrito();
 
                     Swal.fire({
@@ -1969,6 +2104,8 @@
                 });
             });
         }
+
+
 
         // Abrir carrito
         function abrirCarrito() {
@@ -2178,11 +2315,11 @@
         // Mostrar modal del producto
         function mostrarModalProducto(productId) {
             document.getElementById('modalContent').innerHTML = `
-        <div class="loading">
-            <div class="spinner"></div>
-            <p>Cargando detalles del producto...</p>
-        </div>
-    `;
+                <div class="loading">
+                    <div class="spinner"></div>
+                    <p>Cargando detalles del producto...</p>
+                </div>
+            `;
             document.getElementById('productModal').classList.add('open');
 
             cargarDetallesProducto(productId).then(producto => {
@@ -2231,10 +2368,31 @@
 
                 const precio = parseFloat(producto.precio) || 0;
                 const precioOferta = producto.precio_oferta ? parseFloat(producto.precio_oferta) : null;
-                const precioMostrar = precioOferta || precio;
-                const tieneDescuento = precioOferta !== null;
-                const porcentajeDescuento = tieneDescuento ? Math.round((1 - precioOferta / precio) * 100) : 0;
+                const precioOfertaTipo = producto.precio_oferta_tipo ? parseFloat(producto.precio_oferta_tipo) : null;
 
+                let precioMostrar = precioOferta || precio;
+                let tipoSticker = '';
+
+                if (producto.oferta_tipo) {
+                    tipoSticker = producto.oferta_tipo; // ej: "2x1"
+                }
+
+                // Construir HTML del precio
+                let precioHtml = `<span class="current-price">Bs. ${precioMostrar.toFixed(2)}</span>`;
+
+                // Mostrar descuento si existe
+                if (precioOferta) {
+                    precioHtml += `
+        <span class="original-price">Bs. ${precio.toFixed(2)}</span>
+        <span class="discount-badge">-${Math.round((1 - precioOferta / precio) * 100)}%</span>
+    `;
+                }
+
+                // Mostrar oferta tipo (2x1, 3x2, etc)
+                if (precioOfertaTipo && tipoSticker) {
+                    precioHtml += `<span class="price-type-badge-cart">${tipoSticker} (Bs. ${precioOfertaTipo.toFixed(2)})</span>`;
+                }
+                // Construir contenido del modal
                 document.getElementById('modalContent').innerHTML = `
             <div class="modal-images">
                   <div class="main-media-wrapper">
@@ -2257,11 +2415,7 @@
                 <div class="modal-category">${producto.categoria} / ${producto.subcategoria}</div>
                 <h2 class="modal-title">${producto.nombre}</h2>
                 <div class="modal-price">
-                    <span class="current-price">Bs. ${precioMostrar.toFixed(2)}</span>
-                    ${tieneDescuento ? `
-                        <span class="original-price">Bs. ${precio.toFixed(2)}</span>
-                        <span class="discount-badge">-${porcentajeDescuento}%</span>
-                    ` : ''}
+                    ${precioHtml}
                 </div>
                 <p class="modal-description">${producto.descripcion}</p>
                 <div class="modal-actions">

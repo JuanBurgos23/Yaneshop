@@ -155,6 +155,8 @@ class ProductoController extends Controller
                 'descripcion' => $p->descripcion,
                 'precio' => (float)$p->precio,
                 'precio_oferta' => $p->precio_oferta ? (float)$p->precio_oferta : null,
+                'oferta_tipo' => $p->oferta_tipo,              // 🔹 agregado
+                'precio_oferta_tipo' => $p->precio_oferta_tipo, // 🔹 agregado
                 'categoria' => $p->categoria?->nombre ?? 'Sin categoría',
                 'subcategoria' => $p->subcategoria?->nombre ?? 'Sin subcategoría',
                 'imagenes' => $p->imagenes->map(function ($img) {
@@ -204,11 +206,9 @@ class ProductoController extends Controller
 
         // Formatear correctamente las imágenes
         $imagenes = $producto->imagenes->map(function ($img) {
-            // Si la ruta ya es una URL completa, dejarla tal cual
             if (Str::startsWith($img->ruta, ['http://', 'https://'])) {
                 return $img->ruta;
             }
-            // Si es local, generar la ruta con asset
             return asset('storage/' . $img->ruta);
         })->toArray();
 
@@ -221,6 +221,8 @@ class ProductoController extends Controller
             'descripcion' => $producto->descripcion,
             'precio' => (float) $producto->precio,
             'precio_oferta' => $producto->precio_oferta ? (float) $producto->precio_oferta : null,
+            'oferta_tipo' => $producto->oferta_tipo,             // <--- agregar
+            'precio_oferta_tipo' => $producto->precio_oferta_tipo ? (float) $producto->precio_oferta_tipo : null, // <--- agregar
             'categoria' => $producto->categoria?->nombre ?? 'Sin categoría',
             'subcategoria' => $producto->subcategoria?->nombre ?? '',
             'imagenes' => $imagenes,
@@ -340,7 +342,6 @@ class ProductoController extends Controller
         // Query para productos de la empresa, filtrados si hay categorías seleccionadas
         $query = Producto::with('categoria', 'categoria.subcategorias')
             ->where('id_empresa', $empresaId)
-            ->where('estado', '!=', 'Eliminado')
             ->latest();
 
         if (!empty($categoriasFiltradas)) {
@@ -366,50 +367,38 @@ class ProductoController extends Controller
 
     public function store(Request $request)
     {
-        // Validación básica (opcional, puedes mejorarla)
-        $request->validate([
-            'nombre' => 'required|string|max:100',
-            'precio' => 'required|numeric|min:0',
-            'precio_oferta' => 'nullable|numeric|min:0',
-            'oferta_tipo' => 'nullable|string|max:50',
-            'precio_oferta_tipo' => 'nullable|numeric|min:0',
-            'cantidad' => 'required|integer|min:0',
-            'categoria_id' => 'required|exists:categoria,id',
-            'subcategoria_id' => 'nullable|exists:sub_categoria,id',
-            'archivos.*' => 'nullable|file|mimes:jpg,jpeg,png,gif,mp4,webm,ogg',
-        ]);
-
-        // 1️⃣ Crear el producto
+        //dd($request->all());
+        // 1. Crear el producto
         $empresa = Auth::user()->empresa;
-        $producto = Producto::create([
+        $producto = Producto::create(attributes: [
             'nombre' => $request->nombre,
             'precio' => $request->precio,
-            'precio_oferta' => $request->precio_oferta,
-            'oferta_tipo' => $request->oferta_tipo, // NUEVO CAMPO
-            'precio_oferta_tipo' => $request->precio_oferta_tipo, // NUEVO CAMPO
             'descripcion' => $request->descripcion,
             'cantidad' => $request->cantidad,
             'id_categoria' => $request->categoria_id,
             'id_subcategoria' => $request->subcategoria_id,
-            'estado' => 'activo',
-            'id_empresa' => $empresa->id,
+            'precio_oferta'     => $request->precio_oferta,
+            'estado' => "activo",
+            'id_empresa' => $empresa->id
         ]);
 
-        // 2️⃣ Procesar imágenes y videos
+        // 2. Procesar imágenes y videos
         if ($request->hasFile('archivos')) {
             foreach ($request->file('archivos') as $archivo) {
 
                 $mime = $archivo->getMimeType();
+                $extension = $archivo->getClientOriginalExtension();
 
+                // Almacena en diferentes carpetas según el tipo
                 if (Str::startsWith($mime, 'image/')) {
                     $ruta = $archivo->store('productos/imagenes', 'public');
                 } elseif (Str::startsWith($mime, 'video/')) {
                     $ruta = $archivo->store('productos/videos', 'public');
                 } else {
-                    continue; // Ignorar archivos no válidos
+                    continue; // ignorar archivos no válidos
                 }
 
-                // Registrar en la tabla de imágenes
+                // Registrar en la base de datos (solo la ruta por ahora)
                 Imagen::create([
                     'id_producto' => $producto->id,
                     'ruta' => $ruta,
@@ -444,9 +433,6 @@ class ProductoController extends Controller
             'categoria_nombre' => $producto->categoria->nombre ?? '',
             'subcategoria_id' => $producto->subcategoria->id ?? null,
             'subcategoria_nombre' => $producto->subcategoria->nombre ?? '',
-            // 🔹 NUEVOS CAMPOS
-            'oferta_tipo' => $producto->oferta_tipo,
-            'precio_oferta_tipo' => $producto->precio_oferta_tipo,
             'imagenes' => $producto->imagenes->map(function ($img) {
                 $url = preg_match('/^https?:\/\//', $img->ruta) ? $img->ruta : asset('storage/' . $img->ruta);
                 return [
@@ -466,7 +452,7 @@ class ProductoController extends Controller
             ->where('id_empresa', $empresaId)
             ->firstOrFail();
 
-        // Actualizar campos básicos
+        // Actualizar campos
         $producto->nombre = $request->nombre;
         $producto->precio = $request->precio;
         $producto->descripcion = $request->descripcion;
@@ -476,13 +462,6 @@ class ProductoController extends Controller
         $producto->estado = $request->estado;
         $producto->id_categoria = $request->categoria_id;
         $producto->id_subcategoria = $request->subcategoria_id;
-
-        // --- NUEVO: campos de oferta tipo ---
-        // Se envía como input oculto: "oferta_tipo" (ej: 2x1)
-        $producto->oferta_tipo = $request->oferta_tipo ?? null;
-
-        // Precio asociado a la oferta de cantidad
-        $producto->precio_oferta_tipo = $request->precio_oferta_tipo ?? null;
 
         $producto->save();
 
@@ -509,20 +488,6 @@ class ProductoController extends Controller
         return redirect()->route('productos')->with('success', 'Producto actualizado correctamente');
     }
 
-    public function eliminar($id)
-    {
-        $empresaId = Auth::user()->empresa->id;
-
-        $producto = Producto::where('id', $id)
-            ->where('id_empresa', $empresaId)
-            ->firstOrFail();
-
-        // Cambiar estado a "Eliminado"
-        $producto->estado = 'Eliminado';
-        $producto->save();
-
-        return redirect()->route('productos')->with('success', 'Producto eliminado correctamente');
-    }
     public function exportar(Request $request)
     {
         $categoriasIds = $request->input('categorias', []);

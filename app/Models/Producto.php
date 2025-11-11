@@ -21,6 +21,20 @@ class Producto extends Model
         'estado',
         'id_empresa'
     ];
+    // 👇 Estos atributos se agregan automáticamente al serializar a JSON
+    protected $appends = ['oferta_tipo_formateado', 'precio_oferta_tipo_valor'];
+
+    // Accessor para mostrar oferta_tipo
+    public function getOfertaTipoFormateadoAttribute()
+    {
+        return $this->oferta_tipo; // ya viene de la DB
+    }
+
+    // Accessor para mostrar precio_oferta_tipo
+    public function getPrecioOfertaTipoValorAttribute()
+    {
+        return $this->precio_oferta_tipo; // ya viene de la DB
+    }
 
     public function categoria()
     {
