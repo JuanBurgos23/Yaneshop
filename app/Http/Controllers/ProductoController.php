@@ -376,6 +376,8 @@ class ProductoController extends Controller
         $producto = Producto::create(attributes: [
             'nombre' => $request->nombre,
             'precio' => $request->precio,
+            'oferta_tipo' => $request->oferta_tipo,
+            'precio_oferta_tipo' => $request->precio_oferta_tipo,
             'descripcion' => $request->descripcion,
             'cantidad' => $request->cantidad,
             'id_categoria' => $request->categoria_id,
@@ -428,6 +430,8 @@ class ProductoController extends Controller
             'nombre' => $producto->nombre,
             'precio' => $producto->precio,
             'precio_oferta' => $producto->precio_oferta,
+            'oferta_tipo' => $producto->oferta_tipo,
+            'precio_oferta_tipo' => $producto->precio_oferta_tipo,
             'descripcion' => $producto->descripcion,
             'cantidad' => $producto->cantidad,
             'estado' => $producto->estado,
@@ -461,6 +465,8 @@ class ProductoController extends Controller
         $producto->descripcion = $request->descripcion;
         $producto->cantidad = $request->cantidad;
         $producto->precio_oferta = $request->precio_oferta;
+        $producto->oferta_tipo = $request->oferta_tipo;
+        $producto->precio_oferta_tipo = $request->precio_oferta_tipo;
         $producto->codigo_barras = $request->codigo_barras ?? $producto->codigo_barras;
         $producto->estado = $request->estado;
         $producto->id_categoria = $request->categoria_id;

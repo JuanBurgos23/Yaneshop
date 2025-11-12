@@ -586,59 +586,35 @@
                 precioOfertaInput.addEventListener('input', validarPrecioOferta);
             </script>
             <script>
-                const num1 = document.getElementById('oferta_num1');
-                const num2 = document.getElementById('oferta_num2');
-                const precioContainer = document.getElementById('precio_oferta_tipo_container');
-                const precioInput = document.getElementById('precio_oferta_tipo');
-                const ofertaHidden = document.getElementById('oferta_tipo');
+                document.addEventListener('DOMContentLoaded', function() {
+                    const num1 = document.getElementById('oferta_num1');
+                    const num2 = document.getElementById('oferta_num2');
+                    const precioContainer = document.getElementById('precio_oferta_tipo_container');
+                    const precioInput = document.getElementById('precio_oferta_tipo');
+                    const ofertaHidden = document.getElementById('oferta_tipo');
 
-                function actualizarOferta() {
-                    const val1 = parseInt(num1.value);
-                    const val2 = parseInt(num2.value);
+                    function actualizarOferta() {
+                        const val1 = parseInt(num1.value);
+                        const val2 = parseInt(num2.value);
 
-                    if (val1 > 0 && val2 > 0) {
-                        // Mostrar con animación suave
-                        precioContainer.style.display = 'block';
-                        setTimeout(() => precioContainer.style.opacity = 1, 10);
-
-                        // Actualizar el input oculto
-                        ofertaHidden.value = `${val1}x${val2}`;
-                    } else {
-                        // Ocultar suavemente
-                        precioContainer.style.opacity = 0;
-                        setTimeout(() => {
-                            precioContainer.style.display = 'none';
-                            precioInput.value = '';
-                            ofertaHidden.value = '';
-                        }, 300);
-                    }
-                }
-
-                // Escuchar cambios en ambos inputs
-                num1.addEventListener('input', actualizarOferta);
-                num2.addEventListener('input', actualizarOferta);
-
-                function confirmarEliminacion(event) {
-                    event.preventDefault();
-                    const form = event.target;
-
-                    Swal.fire({
-                        title: '¿Eliminar producto?',
-                        text: 'El estado del producto cambiará a Eliminado.',
-                        icon: 'warning',
-                        showCancelButton: true,
-                        confirmButtonText: 'Sí, eliminar',
-                        cancelButtonText: 'Cancelar',
-                        confirmButtonColor: '#d33',
-                        cancelButtonColor: '#3085d6'
-                    }).then((result) => {
-                        if (result.isConfirmed) {
-                            form.submit();
+                        if (val1 > 0 && val2 > 0) {
+                            // Mostrar suavemente
+                            precioContainer.style.display = 'block';
+                            setTimeout(() => precioContainer.style.opacity = 1, 10);
+                            ofertaHidden.value = `${val1}x${val2}`;
+                        } else {
+                            precioContainer.style.opacity = 0;
+                            setTimeout(() => {
+                                precioContainer.style.display = 'none';
+                                precioInput.value = '';
+                                ofertaHidden.value = '';
+                            }, 300);
                         }
-                    });
+                    }
 
-                    return false;
-                }
+                    num1.addEventListener('input', actualizarOferta);
+                    num2.addEventListener('input', actualizarOferta);
+                });
             </script>
             <script>
                 function cargarOfertaEdicion(producto) {
@@ -648,48 +624,50 @@
                     const container = document.getElementById('edit_precio_oferta_tipo_container');
                     const inputPrecio = document.getElementById('edit_precio_oferta_tipo');
                     const inputHidden = document.getElementById('edit_oferta_tipo');
-
                     const inputNum1 = document.getElementById('edit_oferta_num1');
                     const inputNum2 = document.getElementById('edit_oferta_num2');
 
+                    // 👉 Si tiene oferta tipo, llenamos los campos y mostramos el input de precio
                     if (oferta_tipo && oferta_tipo.includes('x')) {
                         const partes = oferta_tipo.split('x');
                         inputNum1.value = partes[0] || '';
                         inputNum2.value = partes[1] || '';
 
-                        // Mostrar precio de oferta con animación
                         container.style.display = 'block';
-                        setTimeout(() => container.style.opacity = 1, 10);
-
+                        container.style.opacity = 1;
+                        inputPrecio.value = precio_oferta_tipo;
+                    } else if (precio_oferta_tipo) {
+                        // Si no tiene oferta_tipo pero tiene precio, también lo mostramos
+                        container.style.display = 'block';
+                        container.style.opacity = 1;
                         inputPrecio.value = precio_oferta_tipo;
                     } else {
+                        container.style.display = 'none';
                         container.style.opacity = 0;
-                        setTimeout(() => container.style.display = 'none', 300);
-                        inputNum1.value = '';
-                        inputNum2.value = '';
-                        inputPrecio.value = '';
                     }
 
-                    // Actualizar input oculto
+                    // Actualizamos el input oculto
                     inputHidden.value = oferta_tipo;
 
-                    // Escuchar cambios en los inputs numéricos
+                    // 🔁 Escuchamos cambios en ambos inputs
                     [inputNum1, inputNum2].forEach(input => {
                         input.addEventListener('input', () => {
-                            const val1 = inputNum1.value || '';
-                            const val2 = inputNum2.value || '';
+                            const val1 = inputNum1.value;
+                            const val2 = inputNum2.value;
+
                             if (val1 && val2) {
                                 inputHidden.value = `${val1}x${val2}`;
-                                // Mostrar precio de oferta si no visible
-                                if (container.style.display === 'none') {
-                                    container.style.display = 'block';
-                                    setTimeout(() => container.style.opacity = 1, 10);
-                                }
+
+                                // Asegurar que el contenedor quede visible
+                                container.style.display = 'block';
+                                setTimeout(() => container.style.opacity = 1, 10);
                             } else {
+                                // Si ambos están vacíos, ocultamos solo si también está vacío el precio
                                 inputHidden.value = '';
-                                container.style.opacity = 0;
-                                setTimeout(() => container.style.display = 'none', 300);
-                                inputPrecio.value = '';
+                                if (!inputPrecio.value) {
+                                    container.style.opacity = 0;
+                                    setTimeout(() => container.style.display = 'none', 300);
+                                }
                             }
                         });
                     });
