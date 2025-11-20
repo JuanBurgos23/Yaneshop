@@ -552,8 +552,11 @@
         .product-name {
             font-weight: 600;
             margin-bottom: 10px;
-            height: 40px;
-            overflow: hidden;
+            overflow: visible;
+            height: auto;
+            /* Importante */
+            white-space: normal;
+            /* Permite saltos de línea */
         }
 
         .product-price {
@@ -561,6 +564,8 @@
             align-items: center;
             gap: 10px;
             margin-bottom: 15px;
+            flex-wrap: wrap;
+            /* Evita que empuje el nombre */
         }
 
         .current-price {
@@ -1742,7 +1747,12 @@
             ${esNuevo ? '<span class="sticker sticker-nuevo">Nuevo</span>' : ''}
             ${esOferta ? '<span class="sticker sticker-oferta">Oferta</span>' : ''}
         </div>
-        ${producto.oferta_tipo ? `<span class="sticker-oferta-tipo">${producto.oferta_tipo}</span>` : ''}
+        ${producto.oferta_tipo && producto.precio_oferta_tipo ? `
+            <span class="sticker-oferta-tipo">
+                ${producto.oferta_tipo.split('x')[0]}x Bs. ${parseFloat(producto.precio_oferta_tipo).toFixed(2)}
+            </span>` 
+            : ''
+        }
         <img src="${producto.imagenes[0]}" alt="${producto.nombre}" class="product-image">
         <div class="product-info">
             <div class="product-category">${producto.categoria} / ${producto.subcategoria}</div>
@@ -1756,7 +1766,12 @@
                                      <span class="discount-badge">-${porcentajeDescuento}%</span>` : ''}
 
                 <!-- Precio de oferta tipo (2x1, 3x2, etc.) -->
-                ${producto.precio_oferta_tipo ? `<span class="price-type-badge">Bs. ${parseFloat(producto.precio_oferta_tipo).toFixed(2)}</span>` : ''}
+                ${producto.precio_oferta_tipo ? `
+                    <span class="price-type-badge">
+                        ${producto.oferta_tipo ? producto.oferta_tipo.split('x')[0] : ''}x Bs. ${parseFloat(producto.precio_oferta_tipo).toFixed(2)}
+                    </span>` 
+                    : ''
+                }
             </div>
             <div class="product-actions">
                 <button class="btn btn-primary btn-add-cart" data-id="${producto.id}">
@@ -2023,14 +2038,15 @@
 
                 let ofertaTexto = '';
                 if (item.ofertaTipo && item.precioOfertaTipo) {
-                    const [comprar, pagar] = item.ofertaTipo.split('x').map(Number);
-                    const fullGroups = Math.floor(item.cantidad / comprar);
-                    const remainder = item.cantidad % comprar;
+                    const cantidadPromo = item.ofertaTipo.split('x')[0]; // obtiene el "2" de "2x1"
+                    const precioPromo = parseFloat(item.precioOfertaTipo);
+
+                    const fullGroups = Math.floor(item.cantidad / cantidadPromo);
 
                     if (fullGroups > 0) {
-                        ofertaTexto = `${item.ofertaTipo} aplicado x${fullGroups}`;
+                        ofertaTexto = `${cantidadPromo}x Bs. ${precioPromo.toFixed(2)} aplicado x${fullGroups}`;
                     } else {
-                        ofertaTexto = item.ofertaTipo;
+                        ofertaTexto = `${cantidadPromo}x Bs. ${precioPromo.toFixed(2)}`;
                     }
                 }
 
@@ -2388,9 +2404,14 @@
     `;
                 }
 
-                // Mostrar oferta tipo (2x1, 3x2, etc)
-                if (precioOfertaTipo && tipoSticker) {
-                    precioHtml += `<span class="price-type-badge-cart">${tipoSticker} (Bs. ${precioOfertaTipo.toFixed(2)})</span>`;
+                // Mostrar oferta tipo pero ahora como "2x Bs. X"
+                if (precioOfertaTipo && producto.oferta_tipo) {
+                    const cantidadPromo = producto.oferta_tipo.split('x')[0]; // obtiene el "2" de "2x1"
+                    precioHtml += `
+                    <span class="price-type-badge-cart">
+                        ${cantidadPromo}x Bs. ${precioOfertaTipo.toFixed(2)}
+                    </span>
+                `;
                 }
                 // Construir contenido del modal
                 document.getElementById('modalContent').innerHTML = `
