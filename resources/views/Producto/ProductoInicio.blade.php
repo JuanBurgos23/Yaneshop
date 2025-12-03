@@ -1903,13 +1903,9 @@
             } else if (categoriaActiva) {
                 filtrarPorCategoria(categoriaActiva);
             } else {
-                // Sin filtros de categoría
                 productosFiltrados = productos.filter(p =>
-                    // Filtro especial por botón
                     (filtroActivo ? aplicarFiltroEspecial(p) : true) &&
-                    // Filtro por término de búsqueda
                     (terminoBusqueda ? p.nombre.toLowerCase().includes(terminoBusqueda.toLowerCase()) : true) &&
-                    // Nuevo filtro de ofertas tipo
                     (filtroActivo === 'ofertas-tipo' ? !!p.oferta_tipo : true)
                 );
 
@@ -1920,25 +1916,6 @@
 
                 document.getElementById('sectionTitle').textContent = titulo;
             }
-
-            // Configurar botones de filtro
-            const botonesFiltro = document.querySelectorAll('.filter-options .btn');
-            botonesFiltro.forEach(btn => {
-                btn.addEventListener('click', () => {
-                    // Quitar 'active' de todos
-                    botonesFiltro.forEach(b => b.classList.remove('active'));
-
-                    // Agregar 'active' al botón clickeado
-                    btn.classList.add('active');
-
-                    // Actualizar filtroActivo según el botón
-                    const filtro = btn.getAttribute('data-filter');
-                    filtroActivo = filtro || null;
-
-                    // Aplicar filtros
-                    aplicarFiltros();
-                });
-            });
 
             cargarProductos();
         }
