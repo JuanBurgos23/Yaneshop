@@ -954,31 +954,87 @@
             gap: 30px;
         }
 
+        /* Contenedor general del modal (por si necesitas scroll interno) */
         .modal-images {
-            flex: 1;
-        }
-
-        .main-image {
-            width: 100%;
-            border-radius: var(--border-radius);
-            margin-bottom: 15px;
-        }
-
-        .image-gallery {
+            max-width: 100%;
             display: flex;
-            gap: 10px;
-            overflow-x: auto;
-            margin-top: 14px;
-            /* ✅ espacio entre el video/imagen y las miniaturas */
+            flex-direction: column;
+            gap: 15px;
         }
 
+        /* GRID RESPONSIVO PARA MINIATURAS */
+        .gallery-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(75px, 1fr));
+            gap: 10px;
+            width: 100%;
+            padding: 5px 0;
+            max-height: 250px;
+            /* Evita que el modal se rompa */
+            overflow-y: auto;
+            /* Activa scroll cuando sean muchísimas miniaturas */
+        }
+
+        /* Miniaturas */
         .gallery-item {
-            width: 80px;
-            height: 80px;
+            width: 100%;
+            height: 70px;
             object-fit: cover;
-            border-radius: var(--border-radius);
+            border-radius: 6px;
             cursor: pointer;
-            transition: var(--transition);
+            transition: 0.2s;
+        }
+
+        .gallery-item:hover {
+            transform: scale(1.05);
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+        }
+
+        /* Estilo para la imagen/video principal */
+        .main-media-wrapper {
+            width: 100%;
+            position: relative;
+        }
+
+        .main-media-container {
+            width: 100%;
+            text-align: center;
+        }
+
+        .main-media {
+            width: 100%;
+            max-height: 400px;
+            object-fit: contain;
+        }
+
+        /* flechas */
+        .nav-btn {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            background: rgba(0, 0, 0, 0.5);
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            color: white;
+            border: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .nav-left {
+            left: 10px;
+        }
+
+        .nav-right {
+            right: 10px;
+        }
+
+        .nav-btn:hover {
+            background: rgba(0, 0, 0, 0.8);
         }
 
         .image-gallery img,
@@ -2401,7 +2457,7 @@
                         ` : ''}
                     </div>
 
-                <div class="image-gallery">
+                <div class="image-gallery gallery-grid">
                     ${medios.map((medio, index) =>
                         medio.match(/\.(mp4|webm|ogg)$/i)
                             ? `<video class="gallery-item" data-index="${index}" width="80" height="60" style="object-fit:cover;"><source src="${medio}" type="video/mp4"></video>`
