@@ -2264,11 +2264,19 @@
             }
 
             let mensaje = `Hola, quiero consultar los siguientes productos:\n\n`;
-
+            
             carrito.forEach(p => {
-                mensaje += `- ${p.nombre} (${p.cantidad} x Bs. ${p.precio.toFixed(2)})\n`;
-            });
 
+                // Precio seguro según lo que venga
+                const precioSeguro =
+                    parseFloat(p.precio) ||
+                    parseFloat(p.precio_unitario) ||
+                    parseFloat(p.precioOfertaTipo) ||
+                    0;
+
+                mensaje += `- ${p.nombre} (${p.cantidad} x Bs. ${precioSeguro.toFixed(2)})\n`;
+            });
+            
             const total = carrito.reduce((sum, item) => sum + (item.precio * item.cantidad), 0);
             mensaje += `\nTotal: Bs. ${total.toFixed(2)}`;
             mensaje += `\n\nMis datos:\nNombre: ${nombre}\nDirección: ${direccion}\nCiudad: ${ciudad}`;
